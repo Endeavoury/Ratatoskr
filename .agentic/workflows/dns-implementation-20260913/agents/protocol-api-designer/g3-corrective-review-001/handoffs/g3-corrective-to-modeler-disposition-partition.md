@@ -49,7 +49,9 @@ Revise only modeler-owned semantic-model and modeler supporting records. Define 
 
 ## Resolution (destination role)
 
-Reserved for `protocol-modeler`.
+`protocol-modeler / g3-disposition-partition-001` supplies a new candidate model at `.agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml` (SHA-256 `155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700`). `DOM-TCP-CORRELATED-DISPOSITION` and `INV-TCP-CORRELATED-DISPOSITION-PARTITION` define an ordered exhaustive classification for every completed correlated TCP frame: resource-limit first; if not resource-limit, malformed; if not malformed, unsupported-extension for an otherwise valid excluded OPT/EDNS frame; otherwise publish. The malformed guard expressly excludes the structurally valid OPT/EDNS case, while unsupported-extension requires no resource-limit and no other structural/profile failure. Each terminal transition preserves no-result publication and cleanup. Traceability retains `DNS-REQ-019`, `DNS-REQ-023`, `DNS-REQ-024`, and `DNS-REQ-025`.
+
+Resolution status: `READY_FOR_REVIEW`. A fresh independent G3 `protocol-api-designer` review is requested by `.agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/handoffs/model-to-g3-disposition-partition-review.md`; it is not dispatched by this leaf.
 
 ## Closure (orchestrator after verification)
 
