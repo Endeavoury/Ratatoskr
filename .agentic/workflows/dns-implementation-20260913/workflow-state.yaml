@@ -1,0 +1,297 @@
+schema_version: 1
+template: false
+workflow:
+  id: dns-implementation-20260913
+  type: ADD_PROTOCOL
+  target:
+    kind: protocol
+    id: dns
+  status: IN_PROGRESS
+  request: .agentic/workflows/dns-implementation-20260913/request.md
+  manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
+  baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
+  updated_at: 2026-09-13T17:28:21Z
+  scope_mode: implementation
+current_stage: research
+active_role: protocol-orchestrator
+stages:
+  - id: request
+    role: protocol-orchestrator
+    status: APPROVED
+    depends_on: []
+    input_artifacts: []
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/request.md
+      - .agentic/workflows/dns-implementation-20260913/manifest.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/intake-001/g0-intake.md
+    gate: G0
+  - id: research
+    role: protocol-researcher
+    status: READY_FOR_REVIEW
+    depends_on: [request]
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/request.md
+      - .agentic/workflows/dns-implementation-20260913/manifest.yaml
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md
+    gate: G1
+  - id: analysis
+    role: protocol-analyst
+    status: NOT_STARTED
+    depends_on: [research]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G2
+  - id: modeling
+    role: protocol-modeler
+    status: NOT_STARTED
+    depends_on: [analysis]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G3
+  - id: native_api_design
+    role: protocol-api-designer
+    status: NOT_STARTED
+    depends_on: [modeling]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G4
+  - id: vectors
+    role: vector-designer
+    status: NOT_STARTED
+    depends_on: [native_api_design]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G5
+  - id: implementation_ready
+    role: protocol-orchestrator
+    status: NOT_STARTED
+    depends_on: [vectors]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G6
+  - id: native_implementation
+    role: c-protocol-implementer
+    status: NOT_STARTED
+    depends_on: [implementation_ready]
+    input_artifacts: []
+    output_artifacts: []
+    gate: null
+  - id: native_verification
+    role: protocol-test-engineer
+    status: NOT_STARTED
+    depends_on: [native_implementation]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G7
+  - id: security
+    role: security-reviewer
+    status: NOT_STARTED
+    depends_on: [native_verification]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G8
+  - id: fuzzing
+    role: fuzz-engineer
+    status: NOT_STARTED
+    depends_on: [security]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G9
+  - id: binding_design
+    role: binding-api-designer
+    status: NOT_STARTED
+    depends_on: [fuzzing]
+    input_artifacts: []
+    output_artifacts: []
+    gate: BINDING_DESIGN
+  - id: binding_exposure
+    role: binding-implementer
+    status: NOT_STARTED
+    depends_on: [binding_design]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G10
+  - id: conformance
+    role: conformance-reviewer
+    status: NOT_STARTED
+    depends_on: [binding_exposure]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G11
+  - id: documentation
+    role: documentation-writer
+    status: NOT_STARTED
+    depends_on: [conformance]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G13
+  - id: compatibility
+    role: compatibility-reviewer
+    status: NOT_STARTED
+    depends_on: [documentation]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G12
+  - id: final_review
+    role: final-reviewer
+    status: NOT_STARTED
+    depends_on: [compatibility]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G14
+gates:
+  - id: G0
+    applicable: true
+    rationale: Administrative intake, scope and authorization verification.
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/intake-001/g0-intake.md
+    input_revisions: [42b0611efa90e4b62f06d07cca64044ae9f090a7]
+  - id: G1
+    applicable: true
+    rationale: Specification inventory is required before DNS analysis.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G2
+    applicable: true
+    rationale: Native DNS behavior must have approved requirements.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G3
+    applicable: true
+    rationale: Native design requires approved language-independent semantics.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G4
+    applicable: true
+    rationale: Existing public C ABI requires scoped design review.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G5
+    applicable: true
+    rationale: Canonical vectors are required before implementation readiness.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G6
+    applicable: true
+    rationale: No native implementation work starts without G1-G5 approval.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G7
+    applicable: true
+    rationale: Future native DNS implementation requires independent verification.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G8
+    applicable: true
+    rationale: DNS hostile-input and network behavior requires security review.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G9
+    applicable: true
+    rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: BINDING_DESIGN
+    applicable: false
+    rationale: No binding target has been selected; existing bindings are out of current scope pending maintainer decision.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G10
+    applicable: false
+    rationale: No binding exposure is authorized in the initial scope.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G11
+    applicable: false
+    rationale: No binding conformance surface is authorized in the initial scope.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G13
+    applicable: true
+    rationale: Final native public behavior requires evidence-matched documentation.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G12
+    applicable: true
+    rationale: Existing public ABI and behavior require compatibility review.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G14
+    applicable: true
+    rationale: Final independent workflow acceptance is required.
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+assignments:
+  - id: research-001
+    stage_id: research
+    role: protocol-researcher
+    status: READY_FOR_REVIEW
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/intake-001/delegations/protocol-researcher-research-001.md
+    agent_id: deleg_7535d570/task-0
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md
+    readonly_paths:
+      - src/protocols/dns/
+      - include/ratatoskr/dns.h
+      - cli/commands/dns.c
+      - tests/dns/
+      - tests/integration/dns_fixture_test.py
+      - fuzz/dns/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/request.md
+      - .agentic/workflows/dns-implementation-20260913/manifest.yaml
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md
+blocked_by:
+  - id: DNS-IMPLEMENTATION-GATE-BLOCK
+    reason: G1-G6 technical approvals are absent; implementation delegation is prohibited.
+    owner_role: protocol-orchestrator
+    handoff: null
+  - id: DNS-BINDING-SCOPE-001
+    reason: Binding scope needs maintainer decision before binding gates can become applicable.
+    owner_role: maintainer
+    handoff: null
+decisions: []
+handoffs:
+  - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+history:
+  - at: 2026-09-13T17:21:47Z
+    actor: protocol-orchestrator/intake-001
+    event: Initialized DNS ADD_PROTOCOL workflow and completed administrative G0; assigned protocol-researcher research-001 as the only active specialist.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/intake-001/g0-intake.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/intake-001/delegations/protocol-researcher-research-001.md
+  - at: 2026-09-13T17:28:21Z
+    actor: protocol-orchestrator/intake-001
+    event: Verified researcher artifact existence, authorized-path boundary, hashes and READY_FOR_REVIEW handoff; G1 remains NOT_STARTED pending independent protocol-analyst review.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md

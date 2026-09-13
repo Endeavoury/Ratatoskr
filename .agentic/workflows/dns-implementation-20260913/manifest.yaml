@@ -1,0 +1,72 @@
+schema_version: 1
+template: false
+artifact_id: dns-implementation-20260913-manifest
+workflow_id: dns-implementation-20260913
+owner_role: protocol-orchestrator
+status: APPROVED
+revision: "git:42b0611efa90e4b62f06d07cca64044ae9f090a7; workflow intake initialized 2026-09-13"
+source_artifacts:
+  - "request.md @ git:42b0611efa90e4b62f06d07cca64044ae9f090a7"
+  - "docs/protocol-validation-plan.md @ git:42b0611efa90e4b62f06d07cca64044ae9f090a7"
+assumptions:
+  - "Existing DNS implementation evidence is not an approved specification inventory."
+open_questions:
+  - id: DNS-SCOPE-001
+    question: "Are any existing language-binding DNS surfaces in implementation scope?"
+    owner: maintainer
+    blocking: false
+limitations:
+  - "No technical gate has passed; G0 is administrative scope intake only."
+component:
+  id: dns
+  kind: protocol
+  version_profile: "To be established by protocol-researcher from official DNS sources; baseline implements an existing unicast stub/client surface."
+  peer_roles:
+    - "client/stub resolver"
+    - "DNS server or recursive resolver: excluded pending explicit scope"
+  capabilities:
+    - id: DNS-BASELINE-UNICAST-CLIENT
+      requirement_refs: []
+      disposition: research_required
+      rationale: "Baseline architecture and validation plan identify query construction, response parsing, UDP and TCP fallback; source authority has not been approved."
+    - id: DNS-BASELINE-RECORD-PRESENTATION
+      requirement_refs: []
+      disposition: research_required
+      rationale: "Public API and existing code expose record results; applicability and behavior require inventory."
+  stateful: true
+dependencies:
+  - component_id: operating-system-network-stack
+    required_version: "platform-provided; precise assumptions to be analyzed"
+    capability_ids: [DNS-BASELINE-UNICAST-CLIENT]
+    purpose: "UDP/TCP DNS exchange"
+    artifact_refs: []
+    prerequisite_workflow: null
+    negotiation: "none established at G0"
+    failure_behavior: "to be analyzed"
+scope:
+  included:
+    - "Evidence-led governed review and future implementation of the existing native DNS unicast stub/client surface."
+    - "Research classification of DNS protocol, transport, record and security dependencies."
+  excluded:
+    - "Commits, pushes, merges, publication, credentials, configuration changes and gate bypasses."
+    - "Recursive resolver, authoritative server, caching, DNSSEC validation, encrypted transports, mDNS/DNS-SD unless explicitly added after scope review."
+  deferred:
+    - "Binding exposure scope and any binding-specific work pending maintainer decision."
+  intended_bindings: []
+  resource_policy: "No resource-budget policy is approved at G0; analyst/API stages must surface any observable limits."
+paths:
+  native_module: src/protocols/dns/
+  public_headers:
+    - include/ratatoskr/dns.h
+  existing_evidence:
+    - cli/commands/dns.c
+    - tests/dns/dns_tests.c
+    - tests/integration/dns_fixture_test.py
+    - fuzz/dns/
+    - docs/dns.md
+    - docs/dns-rfc-compliance.md
+    - docs/protocol-validation-plan.md
+approvals:
+  - gate: G0
+    status: APPROVED
+    rationale: "Administrative intake: explicit target, baseline, boundaries, dependency plan and applicable gates recorded by protocol-orchestrator. This is not technical approval."
