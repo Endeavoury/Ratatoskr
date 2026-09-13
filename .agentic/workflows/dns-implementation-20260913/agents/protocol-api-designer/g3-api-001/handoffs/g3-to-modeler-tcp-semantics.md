@@ -53,7 +53,11 @@ Revise the model in the modeler-owned workspace without introducing native API, 
 
 ## Resolution (destination role)
 
-Reserved for the modeler. Set READY_FOR_REVIEW only after recording revised paths and exact immutable revisions.
+**Status: READY_FOR_REVIEW (local corrective candidate; Git delivery blocked).**
+
+The modeler created `.agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/protocol-model.yaml` as the corrective candidate and `.agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/model-to-g3-corrective-review.md` for a fresh independent G3 review. It defines one observable `EVT-TCP-BYTES`/`STR-TCP-DNS-FRAME` contract: supplied incomplete-frame bytes become accumulator-owned with no caller remainder; a one-frame outcome accepts only prefix plus declared body and leaves the suffix caller-owned. It adds explicit terminal correlated-frame malformed, resource-limit, and unsupported-OPT/EDNS transitions with no result, partial-state discard, and context/buffer cleanup. Traceability now includes `DNS-REQ-019`, `DNS-REQ-023`, `DNS-REQ-024`, and `DNS-REQ-025` across those additions.
+
+The candidate derives from approved analysis `5615caed0b7ad0a321d6794e71b79c4195e90384` and G2 model `7de66fd8bc3c28dc058f3c51a6cd36c2db81424c`; final candidate SHA-256 `130e354e67a517870e3d826f54f323b38dc98716c14b272f22a4adf8d6aa1b7f` and local validation evidence are in the modeler completion report. No interpretation conflict or numerical-policy decision was introduced. No raw-Git commit/push was made because independent discovery found no verified absolute `git-agent` wrapper; delivery and independent G3 review remain blocked pending wrapper-mediated delivery.
 
 ## Closure (orchestrator after verification)
 

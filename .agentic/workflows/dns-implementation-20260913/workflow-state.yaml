@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T21:29:25Z
+  updated_at: 2026-09-13T22:18:26Z
   scope_mode: implementation
 current_stage: modeling
 active_role: protocol-orchestrator
@@ -387,6 +387,43 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/api-design.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/completion-report.md
+  - id: g3-model-correction-001
+    stage_id: modeling
+    role: protocol-modeler
+    status: READY_FOR_REVIEW
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-model-correction-routing-001/delegations/protocol-modeler-g3-model-correction-001.md
+    agent_id: delegated leaf pending delivery
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md (destination Resolution section only)
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/reviews/g3-model-review.md
+      - include/
+      - src/
+      - tests/
+      - fuzz/
+      - bindings/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/request.md
+      - .agentic/workflows/dns-implementation-20260913/manifest.yaml
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/reviews/g3-model-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/reviews/g2-analysis-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/completion-report.md
 blocked_by:
   - id: DNS-IMPLEMENTATION-GATE-BLOCK
     reason: G3-G6 technical approvals are absent; implementation delegation is prohibited.
@@ -396,6 +433,10 @@ blocked_by:
     reason: G3 review requires a modeler correction for TCP incremental consumption and terminal malformed/resource/unsupported-extension outcomes before a fresh independent review.
     owner_role: protocol-modeler
     handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+  - id: DNS-G3-CORRECTION-DELIVERY-BLOCK
+    reason: The local g3-model-correction-001 candidate is READY_FOR_REVIEW, but no verified absolute git-agent wrapper is available for required commit/push and remote delivery verification. G3 remains CHANGES_REQUESTED pending delivery and a fresh independent review.
+    owner_role: protocol-orchestrator
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/model-to-g3-corrective-review.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
@@ -456,3 +497,18 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-api-routing-001/completion-report.md
+  - at: 2026-09-13T22:12:40Z
+    actor: protocol-orchestrator/g3-model-correction-routing-001
+    event: Recorded one fresh protocol-modeler corrective assignment for the active G3 CHANGES_REQUESTED return route. Modeling is IN_PROGRESS; G3 remains CHANGES_REQUESTED and G4+ remain unadvanced. Pre-delegation wrapper discovery found no verified absolute git-agent wrapper, which the leaf must independently confirm and record without raw-Git substitution.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-model-correction-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-model-correction-routing-001/delegations/protocol-modeler-g3-model-correction-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+  - at: 2026-09-13T22:18:26Z
+    actor: protocol-orchestrator/g3-model-correction-routing-001
+    event: "Verified the sole modeler corrective delivery locally: exact allowed files, permitted handoff-resolution section, candidate SHA-256, diff boundary, and diff check. Model correction is READY_FOR_REVIEW locally; G3 remains CHANGES_REQUESTED and G4+ remain unadvanced. Required git-agent wrapper is absent, so no raw-Git commit/push or remote delivery occurred; a fresh independent G3 review is the next role after delivery, but was not dispatched."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/model-to-g3-corrective-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-model-correction-routing-001/modeler-delivery-verification.md
