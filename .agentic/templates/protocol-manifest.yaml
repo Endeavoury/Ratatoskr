@@ -1,0 +1,34 @@
+# Template only: replace placeholders; no component is approved by this file.
+schema_version: 1
+template: true
+artifact_id: "<manifest-id>"
+workflow_id: "<work-id>"
+owner_role: protocol-orchestrator
+status: NOT_STARTED
+revision: "<Git commit or content digest>"
+source_artifacts: []
+assumptions: []
+open_questions: []
+limitations: []
+component:
+  id: "<component-id>"
+  kind: "<protocol|transport|extension|composition>"
+  version_profile: "<specification versions and implemented profile>"
+  peer_roles: []
+  capabilities: [] # Each: id, requirement_refs, support disposition and rationale.
+  stateful: null # Set true/false with analysis reference.
+dependencies: []
+# Each dependency: component_id, required_version, capability_ids, purpose,
+# artifact_refs, prerequisite_workflow, negotiation and failure behavior.
+scope:
+  included: []
+  excluded: []
+  deferred: []
+  intended_bindings: [] # Open-ended binding IDs, never a fixed language enum.
+  resource_policy: "<policy decision reference>"
+paths:
+  native_module: "<repository-relative path>"
+  public_headers: []
+  existing_evidence: []
+approvals: []
+

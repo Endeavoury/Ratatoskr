@@ -10,7 +10,9 @@
 
 ## Guides
 
+- [Agentic engineering manual and Hermes setup](agentic/README.md)
 - [Build and contribution guide](contributing.md)
+- [Protocol analysis and core validation plan](protocol-validation-plan.md)
 - [.NET compatibility migration](migration-dotnet.md)
 - [Java and Maven binding](../bindings/java/README.md)
 - [Python and PyPI binding](../bindings/python/README.md)

@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agentic workflow state v1",
+  "description": "Structural only; gate truth, revision freshness, reviewer independence and graph validity require review.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "template",
+    "workflow",
+    "current_stage",
+    "active_role",
+    "stages",
+    "gates",
+    "assignments",
+    "blocked_by",
+    "decisions",
+    "handoffs",
+    "history"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "template": {
+      "type": "boolean"
+    },
+    "workflow": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "target",
+        "status",
+        "request",
+        "manifest",
+        "baseline_revision",
+        "updated_at",
+        "scope_mode"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "ADD_PROTOCOL",
+            "ADD_BINDING",
+            "EXTEND_PROTOCOL",
+            "ADD_TRANSPORT",
+            "ADD_PROTOCOL_EXTENSION",
+            "REVIEW_PROTOCOL",
+            "SECURITY_REVIEW",
+            "CONFORMANCE_REVIEW"
+          ]
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "protocol",
+                "transport",
+                "extension",
+                "composition",
+                "binding",
+                "component"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "request": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "updated_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope_mode": {
+          "enum": [
+            "planning",
+            "review",
+            "implementation"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "current_stage": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "active_role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "status",
+          "depends_on",
+          "input_artifacts",
+          "output_artifacts",
+          "gate"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "input_artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/artifact"
+            }
+          },
+          "output_artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/artifact"
+            }
+          },
+          "gate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "applicable",
+          "rationale",
+          "status",
+          "record",
+          "input_revisions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "applicable": {
+            "type": "boolean"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          },
+          "record": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "input_revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/artifact"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "stage_id",
+          "role",
+          "status",
+          "delegation",
+          "agent_id",
+          "allowed_paths",
+          "readonly_paths",
+          "input_artifacts",
+          "expected_outputs"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stage_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          },
+          "delegation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "agent_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed_paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "readonly_paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "input_artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/artifact"
+            }
+          },
+          "expected_outputs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "blocked_by": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "reason",
+          "owner_role",
+          "handoff"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner_role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "handoff": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "actor",
+          "event",
+          "references"
+        ],
+        "properties": {
+          "at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actor": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event": {
+            "type": "string",
+            "minLength": 1
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "status": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "NEEDS_UPSTREAM_CHANGE",
+        "READY_FOR_REVIEW",
+        "CHANGES_REQUESTED",
+        "APPROVED",
+        "REJECTED",
+        "SUPERSEDED",
+        "COMPLETE"
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "path",
+        "revision"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

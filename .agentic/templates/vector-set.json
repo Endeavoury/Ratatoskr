@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "template": true,
+  "artifact_id": "<vector-set-id>",
+  "workflow_id": "<work-id>",
+  "target": "<component-id>",
+  "owner_role": "vector-designer",
+  "status": "NOT_STARTED",
+  "revision": "<Git commit or content digest>",
+  "source_artifacts": [],
+  "assumptions": [],
+  "open_questions": [],
+  "limitations": [],
+  "cases": [
+    {
+      "id": "<case-id>",
+      "requirement_refs": [
+        "<requirement-id>"
+      ],
+      "category": "<valid|invalid|boundary|interaction>",
+      "description": "<human-readable scenario>",
+      "preconditions": [],
+      "logical_input": {},
+      "request_text": "<readable request fields or local action>",
+      "response_text": "<readable expected message(s), no-response or event outcome>",
+      "provenance": "<source sections and independent byte verification>",
+      "events": [
+        {
+          "id": "<event-id>",
+          "kind": "<send|receive|input|action|timer|eof>",
+          "actor": "<peer-role>",
+          "connection_id": null,
+          "stream_id": null,
+          "at_ms": 0,
+          "expected_after": {
+            "state": null,
+            "error": null,
+            "consumed_bytes": null,
+            "fields": {}
+          },
+          "payload": {
+            "encoding": "hex",
+            "data": "",
+            "byte_length": 0,
+            "framing": "<included framing or payload only>"
+          },
+          "action": "<local event description if applicable>"
+        }
+      ],
+      "expected": {
+        "comparison": "semantic",
+        "fields": {},
+        "state": null,
+        "error": null,
+        "consumed_bytes": null,
+        "output_events": []
+      },
+      "coverage_notes": "<requirements covered and deliberate exclusions>"
+    }
+  ]
+}

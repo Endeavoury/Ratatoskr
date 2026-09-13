@@ -1,0 +1,248 @@
+# Template only. This is a protocol-flow starting shape, not an active work item.
+# For ADD_BINDING use request -> binding_design -> binding_exposure -> conformance
+# -> documentation -> compatibility -> final_review, with approved native input refs.
+# For scoped review workflows retain only scoped stages and recorded gate rationale.
+# Resolve template placeholders, set template: false and record actual approvals.
+schema_version: 1
+template: true
+workflow:
+  id: "<work-id>"
+  type: ADD_PROTOCOL
+  target:
+    kind: protocol
+    id: "<component-or-binding-id>"
+  status: NOT_STARTED
+  request: "<repository-relative request path>"
+  manifest: "<repository-relative manifest path>"
+  baseline_revision: "<Git commit>"
+  updated_at: "<UTC timestamp>"
+  scope_mode: planning # Change only to the mode actually authorized.
+current_stage: request
+active_role: protocol-orchestrator
+stages:
+  - id: request
+    role: protocol-orchestrator
+    status: NOT_STARTED
+    depends_on: []
+    input_artifacts: []
+    output_artifacts: []
+    gate: G0
+  - id: research
+    role: protocol-researcher
+    status: NOT_STARTED
+    depends_on: ["request"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G1
+  - id: analysis
+    role: protocol-analyst
+    status: NOT_STARTED
+    depends_on: ["research"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G2
+  - id: modeling
+    role: protocol-modeler
+    status: NOT_STARTED
+    depends_on: ["analysis"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G3
+  - id: native_api_design
+    role: protocol-api-designer
+    status: NOT_STARTED
+    depends_on: ["modeling"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G4
+  - id: vectors
+    role: vector-designer
+    status: NOT_STARTED
+    depends_on: ["native_api_design"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G5
+  - id: implementation_ready
+    role: protocol-orchestrator
+    status: NOT_STARTED
+    depends_on: ["vectors"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G6
+  - id: native_implementation
+    role: c-protocol-implementer
+    status: NOT_STARTED
+    depends_on: ["implementation_ready"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: null
+  - id: native_verification
+    role: protocol-test-engineer
+    status: NOT_STARTED
+    depends_on: ["native_implementation"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G7
+  - id: security
+    role: security-reviewer
+    status: NOT_STARTED
+    depends_on: ["native_verification"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G8
+  - id: fuzzing
+    role: fuzz-engineer
+    status: NOT_STARTED
+    depends_on: ["security"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G9
+  - id: binding_design
+    role: binding-api-designer
+    status: NOT_STARTED
+    depends_on: ["fuzzing"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: BINDING_DESIGN
+  - id: binding_exposure
+    role: binding-implementer
+    status: NOT_STARTED
+    depends_on: ["binding_design"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G10
+  - id: conformance
+    role: conformance-reviewer
+    status: NOT_STARTED
+    depends_on: ["binding_exposure"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G11
+  - id: documentation
+    role: documentation-writer
+    status: NOT_STARTED
+    depends_on: ["conformance"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G13
+  - id: compatibility
+    role: compatibility-reviewer
+    status: NOT_STARTED
+    depends_on: ["documentation"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G12
+  - id: final_review
+    role: final-reviewer
+    status: NOT_STARTED
+    depends_on: ["compatibility"]
+    input_artifacts: []
+    output_artifacts: []
+    gate: G14
+gates:
+  - id: G0
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G1
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G2
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G3
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G4
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G5
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G6
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G7
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G8
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G9
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: BINDING_DESIGN
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G10
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G11
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G13
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G12
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+  - id: G14
+    applicable: true
+    rationale: "<scope justification>"
+    status: NOT_STARTED
+    record: null
+    input_revisions: []
+assignments: []
+# Each: id, stage_id, role, status, delegation path, agent_id,
+# allowed_paths, readonly_paths, input_artifacts, expected_outputs.
+blocked_by: []
+# Each: id, reason, owner_role, handoff (path or null).
+decisions: [] # Repository paths to decision records.
+handoffs: [] # Repository paths to handoff records.
+history: []
+# Each: at, actor, event, references. Record transitions and invalidated approvals.
+

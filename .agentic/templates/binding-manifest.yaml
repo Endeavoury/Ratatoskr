@@ -1,0 +1,33 @@
+# Template only: mapping/exposure scope, not a new binding implementation.
+schema_version: 1
+template: true
+artifact_id: "<manifest-id>"
+workflow_id: "<work-id>"
+owner_role: protocol-orchestrator
+status: NOT_STARTED
+revision: "<Git commit or content digest>"
+source_artifacts: []
+assumptions: []
+open_questions: []
+limitations: []
+binding:
+  id: "<binding-id>"
+  language: "<language-name>"
+  runtime_versions: []
+  platforms: []
+  package_root: "<repository-relative path>"
+  existing_package_disposition: "<new|extend|complete|audit>"
+native_baseline:
+  abi_version: "<version>"
+  revision: "<Git commit or content digest>"
+  approved_artifact_refs: []
+capabilities: []
+# Each: component_id, capability_id, ABI refs, supported/unsupported/deferred,
+# rationale, mapping artifact and canonical evidence refs.
+dependencies: []
+packaging:
+  distribution: "<local packaging format>"
+  native_library_strategy: "<approved discovery/bundling design>"
+  publication_authorized: false
+approvals: []
+

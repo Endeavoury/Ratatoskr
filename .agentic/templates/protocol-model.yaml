@@ -1,0 +1,34 @@
+# Template only: semantic domains, not language classes or C structure definitions.
+schema_version: 1
+template: true
+artifact_id: "<model-id>"
+workflow_id: "<work-id>"
+target: "<component-id>"
+owner_role: protocol-modeler
+status: NOT_STARTED
+revision: "<Git commit or content digest>"
+source_artifacts: []
+assumptions: []
+open_questions: []
+limitations: []
+semantic_domains: []
+# Each: id, meaning, constraints/range, requirement_refs. No language-specific types.
+entities: []
+messages: []
+# Each: id, semantic fields, constraints, requirement_refs; wire layout stays in analysis.
+peer_roles: []
+states: []
+events: []
+transitions: []
+# Each: id, role/state, event, guard, effects, next_state, requirement_refs.
+# Effects can include consumed input, produced output, timers and resource ownership.
+sessions: []
+streams: []
+timers: []
+errors: []
+resource_invariants: []
+extension_points: []
+dependencies: []
+traceability: []
+# Each: requirement_id, model_element_ids, exclusions with approved rationale.
+

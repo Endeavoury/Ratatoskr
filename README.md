@@ -147,4 +147,14 @@ Read the [documentation index](docs/README.md), [architecture](docs/architecture
 
 **One implementation. Many languages. One CLI.**
 
+## Agentic engineering
+
+The [agentic operating manual](docs/agentic/README.md) defines Hermes specialist
+roles, protocol and binding workflows, artifact templates, handoffs and review gates.
+Project context lives in [AGENTS.md](AGENTS.md); role skills live under
+`.hermes/skills/`. Follow [Hermes setup](docs/agentic/HERMES_SETUP.md) to discover and
+trust them. The orchestrator starts new protocol work with specification research
+and new binding work with native ABI mapping. Repository artifacts preserve state
+across sessions; independent review governs each handoff.
+
 Released under the [MIT License](LICENSE).
