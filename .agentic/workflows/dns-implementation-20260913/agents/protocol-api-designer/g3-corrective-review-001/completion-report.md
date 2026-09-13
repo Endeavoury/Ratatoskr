@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | `protocol-api-designer` |
 | Status | `CHANGES_REQUESTED` |
-| Revision | Reviewer artifacts committed by this assignment; commit and remote readback recorded after delivery. |
+| Revision | Initial reviewer-artifact delivery `403657be45bc65ee4184fa7c0b8fe9ab0deb0dd9`; exact remote ref readback matched that commit before this completion-record clarification. |
 | Source artifacts | Corrected model `46dfcfe543c7591db963c606802cd7f0d147d35d`; approved analysis `5615caed0b7ad0a321d6794e71b79c4195e90384`; G2 delivery `7de66fd8bc3c28dc058f3c51a6cd36c2db81424c`; prior G3 delivery `0fa10145698994fcdb2e3a6004cd8e6a356b96f7`. |
 | Assumptions | Scoped corrective G3 review only. |
 | Open questions | None. |
@@ -54,7 +54,7 @@ VALIDATION EVIDENCE:
 - Read the complete delegation packet, active role skill, required contracts, current workflow state, approved analysis, G2 evidence, prior G3 finding/return handoff, and delivered corrective artifacts.
 - Independently verified the executable regular Git wrapper, inspected its role-bound identity behavior, verified corrected delivery commit ancestry, and matched corrected/G2/analysis recorded SHA-256 digests from immutable Git objects.
 - Review finding and exact required revision are recorded in the assigned G3 review and formal modeler-only handoff.
-- Pre-commit diff boundary, `git diff --check`, commit, push, and exact remote ref readback remain to be recorded after those actions complete.
+- `git diff --check` passed before commit. Only the four assigned reviewer artifacts were staged and committed in initial delivery `403657be45bc65ee4184fa7c0b8fe9ab0deb0dd9`; push used only `HEAD:refs/heads/hermes/dns-implementation-20260913`, and exact remote readback matched that commit. This clarification is the sole follow-up change.
 
 MODEL / REASONING USED:
 - Requested: `gpt-5.6-sol` / medium. Actual exposed runtime: `openai-codex` / `gpt-5.6-terra`; effective reasoning effort and usage telemetry: unknown.
