@@ -12,7 +12,7 @@ workflow:
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
   updated_at: 2026-09-13T21:29:25Z
   scope_mode: implementation
-current_stage: analysis
+current_stage: modeling
 active_role: protocol-orchestrator
 stages:
   - id: request
