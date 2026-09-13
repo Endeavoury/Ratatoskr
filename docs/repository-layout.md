@@ -20,6 +20,14 @@ packaging/                  native OS/package-manager integration
 docs/                       architecture and public behavior contracts
 ```
 
+## Agent ownership
+
+Each agent keeps work records in
+`.agentic/workflows/<work-id>/agents/<role>/<assignment-id>/` and edits only assigned
+files in the component directories above. The [agent directory map](agentic/DIRECTORIES.md)
+lists all roles, their outputs, shared directories and coordination rules. Reusable
+role directory templates live in `.agentic/templates/agent-workspaces/`.
+
 ## Dependency rules
 
 ```text

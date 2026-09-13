@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/binding-api-designer/<assignment-id>/`.
+- Workspace outputs: `binding-design.md`, mapping decisions and assigned independent reviews.
+- Eligible shared paths, only when explicitly assigned: None; `bindings/<language>/` and public headers are read-only design inputs.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ C headers/implementation, native API design truth, canonical vectors, protocol m
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Assigned bindings/<binding-id>/binding-design.md and mapping decision/review/handoff/completion records inside the work item.
+Allowed, only within the delegation's concrete paths: Assigned workspace binding-design.md and mapping decision/review/handoff/completion records inside the work item.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

@@ -114,7 +114,8 @@ to run every stage. Record actual user-authorized mode at G0.
    of any changed artifact and invalidate their approvals before proceeding.
 4. Select a ready stage whose prerequisites are approved, or a review assignment
    whose candidate is READY_FOR_REVIEW as described above. Record
-   role, assignment ID, allowed paths and input revisions in a delegation packet.
+   role, assignment ID, unique workspace from [DIRECTORIES.md](DIRECTORIES.md),
+   command working directory, allowed paths and input revisions in a delegation packet.
 5. Review outputs, boundary adherence, and independent gate findings before updating
    state. Record evidence references and the next stage even if the session ends.
 

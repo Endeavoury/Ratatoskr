@@ -19,7 +19,9 @@ does not authorize an agent to rewrite a specification or expected vector.
 3. The orchestrator copies relevant [templates](../../.agentic/templates/) into a
    uniquely named `.agentic/workflows/<work-id>/`, fills the request/state, and assigns
    a specialist using a complete [delegation packet](../../.agentic/templates/delegation.md).
-4. The specialist reads its `.hermes/skills/<role>/SKILL.md`, announces its identity,
+4. The orchestrator assigns a unique `agents/<role>/<assignment-id>/` workspace
+   using [Directories](DIRECTORIES.md), with exact shared-source write paths.
+   The specialist reads its `.hermes/skills/<role>/SKILL.md`, announces its identity,
    checks inputs, changes only assigned artifacts, and produces a completion report.
 5. An independent reviewer records the gate result. The orchestrator advances the
    state or routes a formal handoff to the owner of the failing input.
@@ -36,6 +38,7 @@ it never guesses which of several active targets the user intended.
 | [Architecture](ARCHITECTURE.md) | Repository findings, extension axes, state and composition |
 | [Workflow](WORKFLOW.md) | Routing, dependencies, state transitions, resumption |
 | [Roles](ROLES.md) | Ownership and modification matrix |
+| [Directories](DIRECTORIES.md) | Per-agent workspaces and shared source directory ownership |
 | [Model and reasoning policy](MODEL_POLICY.md) | OpenAI defaults per role, token discipline and escalation |
 | [Handoffs](HANDOFFS.md) | Delegation, completion, escalation and backtracking |
 | [Artifacts](ARTIFACTS.md) | Artifact paths, identities, templates and schemas |

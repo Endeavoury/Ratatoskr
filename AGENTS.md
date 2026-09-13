@@ -18,6 +18,14 @@ implementations + M bindings**, not N × M independent protocol implementations.
 - Read `docs/architecture.md`, `docs/repository-layout.md`, and `docs/abi.md` for
   existing contracts. DNS is the first module, not a framework default.
 
+## Agent directories
+
+Every assignment uses `.agentic/workflows/<work-id>/agents/<role>/<assignment-id>/`
+for its artifacts. Read [the directory ownership map](docs/agentic/DIRECTORIES.md)
+and your skill's working-directory section before writing. Source remains in the
+component directories above; shared files need a single explicitly assigned writer.
+Reusable directories for every role are in `.agentic/templates/agent-workspaces/`.
+
 ## Agent workflow
 
 Read [docs/agentic/README.md](docs/agentic/README.md). Specialist roles live in

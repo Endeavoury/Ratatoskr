@@ -239,6 +239,8 @@ gates:
 assignments: []
 # Each: id, stage_id, role, status, delegation path, agent_id,
 # allowed_paths, readonly_paths, input_artifacts, expected_outputs.
+# The delegation records command working directory and agents/<role>/<assignment-id>/.
+# Use concrete workspace output paths in expected_outputs; no extra schema fields.
 blocked_by: []
 # Each: id, reason, owner_role, handoff (path or null).
 decisions: [] # Repository paths to decision records.

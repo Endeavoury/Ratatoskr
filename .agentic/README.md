@@ -9,6 +9,10 @@ manifest, state, artifact revisions, review gates and handoffs. Git is the histo
 store; Hermes is the runtime. There is no script, server, database, build dependency
 or generated production functionality in this framework.
 
+Each new assignment has its own `workflows/<work-id>/agents/<role>/<assignment-id>/`
+directory. `templates/agent-workspaces/` provides a starter directory for every role.
+See [DIRECTORIES.md](../docs/agentic/DIRECTORIES.md) for workspace and shared-source rules.
+
 See [ARTIFACTS.md](../docs/agentic/ARTIFACTS.md) for ownership and
 [WORKFLOW.md](../docs/agentic/WORKFLOW.md) for resumption.
 

@@ -45,6 +45,10 @@ HANDOFF REQUIRED:
 RECOMMENDED NEXT ROLE:
 <role and required gate>
 
+WORKING DIRECTORIES:
+<actual command working directory, artifact workspace, shared paths changed;
+verify no unassigned writes or conflicting writers; older-path exceptions or none>
+
 VALIDATION EVIDENCE:
 <checks actually performed and source revisions; unexecuted checks and limitations>
 

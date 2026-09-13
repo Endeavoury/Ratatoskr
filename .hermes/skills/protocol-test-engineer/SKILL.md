@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/protocol-test-engineer/<assignment-id>/`.
+- Workspace outputs: `test-report.md`, assigned independent gate reviews.
+- Eligible shared paths, only when explicitly assigned: `tests/<component>/`, `tests/core/`, `tests/integration/`, derived fixtures in `tests/fixtures/<component>/`; scoped test CMake registration.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ Native/public API implementation, canonical vectors, analysis/model/API designs,
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Delegated tests/<component>, tests/core or tests/integration files and scoped test CMake registration; assigned test reports and handoffs.
+Allowed, only within the delegation's concrete paths: Delegated tests/<component>, tests/core, tests/integration or derived tests/fixtures/<component> files and scoped test CMake registration; assigned test reports and handoffs.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

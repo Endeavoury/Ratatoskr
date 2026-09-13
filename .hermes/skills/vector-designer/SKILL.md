@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/vector-designer/<assignment-id>/`.
+- Workspace outputs: `vector-set.json`, vector decisions.
+- Eligible shared paths, only when explicitly assigned: None; canonical vectors live in the assigned workspace.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ Specification inventory, analysis/model/API, implementation, harnesses, generate
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Assigned artifacts/vector-set.json and vector decision/handoff/completion records.
+Allowed, only within the delegation's concrete paths: Assigned workspace vector-set.json and vector decision/handoff/completion records.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

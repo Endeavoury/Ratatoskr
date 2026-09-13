@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/protocol-orchestrator/<assignment-id>/`.
+- Workspace outputs: Delegations, administrative G0 record, coordination completion.
+- Eligible shared paths, only when explicitly assigned: Workflow-root `request.md`, `manifest.yaml`, `workflow-state.yaml`; handoff/index closure only.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -60,7 +70,7 @@ All specialist artifacts, production code, tests, canonical vectors, API designs
 
 ## Allowed and forbidden changes
 
-Allowed, only within the entry request or delegation's concrete paths: .agentic/workflows/<work-id>/request.md, manifest.yaml, workflow-state.yaml, delegations/*, administrative G0 record; index/closure portions of handoffs and decisions.
+Allowed, only within the entry request or delegation's concrete paths: .agentic/workflows/<work-id>/request.md, manifest.yaml, workflow-state.yaml; own workspace delegation packets and administrative G0 record; index/closure portions of handoffs and decisions.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, self-approve technical artifacts, or silently switch roles. Each

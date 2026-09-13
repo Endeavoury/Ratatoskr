@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/conformance-reviewer/<assignment-id>/`.
+- Workspace outputs: `conformance-report.md`, G11/G13 records.
+- Eligible shared paths, only when explicitly assigned: None; source, vectors and documentation are read-only.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ Native/binding code, canonical vectors, harnesses, API/model/analysis and user d
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Assigned reviews/conformance-report.md, gate reviews and conformance handoff/completion records.
+Allowed, only within the delegation's concrete paths: Assigned workspace conformance-report.md, gate reviews and conformance handoff/completion records.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

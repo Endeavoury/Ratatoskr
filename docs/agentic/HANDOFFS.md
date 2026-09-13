@@ -11,6 +11,11 @@ outputs, acceptance criteria, handoff target, and stop conditions. Include the e
 relevant shared contracts. Pass the packet's content or an explicit instruction to
 read its path; “continue what we discussed” is not sufficient.
 
+Include the concrete artifact workspace, command working directory and shared-file
+writer assignments from [DIRECTORIES.md](DIRECTORIES.md). Each agent gets its own
+`agents/<role>/<assignment-id>/`; directory ownership never replaces the explicit
+allowed file list. Reviewers receive separate assignments and output directories.
+
 Include requested and observed model/reasoning settings, context/summary targets,
 attempt limits and the escalation trigger from [MODEL_POLICY.md](MODEL_POLICY.md).
 Report unavailable settings honestly; they are runtime configuration, not role

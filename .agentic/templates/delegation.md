@@ -46,6 +46,19 @@ TARGET:
 REPOSITORY ROOT:
 <absolute checkout path>
 
+WORKING DIRECTORIES:
+
+- Command working directory: <absolute repository root or required package root>.
+- Artifact workspace: <repository-relative .agentic/workflows/work-id/agents/role/assignment-id/>.
+- Workspace owner: <role, assignment ID and agent/session identity>.
+- Shared source directories: <exact component/package paths or none>.
+- Shared-file writer / ordering: <named writer and serialized dependencies or none>.
+- Existing-path exception: <older packet paths retained when resuming, or none>.
+
+Use docs/agentic/DIRECTORIES.md. The workspace is for records; production source
+stays in its existing component. List concrete allowed files below, including own
+completion, decisions and review records. Directory ownership is not blanket access.
+
 WORKFLOW / STAGE / ASSIGNMENT:
 <IDs and workflow-state path>
 
@@ -54,6 +67,7 @@ READ FIRST:
 - AGENTS.md
 - .hermes/skills/<role>/SKILL.md
 - docs/agentic/HANDOFFS.md
+- docs/agentic/DIRECTORIES.md
 - docs/agentic/MODEL_POLICY.md
 - <relevant lifecycle and gate contract>
 

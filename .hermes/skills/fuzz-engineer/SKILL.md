@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/fuzz-engineer/<assignment-id>/`.
+- Workspace outputs: `fuzz-plan.md`, `fuzz-results.md`.
+- Eligible shared paths, only when explicitly assigned: `fuzz/<component>/`, derived corpus and scoped fuzz CMake registration.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ Native code/public headers, canonical vector truth, protocol analysis/model/API,
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Assigned artifacts/fuzz-plan.md and fuzz-results.md; future delegated fuzz/<component> and fuzz build registration only when implementation is authorized; own reports/handoffs.
+Allowed, only within the delegation's concrete paths: Assigned workspace fuzz-plan.md and fuzz-results.md; future delegated fuzz/<component> and fuzz build registration only when implementation is authorized; own reports/handoffs.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

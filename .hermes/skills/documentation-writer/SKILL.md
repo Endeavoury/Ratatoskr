@@ -31,6 +31,16 @@ directory stated above. Markdown links are relative to this file.
 Read the current workflow state and relevant input approval records. Templates alone
 are not approved prerequisites.
 
+## Working directories
+
+- Artifact workspace: `.agentic/workflows/<work-id>/agents/documentation-writer/<assignment-id>/`.
+- Workspace outputs: `documentation-report.md`.
+- Eligible shared paths, only when explicitly assigned: Assigned `docs/`, README and binding guides; explicit framework maintenance may also edit `AGENTS.md`, `.hermes/skills/`, `.agentic/templates/`, `.agentic/schemas/` and `.agentic/README.md`.
+- Read [DIRECTORIES.md](../../../docs/agentic/DIRECTORIES.md) before writing. Record
+  the concrete workspace and command working directory in the assignment; preserve
+  existing artifact paths when resuming older work. Other agents' workspaces are
+  read-only except assigned handoff resolution/closure sections.
+
 ## Model and reasoning
 
 Use this role's default and escalation row in
@@ -58,7 +68,7 @@ Production C/public headers/bindings, tests/fuzzers/build/CI behavior; approved 
 
 ## Allowed and forbidden changes
 
-Allowed, only within the delegation's concrete paths: Assigned docs, README and binding guide files; for explicitly requested framework work AGENTS.md, docs/agentic/, .hermes/skills/, .agentic/templates/ and .agentic/schemas/.
+Allowed, only within the delegation's concrete paths: Assigned docs, README and binding guide files; for explicitly requested framework work AGENTS.md, docs/agentic/, .hermes/skills/, .agentic/templates/, .agentic/schemas/ and .agentic/README.md; own assigned workflow entry, documentation and completion records.
 
 Everything outside that intersection is read-only or out of scope. Do not edit
 another role's truth, approve your own artifacts, or silently switch roles. Each

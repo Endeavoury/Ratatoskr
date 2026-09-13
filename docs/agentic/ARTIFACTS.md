@@ -10,14 +10,20 @@
   request.md
   workflow-state.yaml
   manifest.yaml                    protocol/component or binding manifest
-  artifacts/                       specification, analysis, model, design, vectors
-  bindings/<binding-id>/           mapping/exposure evidence, if relevant
-  reviews/                         numbered gate records and specialist reviews
-  decisions/
-  handoffs/
-  delegations/
-  completions/
+  agents/<role>/<assignment-id>/   one workspace per agent assignment
+    README.md                     concrete scope and directory assignment
+    <owned-artifact>               inventory, model, vectors, design or report
+    reviews/                      assigned independent gate records
+    decisions/
+    handoffs/
+    completion-report.md
+    delegations/                  orchestrator workspace only
 ```
+
+See [DIRECTORIES.md](DIRECTORIES.md) for all role directories, shared-source
+ownership and compatibility with existing workflow paths. Copy role workspace
+starters from `.agentic/templates/agent-workspaces/`; instantiate only needed roles.
+Binding targets use distinct assignment IDs, not a shared writable mapping folder.
 
 All artifact paths are repository-relative. A work ID is a unique stable slug, not
 just a protocol name; multiple changes may target one protocol. Target IDs and

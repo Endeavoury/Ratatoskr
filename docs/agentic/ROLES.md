@@ -1,5 +1,9 @@
 # Role ownership matrix
 
+Every role has a dedicated assignment directory. See [DIRECTORIES.md](DIRECTORIES.md)
+for the complete workspace and shared source path map; artifact ownership below
+continues to constrain writes within those directories.
+
 Each role's model/reasoning default and escalation trigger are centralized in
 [MODEL_POLICY.md](MODEL_POLICY.md). Model choice never changes the boundaries below.
 
