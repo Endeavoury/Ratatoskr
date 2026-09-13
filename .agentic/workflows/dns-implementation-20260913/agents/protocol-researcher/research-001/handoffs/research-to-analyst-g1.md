@@ -51,4 +51,8 @@ Reserved for the independent protocol-analyst. Set a review disposition with lin
 
 ## Closure (orchestrator after verification)
 
-Reserved for protocol-orchestrator after it verifies reviewer independence, disposition and required evidence.
+- **Closed by:** protocol-orchestrator / `g1-analysis-routing-001`, 2026-09-13.
+- **Evidence checked:** Independent G1 record `.agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md` at Git `5615caed0b7ad0a321d6794e71b79c4195e90384`, SHA-256 `8165b84902e8147f45c7f8983f9bc79e6000b565cbed82fa96666d1044732ac8`; verified input inventory SHA-256 `9aa91abf9cb3a98c0fd3fb061f26d2c16e57ee4685c5efa729d3af7dfdef8073` at Git `051d010d889155dd26906161473f2c1fcb3af81b`.
+- **Independence:** reviewer `protocol-analyst/analysis-001` is a separate delegated identity from inventory author `protocol-researcher/research-001`; the review declares no authoring/editing of its subject.
+- **Disposition:** G1 `APPROVED` for the exact subject revision. The shared workflow state records the gate and routes only the analysis candidate to independent G2 review. This closure does not approve G2 or authorize modeling/implementation.
+- **Verification record:** `.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/g1-state-verification.md`.

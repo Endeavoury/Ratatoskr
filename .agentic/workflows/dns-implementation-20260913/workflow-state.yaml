@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T17:34:46Z
+  updated_at: 2026-09-13T17:45:33Z
   scope_mode: implementation
-current_stage: research
+current_stage: analysis
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -27,7 +27,7 @@ stages:
     gate: G0
   - id: research
     role: protocol-researcher
-    status: READY_FOR_REVIEW
+    status: APPROVED
     depends_on: [request]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/request.md
@@ -40,7 +40,7 @@ stages:
     gate: G1
   - id: analysis
     role: protocol-analyst
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     depends_on: [research]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
@@ -159,11 +159,13 @@ gates:
   - id: G1
     applicable: true
     rationale: Specification inventory is required before DNS analysis.
-    status: IN_PROGRESS
-    record: null
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
     input_revisions:
       - git:051d010d889155dd26906161473f2c1fcb3af81b
       - sha256:9aa91abf9cb3a98c0fd3fb061f26d2c16e57ee4685c5efa729d3af7dfdef8073
+      - sha256:e41ed5cc5818ef41df06511980b584eaa66b131d2c34ed08d0a69e92bada0d0b
+      - gate-review-git:5615caed0b7ad0a321d6794e71b79c4195e90384
   - id: G2
     applicable: true
     rationale: Native DNS behavior must have approved requirements.
@@ -252,9 +254,9 @@ assignments:
   - id: analysis-001
     stage_id: analysis
     role: protocol-analyst
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/delegations/protocol-analyst-analysis-001.md
-    agent_id: pending-delegation
+    agent_id: deleg_52a8fb54/task-0
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
@@ -321,6 +323,7 @@ blocked_by:
 decisions: []
 handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+  - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -341,3 +344,11 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/delegations/protocol-analyst-analysis-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+  - at: 2026-09-13T17:45:33Z
+    actor: protocol-orchestrator/g1-analysis-routing-001
+    event: Verified independent G1 approval, exact subject/output revisions, analyst-only change boundary, clean worktree, and remote delivery ref. Closed the researcher G1 handoff; advanced research and G1 to APPROVED; recorded analysis-001 as READY_FOR_REVIEW for G2 only.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/g1-state-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
