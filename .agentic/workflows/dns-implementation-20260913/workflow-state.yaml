@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T17:45:33Z
+  updated_at: 2026-09-13T17:51:54Z
   scope_mode: implementation
 current_stage: analysis
 active_role: protocol-orchestrator
@@ -53,7 +53,7 @@ stages:
     gate: G2
   - id: modeling
     role: protocol-modeler
-    status: NOT_STARTED
+    status: IN_PROGRESS
     depends_on: [analysis]
     input_artifacts: []
     output_artifacts: []
@@ -169,7 +169,7 @@ gates:
   - id: G2
     applicable: true
     rationale: Native DNS behavior must have approved requirements.
-    status: NOT_STARTED
+    status: IN_PROGRESS
     record: null
     input_revisions: []
   - id: G3
@@ -311,9 +311,43 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md
+  - id: g2-model-001
+    stage_id: analysis
+    role: protocol-modeler
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g2-model-routing-001/delegations/protocol-modeler-g2-model-001.md
+    agent_id: pending independent child assignment
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/reviews/g2-analysis-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/completion-report.md
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/
+      - src/protocols/dns/
+      - include/ratatoskr/dns.h
+      - cli/commands/dns.c
+      - tests/dns/
+      - tests/integration/dns_fixture_test.py
+      - fuzz/dns/
+      - docs/
+      - bindings/
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/decisions/dns-extension-and-qtype-profile.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/reviews/g2-analysis-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/completion-report.md
 blocked_by:
   - id: DNS-IMPLEMENTATION-GATE-BLOCK
-    reason: G1-G6 technical approvals are absent; implementation delegation is prohibited.
+    reason: G2-G6 technical approvals are absent; implementation delegation is prohibited.
     owner_role: protocol-orchestrator
     handoff: null
   - id: DNS-BINDING-SCOPE-001
@@ -350,5 +384,12 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/g1-state-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
+  - at: 2026-09-13T17:51:54Z
+    actor: protocol-orchestrator/g2-model-routing-001
+    event: Verified G1 approval and analysis-001 READY_FOR_REVIEW status; created one independent protocol-modeler assignment for G2 review and explicitly conditional G3 model candidate. G2 is IN_PROGRESS; no model or G3 approval is asserted.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g2-model-routing-001/delegations/protocol-modeler-g2-model-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
