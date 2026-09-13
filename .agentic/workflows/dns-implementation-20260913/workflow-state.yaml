@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T22:29:37Z
+  updated_at: 2026-09-13T22:36:36Z
   scope_mode: implementation
 current_stage: modeling
 active_role: protocol-orchestrator
@@ -181,11 +181,13 @@ gates:
     applicable: true
     rationale: Native design requires approved language-independent semantics.
     status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/reviews/g3-model-review.md
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
     input_revisions:
-      - git:7de66fd8bc3c28dc058f3c51a6cd36c2db81424c
-      - sha256:a94af3e8889a6f86470385cecf3084fb8c4d8db8d712e539f5cbb7241851e1cd
-      - gate-review-git:0fa10145698994fcdb2e3a6004cd8e6a356b96f7
+      - git:46dfcfe543c7591db963c606802cd7f0d147d35d
+      - sha256:130e354e67a517870e3d826f54f323b38dc98716c14b272f22a4adf8d6aa1b7f
+      - prior-g3-review-git:0fa10145698994fcdb2e3a6004cd8e6a356b96f7
+      - gate-review-git:403657be45bc65ee4184fa7c0b8fe9ab0deb0dd9
+      - completion-delivery-git:4e8a6653146575b8e4ce57b7cd5927e5d80d8b9e
   - id: G4
     applicable: true
     rationale: Existing public C ABI requires scoped design review.
@@ -427,9 +429,9 @@ assignments:
   - id: g3-corrective-review-001
     stage_id: modeling
     role: protocol-api-designer
-    status: IN_PROGRESS
+    status: CHANGES_REQUESTED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-corrective-review-routing-001/delegations/protocol-api-designer-g3-corrective-review-001.md
-    agent_id: pending fresh independent leaf dispatch; distinct from protocol-api-designer/g3-api-001
+    agent_id: deleg_f2099944/task-0; fresh independent leaf distinct from protocol-api-designer/g3-api-001
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
@@ -468,9 +470,9 @@ blocked_by:
     owner_role: protocol-orchestrator
     handoff: null
   - id: DNS-G3-MODEL-TCP-BLOCK
-    reason: G3 review requires a modeler correction for TCP incremental consumption and terminal malformed/resource/unsupported-extension outcomes before a fresh independent review.
+    reason: Independent corrective G3 review found overlapping completed correlated TCP malformed, resource-limit, and unsupported-extension classifications; protocol-modeler must make the disposition partition mutually exclusive or ordered before a fresh G3 review.
     owner_role: protocol-modeler
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/handoffs/g3-corrective-to-modeler-disposition-partition.md
 
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -481,6 +483,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/analysis-to-modeler-g2.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+  - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/handoffs/g3-corrective-to-modeler-disposition-partition.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -555,3 +558,11 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-corrective-review-routing-001/delegations/protocol-api-designer-g3-corrective-review-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/protocol-model.yaml
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-model-correction-001/handoffs/model-to-g3-corrective-review.md
+  - at: 2026-09-13T22:36:36Z
+    actor: protocol-orchestrator/g3-corrective-review-routing-001
+    event: Verified the sole fresh independent protocol-api-designer G3 corrective-review delivery, reviewer-only boundary, identity declaration, exact review input revisions, and remote ref 4e8a6653146575b8e4ce57b7cd5927e5d80d8b9e. Recorded the designated reviewer CHANGES_REQUESTED disposition and modeler-only return handoff. G3 and modeling remain CHANGES_REQUESTED; G4 and later stages remain unadvanced.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/handoffs/g3-corrective-to-modeler-disposition-partition.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-corrective-review-routing-001/completion-report.md
