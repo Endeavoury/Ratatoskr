@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T17:28:21Z
+  updated_at: 2026-09-13T17:34:46Z
   scope_mode: implementation
 current_stage: research
 active_role: protocol-orchestrator
@@ -40,10 +40,16 @@ stages:
     gate: G1
   - id: analysis
     role: protocol-analyst
-    status: NOT_STARTED
+    status: IN_PROGRESS
     depends_on: [research]
-    input_artifacts: []
-    output_artifacts: []
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/completion-report.md
     gate: G2
   - id: modeling
     role: protocol-modeler
@@ -153,9 +159,11 @@ gates:
   - id: G1
     applicable: true
     rationale: Specification inventory is required before DNS analysis.
-    status: NOT_STARTED
+    status: IN_PROGRESS
     record: null
-    input_revisions: []
+    input_revisions:
+      - git:051d010d889155dd26906161473f2c1fcb3af81b
+      - sha256:9aa91abf9cb3a98c0fd3fb061f26d2c16e57ee4685c5efa729d3af7dfdef8073
   - id: G2
     applicable: true
     rationale: Native DNS behavior must have approved requirements.
@@ -241,6 +249,38 @@ gates:
     record: null
     input_revisions: []
 assignments:
+  - id: analysis-001
+    stage_id: analysis
+    role: protocol-analyst
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/delegations/protocol-analyst-analysis-001.md
+    agent_id: pending-delegation
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/completion-report.md
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/
+      - src/protocols/dns/
+      - include/ratatoskr/dns.h
+      - cli/commands/dns.c
+      - tests/dns/
+      - tests/integration/dns_fixture_test.py
+      - fuzz/dns/
+      - docs/
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/request.md
+      - .agentic/workflows/dns-implementation-20260913/manifest.yaml
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/completion-report.md
   - id: research-001
     stage_id: research
     role: protocol-researcher
@@ -295,3 +335,9 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/completion-report.md
+  - at: 2026-09-13T17:34:46Z
+    actor: protocol-orchestrator/g1-analysis-routing-001
+    event: Re-verified delivery baseline/origin/branch/remote ref and committed G1 inputs; recorded one independent protocol-analyst assignment for G1 review and a conditional analysis candidate. G1 remains unapproved until the assigned review record is verified.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g1-analysis-routing-001/delegations/protocol-analyst-analysis-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/specification-inventory.md
