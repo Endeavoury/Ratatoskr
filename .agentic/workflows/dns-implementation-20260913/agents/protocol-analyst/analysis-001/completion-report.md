@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | protocol-analyst |
 | Status | READY_FOR_REVIEW |
-| Revision | Pre-commit workspace revision; role-scoped commit/push and remote-ref evidence are added after final validation. |
+| Revision | Initial completed workspace commit Git `3b20866323491799ac4d3c29d8b9151da1472bfe`; this completion-evidence update is committed and pushed after this report. |
 | Source artifacts | G1 inventory SHA-256 `9aa91abf9cb3a98c0fd3fb061f26d2c16e57ee4685c5efa729d3af7dfdef8073`, G1 handoff SHA-256 `e41ed5cc5818ef41df06511980b584eaa66b131d2c34ed08d0a69e92bada0d0b`, delivery baseline Git `051d010d889155dd26906161473f2c1fcb3af81b` |
 | Assumptions | Scope remains native unicast stub/client DNS only. |
 | Open questions | Resource limits, retry/server selection, timeout/cancellation API policy, and binding scope remain deferred as explicitly recorded. |
@@ -56,7 +56,9 @@ VALIDATION EVIDENCE:
 - Verified root/origin `https://github.com/Endeavoury/Ratatoskr.git`, branch `hermes/dns-implementation-20260913`, HEAD `c4d4a6d1623e74a0d02412f466083933d5f90240`, and clean baseline before role-owned writes.
 - Verified required request, manifest, inventory, and handoff hashes; current workflow-state differs from the delivery-baseline hash because committed orchestrator routing dispatch is present at HEAD, and it records this assignment as `IN_PROGRESS` without altering the reviewed researcher hashes.
 - Read `AGENTS.md`, role skill, all packet-required shared contracts, G0 inputs, researcher completion/handoff/inventory, and RFC Editor/IANA sources. Independently checked RFC 1034, 1035, 1123, 2181, 3425, 3597, 4343, 5452, 6891, 7766, 9619, 9267, and IANA DNS Parameters.
-- Final validation before commit runs `git diff --check`, constrained name-only diff, file-existence/citation check, and placeholder scan. No markdown linter, build, test, or implementation check applies to this artifact-only assignment.
+- Final validation passed: custom artifact/citation/placeholder/path check; `git diff --check`; SHA-256 records for all five role-owned files; and `git diff --cached --check` with only the five assigned-workspace paths staged. No markdown linter, build, test, or implementation check applies to this artifact-only assignment.
+- Commit executed: `/home/hermes/hermes-workspace/.hermes-control/integrations/github/git-agent.sh --role protocol-analyst -- commit -m "docs(dns): review inventory and add analysis candidate"`, producing `3b20866323491799ac4d3c29d8b9151da1472bfe`.
+- Push executed: `/home/hermes/hermes-workspace/.hermes-control/integrations/github/git-agent.sh --role protocol-analyst -- push origin HEAD:refs/heads/hermes/dns-implementation-20260913`; post-push `git ls-remote --heads origin refs/heads/hermes/dns-implementation-20260913` returned `3b20866323491799ac4d3c29d8b9151da1472bfe refs/heads/hermes/dns-implementation-20260913`, equal to local HEAD at that verification point.
 
 MODEL / REASONING USED:
 - Requested: `gpt-5.6-terra` / medium. Observed runtime: `openai-codex` / `gpt-5.6-terra`; reasoning effort unknown from session metadata.
