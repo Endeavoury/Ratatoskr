@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T02:18:10Z
+  updated_at: 2026-09-14T02:22:45Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -552,9 +552,9 @@ assignments:
   - id: g4-api-design-001
     stage_id: native_api_design
     role: protocol-api-designer
-    status: NOT_STARTED
+    status: IN_PROGRESS
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
-    agent_id: pending dispatch after verified G3 closure delivery
+    agent_id: pending fresh leaf dispatch immediately after this G4 routing delivery readback
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
@@ -703,4 +703,10 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/g3-delivery-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/g3-state-closure-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
+  - at: 2026-09-14T02:22:45Z
+    actor: protocol-orchestrator/g4-api-design-routing-001
+    event: After exact G3 closure remote readback, advanced native_api_design to IN_PROGRESS solely for the single recorded G4 protocol-api-designer authoring assignment. G4 remains unapproved; dispatch is the next immediate action after this routing delivery readback.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
