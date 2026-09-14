@@ -39,7 +39,7 @@ The `protocol-api-designer` must issue a new immutable design candidate, without
 
 ## Resolution
 
-`protocol-api-designer / g4-compatibility-remediation-001` supplied replacement candidate `agents/protocol-api-designer/g4-compatibility-remediation-001/api-design.md` at Git revision `e3c63fd`, SHA-256 `69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520`, with status `READY_FOR_REVIEW`.
+`protocol-api-designer / g4-compatibility-remediation-001` supplied replacement candidate `agents/protocol-api-designer/g4-compatibility-remediation-001/api-design.md` at Git revision `e3c63fdb0766afc86d28fc32ec3071d1e7ec762c`, SHA-256 `69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520`, with status `READY_FOR_REVIEW`.
 
 It resolves the ordinary-identifier collision by retaining `typedef uint32_t ratos_dns_request_state;` and renaming the accessor to `ratos_dns_request_get_state(const ratos_dns_request *request)`. It completely defines `ratos_dns_request_options` and `ratos_dns_limits`: normative fixed-width field order/types; mandatory `struct_size`; initializer behavior; reserved input/output zero rules; append-only evolution; borrowed input and copy/no-retention semantics; validation; symbolic implementation-selected default-source behavior; and ABI-1 additive implications. It preserves baseline symbols, result ownership, synchronous `ratos_dns_query` behavior, and the callback-free UDP-first/TCP-fallback model.
 
