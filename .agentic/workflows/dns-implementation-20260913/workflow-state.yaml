@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T02:22:45Z
+  updated_at: 2026-09-14T02:28:16Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -65,7 +65,7 @@ stages:
     gate: G3
   - id: native_api_design
     role: protocol-api-designer
-    status: NOT_STARTED
+    status: READY_FOR_REVIEW
     depends_on: [modeling]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml
@@ -552,9 +552,9 @@ assignments:
   - id: g4-api-design-001
     stage_id: native_api_design
     role: protocol-api-designer
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
-    agent_id: pending fresh leaf dispatch immediately after this G4 routing delivery readback
+    agent_id: deleg_8857e307/task-0; dispatched after G3 closure delivery and delivered READY_FOR_REVIEW at 1b3fe06b3b4c5b7ffa0db0df0199dd45ac0dad2a
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
@@ -710,3 +710,9 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
+  - at: 2026-09-14T02:28:16Z
+    actor: protocol-orchestrator/g4-api-design-routing-001
+    event: Dispatched exactly one protocol-api-designer leaf after the G3 closure and G4 routing deliveries were remotely read back. Verified its READY_FOR_REVIEW delivery commit, remote ref, allowed-path boundary, and diff check. Native API design is READY_FOR_REVIEW; G4 remains NOT_STARTED pending its designated independent reviews, and no later stage is routed.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/completion-report.md
