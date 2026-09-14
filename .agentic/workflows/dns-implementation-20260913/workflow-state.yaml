@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T02:34:00Z
+  updated_at: 2026-09-14T03:04:49Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -65,7 +65,7 @@ stages:
     gate: G3
   - id: native_api_design
     role: protocol-api-designer
-    status: CHANGES_REQUESTED
+    status: IN_PROGRESS
     depends_on: [modeling]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml
@@ -614,6 +614,43 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/reviews/g4-binding-safety-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/completion-report.md
+  - id: g4-binding-safety-remediation-001
+    stage_id: native_api_design
+    role: protocol-api-designer
+    status: READY_FOR_REVIEW
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-remediation-routing-001/delegations/protocol-api-designer-g4-binding-safety-remediation-001.md
+    agent_id: deleg_fc2c8193/task-0; delivered at 262c445a1b519b3baaa04f71fbcd59074c1baab0; requested gpt-5.6-sol/medium, observed child gpt-5.6-terra (effort unknown)
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md (Resolution section only)
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/
+      - include/
+      - src/
+      - tests/
+      - fuzz/
+      - bindings/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/{request.md,manifest.yaml}
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml at git:f26745472178649a60f2cb079937d1bbe3f13c0b sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md at git:865fa190ee19e041c5ddfab8279b49829baaa240
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md at git:5615caed0b7ad0a321d6794e71b79c4195e90384 sha256:5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444
+      - include/ratatoskr/ and docs/abi.md at git:e745710b95f209ad7bd3bdf4ef120e1d36b20fd4
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md at git:1b3fe06b3b4c5b7ffa0db0df0199dd45ac0dad2a sha256:4e8c33beecf48a2a55d83183de7dd100c934fa874661a97ae7e25f67277d597d
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md at reviewer git:c2ab2aa30496edf70163b46b9572c0b155488eb4
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/reviews/g4-binding-safety-review.md at reviewer git:c2ab2aa30496edf70163b46b9572c0b155488eb4
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md (Resolution section only)
 blocked_by:
   - id: DNS-IMPLEMENTATION-GATE-BLOCK
     reason: G4 binding-safety review returned CHANGES_REQUESTED and mandatory compatibility review is unperformed; G4-G6 technical approvals are absent, so implementation delegation is prohibited.
@@ -624,7 +661,7 @@ blocked_by:
     owner_role: maintainer
     handoff: null
   - id: DNS-G4-BINDING-SAFETY-API-CONTRACT-001
-    reason: F-BIND-001 and F-BIND-002 require a protocol-api-designer candidate revision before a fresh binding-safety re-review; compatibility review remains separately mandatory.
+    reason: Corrective protocol-api-designer candidate is READY_FOR_REVIEW at 262c445a1b519b3baaa04f71fbcd59074c1baab0; F-BIND-001/F-BIND-002 remain blocking until a fresh independent binding-safety re-review, and compatibility review remains separately mandatory and unassigned.
     owner_role: protocol-api-designer
     handoff: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
 decisions: []
@@ -759,4 +796,18 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-review-routing-001/delegations/binding-api-designer-g4-binding-safety-review-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-review-routing-001/binding-review-delivery-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/reviews/g4-binding-safety-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
+  - at: 2026-09-14T02:56:29Z
+    actor: protocol-orchestrator/g4-binding-safety-remediation-routing-001
+    event: Recorded exactly one corrective protocol-api-designer authoring assignment for F-BIND-001/F-BIND-002. Native API design is IN_PROGRESS while G4 remains CHANGES_REQUESTED; fresh binding re-review and compatibility review remain unassigned and no later stage is routed.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-remediation-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-remediation-routing-001/delegations/protocol-api-designer-g4-binding-safety-remediation-001.md
+  - at: 2026-09-14T03:04:49Z
+    actor: protocol-orchestrator/g4-binding-safety-remediation-routing-001
+    event: "Verified the sole corrective protocol-api-designer delivery: required artifacts and immutable input hashes exist, completion is READY_FOR_REVIEW, the binding-safety handoff Resolution is within its permitted section, delivery diff contains only authorized paths, and wrapper-mediated commit/remote readback match 262c445a1b519b3baaa04f71fbcd59074c1baab0. Native API design remains IN_PROGRESS and G4 remains CHANGES_REQUESTED; no binding re-review, compatibility review, vectors, or later stage was routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-remediation-routing-001/delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
