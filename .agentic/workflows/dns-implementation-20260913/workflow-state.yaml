@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-13T23:07:22Z
+  updated_at: 2026-09-14T02:18:10Z
   scope_mode: implementation
-current_stage: modeling
+current_stage: native_api_design
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -53,7 +53,7 @@ stages:
     gate: G2
   - id: modeling
     role: protocol-modeler
-    status: CHANGES_REQUESTED
+    status: APPROVED
     depends_on: [analysis]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
@@ -67,8 +67,13 @@ stages:
     role: protocol-api-designer
     status: NOT_STARTED
     depends_on: [modeling]
-    input_artifacts: []
-    output_artifacts: []
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/completion-report.md
     gate: G4
   - id: vectors
     role: vector-designer
@@ -185,14 +190,14 @@ gates:
   - id: G3
     applicable: true
     rationale: Native design requires approved language-independent semantics.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md
     input_revisions:
-      - git:46dfcfe543c7591db963c606802cd7f0d147d35d
-      - sha256:130e354e67a517870e3d826f54f323b38dc98716c14b272f22a4adf8d6aa1b7f
-      - prior-g3-review-git:0fa10145698994fcdb2e3a6004cd8e6a356b96f7
-      - gate-review-git:403657be45bc65ee4184fa7c0b8fe9ab0deb0dd9
-      - completion-delivery-git:4e8a6653146575b8e4ce57b7cd5927e5d80d8b9e
+      - model-git:f26745472178649a60f2cb079937d1bbe3f13c0b
+      - model-sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
+      - analysis-git:5615caed0b7ad0a321d6794e71b79c4195e90384
+      - analysis-sha256:5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444
+      - reviewer-delivery-git:865fa190ee19e041c5ddfab8279b49829baaa240
   - id: G4
     applicable: true
     rationale: Existing public C ABI requires scoped design review.
@@ -509,9 +514,9 @@ assignments:
   - id: g3-disposition-review-001
     stage_id: modeling
     role: protocol-api-designer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/delegations/protocol-api-designer-g3-disposition-review-001.md
-    agent_id: pending fresh independent child dispatch; must be distinct from g3-api-001 and g3-corrective-review-001
+    agent_id: deleg_6e91f232/task-0; fresh independent reviewer distinct from g3-api-001 and g3-corrective-review-001; delivered at 865fa190ee19e041c5ddfab8279b49829baaa240
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md
@@ -544,16 +549,45 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/completion-report.md
+  - id: g4-api-design-001
+    stage_id: native_api_design
+    role: protocol-api-designer
+    status: NOT_STARTED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
+    agent_id: pending dispatch after verified G3 closure delivery
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/completion-report.md
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/
+      - include/ratatoskr/
+      - src/
+      - tests/
+      - fuzz/
+      - bindings/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/{request.md,manifest.yaml}
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml at git:f26745472178649a60f2cb079937d1bbe3f13c0b sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md at git:865fa190ee19e041c5ddfab8279b49829baaa240
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md at git:5615caed0b7ad0a321d6794e71b79c4195e90384 sha256:5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444
+      - include/ratatoskr/ and docs/abi.md at git:e745710b95f209ad7bd3bdf4ef120e1d36b20fd4
+      - docs/repository-layout.md at git:42b0611efa90e4b62f06d07cca64044ae9f090a7
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-api-design-001/completion-report.md
 blocked_by:
   - id: DNS-IMPLEMENTATION-GATE-BLOCK
     reason: G3-G6 technical approvals are absent; implementation delegation is prohibited.
     owner_role: protocol-orchestrator
     handoff: null
-  - id: DNS-G3-MODEL-TCP-BLOCK
-    reason: Modeler disposition-partition candidate is READY_FOR_REVIEW; G3 remains CHANGES_REQUESTED pending a fresh independent protocol-api-designer review.
-    owner_role: protocol-orchestrator
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/handoffs/model-to-g3-disposition-partition-review.md
-
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
@@ -662,3 +696,11 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/delegations/protocol-api-designer-g3-disposition-review-001.md
+  - at: 2026-09-14T02:18:10Z
+    actor: protocol-orchestrator/g3-disposition-review-routing-001
+    event: Verified independent G3 APPROVED reviewer delivery, immutable model and analysis digests, reviewer-only boundary, and prior remote ref. Closed modeling/G3 as APPROVED, completed g3-disposition-review-001, closed the modeler G3 handoff, removed DNS-G3-MODEL-TCP-BLOCK, and recorded one pending G4 API-design assignment reference. G4 is not yet dispatched or approved.
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/g3-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g3-disposition-review-routing-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/g3-state-closure-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-api-design-routing-001/delegations/protocol-api-designer-g4-api-design-001.md
