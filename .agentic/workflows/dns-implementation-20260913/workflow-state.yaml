@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T03:51:32Z
+  updated_at: 2026-09-14T07:26:50Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -696,7 +696,7 @@ assignments:
   - id: g4-compatibility-review-001
     stage_id: native_api_design
     role: compatibility-reviewer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-routing-001/delegations/compatibility-reviewer-g4-compatibility-review-001.md
     agent_id: pending single fresh leaf dispatch; must be independent of g4-api-design-001, g4-binding-safety-remediation-001, g4-binding-safety-review-001, and g4-binding-safety-rereview-002
     allowed_paths:
@@ -718,9 +718,32 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/compatibility-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/reviews/g12-g4-compatibility-support-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/completion-report.md
+  - id: g4-compatibility-remediation-001
+    stage_id: native_api_design
+    role: protocol-api-designer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-corrective-routing-001/delegations/protocol-api-designer-g4-compatibility-remediation-001.md
+    agent_id: pending one fresh protocol-api-designer leaf dispatch
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md (Resolution section only)
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - compatibility delivery at git:0cb6e27b265c38e42d09d61c0883f1a086df8835 for blocking C-COMP-001
+      - immutable subject candidate at git:262c445a1b519b3baaa04f71fbcd59074c1baab0 sha256:6d7efc5b272d8b23c591076bb29b2b6711538281341eaeee573c6d0ecc7c8814
+      - ABI baseline include/ratatoskr/ and docs/abi.md at git:e745710b95f209ad7bd3bdf4ef120e1d36b20fd4
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md (Resolution section only)
 blocked_by:
   - id: DNS-IMPLEMENTATION-GATE-BLOCK
-    reason: G4 binding-safety review returned CHANGES_REQUESTED and mandatory compatibility review is unperformed; G4-G6 technical approvals are absent, so implementation delegation is prohibited.
+    reason: G4 remains CHANGES_REQUESTED after mandatory compatibility evidence returned blocking C-COMP-001; G4-G6 technical approvals are absent, so implementation delegation is prohibited.
     owner_role: protocol-orchestrator
     handoff: null
   - id: DNS-BINDING-SCOPE-001
@@ -728,9 +751,13 @@ blocked_by:
     owner_role: maintainer
     handoff: null
   - id: DNS-G4-BINDING-SAFETY-API-CONTRACT-001
-    reason: The designated fresh binding-safety reviewer records scoped APPROVED dispositions for F-BIND-001/F-BIND-002 at 0f0eb9db033f4c26481a302df397184515dc60ad; this is not overall G4 approval, and the separately mandatory compatibility review is assigned as g4-compatibility-review-001 and remains unperformed.
+    reason: The designated fresh binding-safety reviewer records scoped APPROVED dispositions for F-BIND-001/F-BIND-002 at 0f0eb9db033f4c26481a302df397184515dc60ad; this is not overall G4 approval, and the separately mandatory compatibility review returned blocking C-COMP-001.
     owner_role: protocol-orchestrator
     handoff: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
+  - id: DNS-G4-COMPATIBILITY-C-COMP-001
+    reason: Mandatory independent compatibility evidence at 0cb6e27b265c38e42d09d61c0883f1a086df8835 returned blocking C-COMP-001. A fresh design-only protocol-api-designer candidate must resolve the C ordinary-identifier collision and complete options/limits contracts before a new compatibility re-review can be assigned.
+    owner_role: protocol-api-designer
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md
 decisions: []
 handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-researcher/research-001/handoffs/research-to-analyst-g1.md
@@ -739,6 +766,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/handoffs/g3-corrective-to-modeler-disposition-partition.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/handoffs/model-to-g3-disposition-partition-review.md
   - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
+  - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -897,3 +925,10 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-routing-001/preflight-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-routing-001/delegations/compatibility-reviewer-g4-compatibility-review-001.md
+  - at: 2026-09-14T07:26:50Z
+    actor: protocol-orchestrator/g4-compatibility-corrective-routing-001
+    event: "Verified the independent compatibility delivery at 0cb6e27b265c38e42d09d61c0883f1a086df8835: report, G12-style support review, blocking C-COMP-001 return handoff, and completion report exist and consistently require a fresh design-only API correction. Recorded exactly one pending fresh protocol-api-designer corrective assignment. Native API design remains IN_PROGRESS and G4 remains CHANGES_REQUESTED; no re-review, vectors, or later stage is routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-corrective-routing-001/compatibility-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-compatibility-corrective-routing-001/delegations/protocol-api-designer-g4-compatibility-remediation-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md
