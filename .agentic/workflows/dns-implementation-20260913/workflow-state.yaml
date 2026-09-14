@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T07:35:14Z
+  updated_at: 2026-09-14T07:37:26Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -200,7 +200,7 @@ gates:
       - reviewer-delivery-git:865fa190ee19e041c5ddfab8279b49829baaa240
   - id: G4
     applicable: true
-    rationale: Existing public C ABI requires scoped design review; the narrow binding-safety re-review is recorded but separately mandatory compatibility evidence remains unperformed.
+    rationale: Existing public C ABI requires scoped design review; binding-safety evidence is scoped-approved and mandatory compatibility evidence returned C-COMP-001. The fresh corrective candidate is READY_FOR_REVIEW, but its independent compatibility re-review remains required and unassigned.
     status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/reviews/g4-binding-safety-review.md
     input_revisions:
