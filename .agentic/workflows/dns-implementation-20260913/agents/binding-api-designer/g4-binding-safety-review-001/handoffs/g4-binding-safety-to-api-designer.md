@@ -47,7 +47,11 @@ The candidate uses `ratos_dns_event`, `ratos_dns_endpoint`, request state, trans
 
 ## Resolution (destination role)
 
-Pending destination action.
+- **Destination status:** `READY_FOR_REVIEW`.
+- **Corrective candidate:** `.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-binding-safety-remediation-001/api-design.md`, SHA-256 `6d7efc5b272d8b23c591076bb29b2b6711538281341eaeee573c6d0ecc7c8814`; delivery commit is recorded in the candidate completion report and delivery result.
+- **F-BIND-001 resolution:** The candidate defines stable fixed-width `uint32_t` state, event-kind, transport-failure, and DNS-error-class contracts; concrete `ratos_dns_event` fields; mandatory initializer/output reset behavior; per-operation field-validity paths; `struct_size`/reserved/append-only evolution rules; and named `ratos_dns_request_error_class` and transport-failure accessors.
+- **F-BIND-002 resolution:** The candidate defines `name` as borrowed UTF-8 NUL-terminated C text with invalid-input/no-I/O behavior, and defines the fixed-layout `ratos_dns_endpoint` binary address pointer/length/family/port contract, nullability, validity, and call-scoped lifetime.
+- **Boundary:** This is an authoring delivery only. Fresh independent binding-safety re-review and separate compatibility review remain mandatory and unperformed; no header/code realization or compatibility conclusion is asserted.
 
 ## Closure (orchestrator after verification)
 
