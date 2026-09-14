@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | `binding-api-designer` |
 | Status | `APPROVED` — limited solely to F-BIND-001 and F-BIND-002 |
-| Revision | Pending wrapper-mediated commit and exact remote-ref readback. |
+| Revision | Local and remote delivery commit `b93487cc459971cbfb99682e09a1955cd9d71b3a` (superseded by the final completion-metadata commit recorded below). |
 | Assumptions | None. Immutable packet revisions and digest checks are the review basis. |
 | Limitations | Compatibility review remains separately mandatory and unperformed; no overall G4 approval is claimed. |
 
