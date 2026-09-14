@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-14T03:29:24Z
+  updated_at: 2026-09-14T03:38:23Z
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -200,13 +200,15 @@ gates:
       - reviewer-delivery-git:865fa190ee19e041c5ddfab8279b49829baaa240
   - id: G4
     applicable: true
-    rationale: Existing public C ABI requires scoped design review.
+    rationale: Existing public C ABI requires scoped design review; the narrow binding-safety re-review is recorded but separately mandatory compatibility evidence remains unperformed.
     status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/reviews/g4-binding-safety-review.md
     input_revisions:
       - candidate-git:1b3fe06b3b4c5b7ffa0db0df0199dd45ac0dad2a
       - abi-baseline-git:e745710b95f209ad7bd3bdf4ef120e1d36b20fd4
       - binding-review-sha256:7ad721b4943aae4bc396e01dd4e8ce542e663b8ac2b75ef68a6e71cb4730dde4
+      - binding-safety-rereview-002-remote-git:0f0eb9db033f4c26481a302df397184515dc60ad
+      - binding-safety-rereview-002-sha256:e5ead3b0fa6e966c50b4a3ed7e0999d4001bb4e1b497629252699673b3354bb8
   - id: G5
     applicable: true
     rationale: Canonical vectors are required before implementation readiness.
@@ -672,9 +674,9 @@ assignments:
   - id: g4-binding-safety-rereview-002
     stage_id: native_api_design
     role: binding-api-designer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-rereview-repair-routing-001/delegations/binding-api-designer-g4-binding-safety-rereview-002.md
-    agent_id: pending one fresh independent child assignment
+    agent_id: fresh independent leaf delivered at b93487cc459971cbfb99682e09a1955cd9d71b3a; completion metadata at 0f0eb9db033f4c26481a302df397184515dc60ad
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-rereview-002/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-rereview-002/reviews/g4-binding-safety-rereview.md
@@ -700,13 +702,9 @@ blocked_by:
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
     handoff: null
-  - id: DNS-G4-BINDING-SAFETY-REREVIEW-INPUT-001
-    reason: Historical g4-binding-safety-rereview-001 was BLOCKED because its packet named c2ab2aa30496edf70163b46b9572c0b155488eb4 for original-review inputs absent at that revision. Corrected immutable inputs are verified at 6126fa3f076614f69864186d9e9aa8223c3c024f; fresh re-review-002 is assigned and pending.
-    owner_role: protocol-orchestrator
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-rereview-001/handoffs/g4-binding-safety-rereview-input-integrity.md
   - id: DNS-G4-BINDING-SAFETY-API-CONTRACT-001
-    reason: Corrective protocol-api-designer candidate is READY_FOR_REVIEW at 262c445a1b519b3baaa04f71fbcd59074c1baab0; F-BIND-001/F-BIND-002 remain blocking until a fresh independent binding-safety re-review, and compatibility review remains separately mandatory and unassigned.
-    owner_role: protocol-api-designer
+    reason: The designated fresh binding-safety reviewer records scoped APPROVED dispositions for F-BIND-001/F-BIND-002 at 0f0eb9db033f4c26481a302df397184515dc60ad; this is not overall G4 approval, and the separately mandatory compatibility review remains unperformed and unassigned.
+    owner_role: protocol-orchestrator
     handoff: .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
 decisions: []
 handoffs:
@@ -861,3 +859,10 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-rereview-repair-routing-001/input-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-rereview-repair-routing-001/delegations/binding-api-designer-g4-binding-safety-rereview-002.md
+  - at: 2026-09-14T03:38:23Z
+    actor: protocol-orchestrator/g4-binding-safety-rereview-closure-001
+    event: "Wrapper-read remote tip 0f0eb9db033f4c26481a302df397184515dc60ad and recalculated all designated immutable-input digests. Recorded the fresh binding-api-designer re-review-002's scoped APPROVED dispositions for F-BIND-001/F-BIND-002, its independence declaration, and reviewer-only allowed-path delivery. Removed only the resolved input-integrity blocker. Native API design remains IN_PROGRESS and G4 remains CHANGES_REQUESTED because the separately mandatory compatibility review is unperformed; no compatibility route, overall G4 approval, or later stage was advanced."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g4-binding-safety-rereview-closure-001/verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-rereview-002/reviews/g4-binding-safety-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-rereview-002/completion-report.md
