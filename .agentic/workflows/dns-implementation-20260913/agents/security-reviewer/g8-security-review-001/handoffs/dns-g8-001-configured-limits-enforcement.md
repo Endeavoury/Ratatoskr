@@ -31,7 +31,7 @@ Implement the contractual finite effective defaults and configured limit enforce
 
 ## Resolution (destination role)
 
-Pending.
+**READY_FOR_REVIEW.** The c-protocol-implementer produced the DNS-G8-001 candidate and trace at `.agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/implementation-report.md` and handoff `handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md`. The candidate enforces finite effective defaults and the configured UDP, TCP-frame, RR-count, name-expansion, compression-traversal, typed-field, outstanding-request, and connection limits in the authorized private DNS implementation paths; request-path resource excess fails terminally with no transferable result. `git diff --check`, strict C compilation, and the existing native DNS test executable passed; CMake/CTest remain unavailable because `cmake` is absent. Candidate delivery and fresh independent G7 then G8 review are still required; this destination resolution makes no approval claim.
 
 ## Closure (orchestrator after verification)
 

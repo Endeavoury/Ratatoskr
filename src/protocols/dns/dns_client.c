@@ -60,6 +60,28 @@ static uint16_t query_id(void) {
     return value;
 }
 
+ratos_error ratos_dns_effective_limits(const ratos_dns_limits *configured,
+    ratos_dns_limits *effective) {
+    if (configured == NULL || effective == NULL) return RATOS_ERROR_INVALID_ARGUMENT;
+    *effective = *configured;
+    effective->max_udp_message_bytes = configured->max_udp_message_bytes ? configured->max_udp_message_bytes : RATOS_DNS_DEFAULT_MAX_UDP_MESSAGE_BYTES;
+    effective->max_tcp_frame_bytes = configured->max_tcp_frame_bytes ? configured->max_tcp_frame_bytes : RATOS_DNS_DEFAULT_MAX_TCP_FRAME_BYTES;
+    effective->max_total_rrs = configured->max_total_rrs ? configured->max_total_rrs : RATOS_DNS_DEFAULT_MAX_TOTAL_RRS;
+    effective->max_name_expansion_bytes = configured->max_name_expansion_bytes ? configured->max_name_expansion_bytes : RATOS_DNS_DEFAULT_MAX_NAME_EXPANSION_BYTES;
+    effective->max_compression_pointer_traversals = configured->max_compression_pointer_traversals ? configured->max_compression_pointer_traversals : RATOS_DNS_DEFAULT_MAX_COMPRESSION_POINTER_TRAVERSALS;
+    effective->max_typed_field_bytes = configured->max_typed_field_bytes ? configured->max_typed_field_bytes : RATOS_DNS_DEFAULT_MAX_TYPED_FIELD_BYTES;
+    effective->max_outstanding_requests = configured->max_outstanding_requests ? configured->max_outstanding_requests : RATOS_DNS_DEFAULT_MAX_OUTSTANDING_REQUESTS;
+    effective->max_connections = configured->max_connections ? configured->max_connections : RATOS_DNS_DEFAULT_MAX_CONNECTIONS;
+    if (effective->max_udp_message_bytes < RATOS_DNS_HEADER_SIZE || effective->max_tcp_frame_bytes < RATOS_DNS_HEADER_SIZE
+        || effective->max_total_rrs == 0u || effective->max_name_expansion_bytes == 0u
+        || effective->max_compression_pointer_traversals == 0u || effective->max_typed_field_bytes == 0u
+        || effective->max_outstanding_requests == 0u || effective->max_connections == 0u
+        || effective->max_udp_message_bytes > RATOS_DNS_MAX_PACKET || effective->max_tcp_frame_bytes > RATOS_DNS_MAX_PACKET
+        || effective->max_total_rrs > RATOS_DNS_MAX_RECORDS || effective->max_connections > effective->max_outstanding_requests)
+        return RATOS_ERROR_INVALID_ARGUMENT;
+    return RATOS_OK;
+}
+
 static int response_requests_tcp(const uint8_t *data, size_t length, uint16_t expected_id) {
     uint16_t id, flags;
     if (length < 4u) return 0;
@@ -79,9 +101,11 @@ ratos_error ratos_dns_query(ratos_context *ctx, const char *name,
     const char *server;
     uint16_t id;
     ratos_dns_result *udp_result = NULL;
+    ratos_dns_limits limits;
     ratos_error error;
     if (out_result != NULL) *out_result = NULL;
     if (ctx == NULL || name == NULL || name[0] == '\0' || out_result == NULL) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (ratos_dns_effective_limits(&ctx->dns_limits, &limits) != RATOS_OK) return RATOS_ERROR_INVALID_ARGUMENT;
     ctx->error_message[0] = '\0';
     ratos_dns_query_options_init(&options);
     if (provided != NULL) {
@@ -101,16 +125,16 @@ ratos_error ratos_dns_query(ratos_context *ctx, const char *name,
     id = query_id();
     error = ratos_dns_build_query(ctx, name, options.type, options.recursion_desired, id, &query, &effective_name);
     if (error != RATOS_OK) goto cleanup;
-    error = ratos_dns_udp_exchange(ctx, server, options.port, options.timeout_ms, query.data, query.length, &wire_response, &response_length);
+    error = ratos_dns_udp_exchange(ctx, server, options.port, options.timeout_ms, query.data, query.length, &limits, &wire_response, &response_length);
     if (error != RATOS_OK) goto cleanup;
     if (response_requests_tcp(wire_response, response_length, id)) {
         free(wire_response); wire_response = NULL;
-        error = ratos_dns_tcp_exchange(ctx, server, options.port, options.timeout_ms, query.data, query.length, &wire_response, &response_length);
+        error = ratos_dns_tcp_exchange(ctx, server, options.port, options.timeout_ms, query.data, query.length, &limits, &wire_response, &response_length);
         if (error != RATOS_OK) goto cleanup;
-        error = ratos_dns_parse_response(ctx, wire_response, response_length, id, effective_name, options.type, server, &udp_result);
+        error = ratos_dns_parse_response_limited(ctx, wire_response, response_length, id, effective_name, options.type, server, &limits, &udp_result);
         if (error != RATOS_OK) goto cleanup;
     } else {
-        error = ratos_dns_parse_response(ctx, wire_response, response_length, id, effective_name, options.type, server, &udp_result);
+        error = ratos_dns_parse_response_limited(ctx, wire_response, response_length, id, effective_name, options.type, server, &limits, &udp_result);
         if (error != RATOS_OK) goto cleanup;
     }
     *out_result = udp_result; udp_result = NULL;
@@ -166,26 +190,37 @@ void ratos_dns_event_init(ratos_dns_event *e) { if (e != NULL) { memset(e, 0, si
 void ratos_dns_endpoint_init(ratos_dns_endpoint *e) { if (e != NULL) { memset(e, 0, sizeof(*e)); e->struct_size = (uint32_t)sizeof(*e); } }
 void ratos_dns_request_options_init(ratos_dns_request_options *o) { if (o != NULL) { memset(o, 0, sizeof(*o)); o->struct_size = (uint32_t)sizeof(*o); o->recursion_desired = 1u; } }
 void ratos_dns_limits_init(ratos_dns_limits *l) { if (l != NULL) { memset(l, 0, sizeof(*l)); l->struct_size = (uint32_t)sizeof(*l); } }
+static ratos_dns_request *context_requests;
+static size_t active_requests_for_context(const ratos_context *ctx) {
+    const ratos_dns_request *request;
+    size_t active = 0u;
+    for (request = context_requests; request != NULL; request = request->next_context_request)
+        if (request->context == ctx && (request->state == RATOS_DNS_REQUEST_STATE_UDP_PENDING || request->state == RATOS_DNS_REQUEST_STATE_TCP_PENDING)) ++active;
+    return active;
+}
 ratos_error ratos_dns_context_set_dns_limits(ratos_context *ctx, const ratos_dns_limits *l) {
-    if (ctx == NULL || l == NULL || l->struct_size < sizeof(*l) || l->reserved0 != 0u || l->reserved[0] != 0u || l->reserved[1] != 0u || l->max_udp_message_bytes > RATOS_DNS_MAX_PACKET || l->max_tcp_frame_bytes > RATOS_DNS_MAX_PACKET) return RATOS_ERROR_INVALID_ARGUMENT;
-    ctx->dns_limits = *l; return RATOS_OK;
+    ratos_dns_limits effective;
+    if (ctx == NULL || l == NULL || l->struct_size < sizeof(*l) || l->reserved0 != 0u || l->reserved[0] != 0u || l->reserved[1] != 0u || ratos_dns_effective_limits(l, &effective) != RATOS_OK) return RATOS_ERROR_INVALID_ARGUMENT;
+    ctx->dns_limits = effective; return RATOS_OK;
 }
 ratos_error ratos_dns_request_start(ratos_context *ctx, const char *name, const ratos_dns_request_options *o, ratos_dns_request **out) {
-    ratos_dns_request *r; size_t n;
+    ratos_dns_request *r; size_t n; ratos_dns_limits limits;
     if (out != NULL) *out = NULL;
     if (ctx == NULL || name == NULL || o == NULL || out == NULL || o->struct_size < sizeof(*o) || o->recursion_desired > 1u || o->reserved[0] || o->reserved[1] || o->reserved0[0] || o->reserved0[1] || o->reserved0[2] || o->reserved0[3] || o->reserved0[4] || o->reserved0[5] || o->reserved0[6] || !endpoint_valid(o->upstream)) return RATOS_ERROR_INVALID_ARGUMENT;
     n = strlen(name); if (n == 0u || n > 255u || !request_name_valid(name)) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (ratos_dns_effective_limits(&ctx->dns_limits, &limits) != RATOS_OK) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (active_requests_for_context(ctx) >= limits.max_outstanding_requests || active_requests_for_context(ctx) >= limits.max_connections) return RATOS_ERROR_OUT_OF_MEMORY;
     r = (ratos_dns_request *)calloc(1u, sizeof(*r)); if (r == NULL) return RATOS_ERROR_OUT_OF_MEMORY;
     r->name = ratos_strdup(name); if (r->name == NULL) { free(r); return RATOS_ERROR_OUT_OF_MEMORY; }
-    r->context = ctx; r->id = query_id(); r->type = RATOS_DNS_A; r->recursion_desired = o->recursion_desired; r->limits = ctx->dns_limits; r->state = RATOS_DNS_REQUEST_STATE_UDP_PENDING;
-    r->upstream = *o->upstream; memcpy(r->upstream_address, o->upstream->address, o->upstream->address_len); r->upstream.address = r->upstream_address; *out = r; return RATOS_OK;
+    r->context = ctx; r->id = query_id(); r->type = RATOS_DNS_A; r->recursion_desired = o->recursion_desired; r->limits = limits; r->state = RATOS_DNS_REQUEST_STATE_UDP_PENDING;
+    r->upstream = *o->upstream; memcpy(r->upstream_address, o->upstream->address, o->upstream->address_len); r->upstream.address = r->upstream_address; r->next_context_request = context_requests; context_requests = r; *out = r; return RATOS_OK;
 }
 static int matching_peer(const ratos_dns_request *r, const ratos_dns_endpoint *p) { return endpoint_valid(p) && p->family == r->upstream.family && p->port == r->upstream.port && p->address_len == r->upstream.address_len && memcmp(p->address, r->upstream.address, p->address_len) == 0; }
 static ratos_error request_parse(ratos_dns_request *r, const uint8_t *b, size_t n, ratos_dns_event *e) {
     ratos_error x; ratos_dns_result *result = NULL;
-    if (n > (r->limits.max_udp_message_bytes ? r->limits.max_udp_message_bytes : RATOS_DNS_MAX_PACKET)) { request_fail(r, RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT, 0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_PROTOCOL; }
-    x = ratos_dns_parse_response(r->context,b,n,r->id,r->name,r->type,"request",&result);
-    if (x != RATOS_OK) { request_fail(r, x == RATOS_ERROR_UNSUPPORTED ? RATOS_DNS_ERROR_CLASS_UNSUPPORTED_EXTENSION : RATOS_DNS_ERROR_CLASS_MALFORMED_RESPONSE,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return x; }
+    if (n > (r->state == RATOS_DNS_REQUEST_STATE_TCP_PENDING ? r->limits.max_tcp_frame_bytes : r->limits.max_udp_message_bytes)) { request_fail(r, RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT, 0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_OUT_OF_MEMORY; }
+    x = ratos_dns_parse_response_limited(r->context,b,n,r->id,r->name,r->type,"request",&r->limits,&result);
+    if (x != RATOS_OK) { request_fail(r, x == RATOS_ERROR_UNSUPPORTED ? RATOS_DNS_ERROR_CLASS_UNSUPPORTED_EXTENSION : x == RATOS_ERROR_OUT_OF_MEMORY ? RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT : RATOS_DNS_ERROR_CLASS_MALFORMED_RESPONSE,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return x; }
     if (result->truncated && r->state == RATOS_DNS_REQUEST_STATE_UDP_PENDING) { ratos_dns_result_destroy(result); r->state=RATOS_DNS_REQUEST_STATE_TCP_PENDING; request_event(r,e,RATOS_DNS_EVENT_NEED_TCP_FALLBACK); return RATOS_OK; }
     r->result=result; r->state=RATOS_DNS_REQUEST_STATE_COMPLETE; request_event(r,e,RATOS_DNS_EVENT_COMPLETE); return RATOS_OK;
 }
@@ -201,7 +236,7 @@ ratos_error ratos_dns_request_receive_tcp(ratos_dns_request *r,const uint8_t *b,
     if (r->state != RATOS_DNS_REQUEST_STATE_TCP_PENDING) { request_event(r,e,RATOS_DNS_EVENT_NONE); return RATOS_ERROR_INVALID_ARGUMENT; }
     while (r->prefix_used < 2u && *used < n) r->prefix[r->prefix_used++] = b[(*used)++];
     if (r->prefix_used < 2u) { request_event(r,e,RATOS_DNS_EVENT_PENDING); return RATOS_OK; }
-    if (r->frame == NULL) { r->frame_length=((size_t)r->prefix[0]<<8)|r->prefix[1]; if (r->frame_length==0u) { request_fail(r,RATOS_DNS_ERROR_CLASS_MALFORMED_RESPONSE,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_PROTOCOL; } if (r->limits.max_tcp_frame_bytes && r->frame_length > r->limits.max_tcp_frame_bytes) { request_fail(r,RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_PROTOCOL; } r->frame=(uint8_t*)malloc(r->frame_length); if(!r->frame){request_fail(r,RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT,0u);request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR);return RATOS_ERROR_OUT_OF_MEMORY;} }
+    if (r->frame == NULL) { r->frame_length=((size_t)r->prefix[0]<<8)|r->prefix[1]; if (r->frame_length==0u) { request_fail(r,RATOS_DNS_ERROR_CLASS_MALFORMED_RESPONSE,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_PROTOCOL; } if (r->frame_length > r->limits.max_tcp_frame_bytes) { request_fail(r,RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT,0u); request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR); return RATOS_ERROR_OUT_OF_MEMORY; } r->frame=(uint8_t*)malloc(r->frame_length); if(!r->frame){request_fail(r,RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT,0u);request_event(r,e,RATOS_DNS_EVENT_TERMINAL_ERROR);return RATOS_ERROR_OUT_OF_MEMORY;} }
     take=r->frame_length-r->frame_used; if(take>n-*used) take=n-*used; memcpy(r->frame+r->frame_used,b+*used,take); r->frame_used+=take; *used+=take;
     if(r->frame_used<r->frame_length){request_event(r,e,RATOS_DNS_EVENT_PENDING);return RATOS_OK;} b=r->frame; n=r->frame_length; r->frame=NULL; r->frame_used=0u; { ratos_error x = request_parse(r,b,n,e); free((void *)b); return x; }
 }
@@ -209,4 +244,4 @@ ratos_error ratos_dns_request_transport_failed(ratos_dns_request *r,ratos_dns_tr
 ratos_error ratos_dns_request_cancel(ratos_dns_request *r,ratos_dns_event *e) { if(e!=NULL)ratos_dns_event_init(e);if(r==NULL||e==NULL)return RATOS_ERROR_INVALID_ARGUMENT;if(r->state!=RATOS_DNS_REQUEST_STATE_CANCELLED){free(r->frame);r->frame=NULL;r->state=RATOS_DNS_REQUEST_STATE_CANCELLED;r->error_class=RATOS_DNS_ERROR_CLASS_CANCELLED;}request_event(r,e,RATOS_DNS_EVENT_CANCELLED);return RATOS_OK; }
 ratos_error ratos_dns_request_take_result(ratos_dns_request *r,ratos_dns_result **out) {if(out!=NULL)*out=NULL;if(r==NULL||out==NULL||r->state!=RATOS_DNS_REQUEST_STATE_COMPLETE||r->result==NULL)return RATOS_ERROR_INVALID_ARGUMENT;*out=r->result;r->result=NULL;return RATOS_OK;}
 ratos_dns_request_state ratos_dns_request_get_state(const ratos_dns_request *r){return r?r->state:RATOS_DNS_REQUEST_STATE_NEW;} ratos_dns_error_class ratos_dns_request_error_class(const ratos_dns_request *r){return r?r->error_class:RATOS_DNS_ERROR_CLASS_NONE;} ratos_dns_transport_failure ratos_dns_request_transport_failure(const ratos_dns_request *r){return r?r->transport_failure:RATOS_DNS_TRANSPORT_FAILURE_NONE;}
-void ratos_dns_request_destroy(ratos_dns_request *r){if(r!=NULL){free(r->name);free(r->frame);ratos_dns_result_destroy(r->result);free(r);}} uint64_t ratos_dns_capabilities(void){return RATOS_DNS_CAP_UDP_UNICAST_QUERY|RATOS_DNS_CAP_TCP_AFTER_UDP_TC|RATOS_DNS_CAP_INCREMENTAL_TCP_INPUT|RATOS_DNS_CAP_REQUEST_CANCELLATION|RATOS_DNS_CAP_RESOURCE_CONFIGURATION|RATOS_DNS_CAP_OPAQUE_ORDINARY_RDATA;}
+void ratos_dns_request_destroy(ratos_dns_request *r){if(r!=NULL){ratos_dns_request **link=&context_requests;while(*link!=NULL&&*link!=r)link=&(*link)->next_context_request;if(*link==r)*link=r->next_context_request;free(r->name);free(r->frame);ratos_dns_result_destroy(r->result);free(r);}} uint64_t ratos_dns_capabilities(void){return RATOS_DNS_CAP_UDP_UNICAST_QUERY|RATOS_DNS_CAP_TCP_AFTER_UDP_TC|RATOS_DNS_CAP_INCREMENTAL_TCP_INPUT|RATOS_DNS_CAP_REQUEST_CANCELLATION|RATOS_DNS_CAP_RESOURCE_CONFIGURATION|RATOS_DNS_CAP_OPAQUE_ORDINARY_RDATA;}
