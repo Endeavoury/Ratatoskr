@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T20:52:47Z
+  updated_at: 2026-09-19T20:59:57Z
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -133,7 +133,7 @@ stages:
     gate: G7
   - id: security
     role: security-reviewer
-    status: IN_PROGRESS
+    status: CHANGES_REQUESTED
     depends_on: [native_verification]
     input_artifacts: []
     output_artifacts: []
@@ -279,9 +279,13 @@ gates:
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
-    status: IN_PROGRESS
-    record: null
-    input_revisions: []
+    status: CHANGES_REQUESTED
+    record: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
+    input_revisions:
+      - corrective-implementation-delivery-git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee
+      - corrective-source-sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
+      - independent-security-reviewer-assignment:deleg_661ae1a2/task-0
+      - security-review-delivery-git:90a02df18522b6c311e236dc03c82583971c7511
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
@@ -1111,9 +1115,9 @@ assignments:
   - id: g8-security-review-001
     stage_id: security
     role: security-reviewer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-security-routing-001/delegations/security-reviewer-g8-security-review-001.md
-    agent_id: pending fresh independent security-reviewer leaf; must be distinct from all implementation, remediation, and G7 review authors
+    agent_id: "deleg_661ae1a2/task-0; fresh independent security-reviewer distinct from implementation, remediation, and G7 review authors; technical disposition: CHANGES_REQUESTED; delivered at 90a02df18522b6c311e236dc03c82583971c7511"
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/security-review.md
@@ -1146,6 +1150,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
   - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/handoffs/maintainer-resource-policy.md
+  - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -1443,3 +1448,12 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-remediation-rereview-routing-002/evidence/leaf-result-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/completion-report.md
+  - at: 2026-09-19T20:59:57Z
+    actor: protocol-orchestrator/g8-security-routing-001
+    event: "Verified exactly one fresh independent security-reviewer G8 delivery at remote git:90a02df18522b6c311e236dc03c82583971c7511. The reviewer-only five-file commit, declared independence, G7 subject/evidence revisions, and exact remote readback were verified. Recorded the designated technical disposition CHANGES_REQUESTED faithfully: blocking high-severity DNS-G8-001 requires c-protocol-implementer remediation and a fresh independent G8 re-review. Security/G8 are CHANGES_REQUESTED; G9 and every later stage remain NOT_STARTED and were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-security-routing-001/delegations/security-reviewer-g8-security-review-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/completion-report.md
