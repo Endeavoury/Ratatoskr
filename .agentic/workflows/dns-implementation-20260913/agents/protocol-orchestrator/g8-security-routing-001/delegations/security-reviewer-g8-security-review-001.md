@@ -96,7 +96,7 @@ Only these new reviewer-owned paths:
 - `.agentic/workflows/dns-implementation-20260913/workflow-state.yaml`; request, manifest, all existing agent workspaces, and all upstream evidence.
 - All production source/headers, tests, vectors, fuzzers, bindings, docs, build files, and CI.
 - No changes outside the five concrete reviewer outputs above.
-- Do not commit, push, merge, or invoke a new specialist. If Git inspection is needed, use only `/home/hermes/hermes-workspace/.hermes-control/integrations/github/git-agent.sh --role security-reviewer -- <git args>`.
+- Do not merge or invoke a new specialist. Use only `/home/hermes/hermes-workspace/.hermes-control/integrations/github/git-agent.sh --role security-reviewer -- <git args>` for every Git operation. After producing only the allowed reviewer outputs, commit them with that wrapper, push only `HEAD:refs/heads/hermes/dns-implementation-20260913`, then perform exact wrapper-mediated remote readback. Never push `master`.
 
 ## Expected outputs
 
