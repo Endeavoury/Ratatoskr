@@ -1,0 +1,1805 @@
+{
+  "schema_version": 1,
+  "template": false,
+  "artifact_id": "dns-implementation-20260913-vector-set-g5-vectors-remediation-001",
+  "workflow_id": "dns-implementation-20260913",
+  "target": "protocol/dns",
+  "owner_role": "vector-designer",
+  "status": "READY_FOR_REVIEW",
+  "revision": "Corrective candidate superseding reviewed g5-vectors-001 only for fresh G5 review; content SHA-256 and local-only delivery evidence are recorded in completion-report.md.",
+  "source_artifacts": [
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/vector-set.json",
+      "revision": "git:84ac705417fac3aa6beaa1800cbfacf02e4ae773; sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089"
+    },
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/reviews/g5-vector-byte-coverage-review.md",
+      "revision": "sha256:8f0a775f24c74bed9b3501a2556d5412831316d7be0c6c8cb92c8c783c09e71f"
+    },
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/reviews/g5-vector-interpretation-review.md",
+      "revision": "sha256:954237c9c93fe6ac728f69b463c297cd23ef3d7d1e8a7ebb176e250394e9fe19"
+    },
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md",
+      "revision": "git:5615caed0b7ad0a321d6794e71b79c4195e90384; sha256:5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444"
+    },
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml",
+      "revision": "git:f26745472178649a60f2cb079937d1bbe3f13c0b; sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700"
+    },
+    {
+      "path": ".agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/api-design.md",
+      "revision": "git:e3c63fdb0766afc86d28fc32ec3071d1e7ec762c; sha256:69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520"
+    },
+    {
+      "path": "RFC 1035 sections 4.1-4.2.2, RFC 7766 sections 4-5 and 8, RFC 9619 section 4, RFC 3597 section 3, RFC 6891 section 6.1.2",
+      "revision": "official RFC Editor text independently consulted 2026-09-19; byte derivations are stated per case"
+    }
+  ],
+  "assumptions": [
+    "UDP-first unicast stub/client profile; TCP appears only after a correlated UDP TC response.",
+    "The deterministic ID 0x1a2b is a vector seam, not a prescription for production ID generation.",
+    "Named endpoint values below are logical correlation metadata; no socket implementation is implied."
+  ],
+  "open_questions": [
+    "Numerical default limits are intentionally not fixed. Limit vectors set an explicit local configured limit."
+  ],
+  "limitations": [
+    "No EDNS query construction, typed-RDATA decoder, TCP reuse/pipelining capability, retry policy, or binding adapter is specified.",
+    "This authoring candidate is not a G5 approval and does not authorize G6 or implementation.",
+    "DNS-REQ-027 has no G5 canonical vector: it is a residual plain-UDP authenticity risk whose approved planned evidence is downstream security-review and documentation/metadata, not a wire behavior asserted here."
+  ],
+  "cases": [
+    {
+      "id": "DNS-VEC-001",
+      "requirement_refs": [
+        "DNS-REQ-001",
+        "DNS-REQ-002",
+        "DNS-REQ-003",
+        "DNS-REQ-005",
+        "DNS-REQ-006"
+      ],
+      "category": "positive/exact-query",
+      "description": "Build an RD=1 A/IN query for Example.COM with deterministic ID.",
+      "preconditions": [
+        "ST-NEW",
+        "selected UDP peer 192.0.2.53:53",
+        "ID seam returns 0x1a2b"
+      ],
+      "logical_input": {
+        "name": "Example.COM.",
+        "qtype": 1,
+        "qclass": 1,
+        "recursion_desired": true
+      },
+      "request_text": "DNS header ID=0x1a2b, flags=0x0100, QDCOUNT=1; QNAME labels Example COM root; QTYPE=A; QCLASS=IN.",
+      "response_text": "No response in this construction vector.",
+      "provenance": "RFC 1035 4.1.1/4.1.2: 12-octet network-order header and QNAME/QTYPE/QCLASS; approved DNS-REQ-001/002/003/005.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "local_request",
+          "actor": "client",
+          "at_ms": 0,
+          "action": "build_and_send_udp",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": null,
+            "fields": {
+              "request_bytes_exact": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "emitted_dns_message": {
+            "encoding": "hex",
+            "data": "1a2b01000001000000000000074578616d706c6503434f4d0000010001",
+            "byte_length": 29,
+            "framing": "complete DNS message; no UDP or TCP framing"
+          },
+          "header": {
+            "id": 6699,
+            "qr": false,
+            "opcode": 0,
+            "rd": true,
+            "qdcount": 1,
+            "ancount": 0,
+            "nscount": 0,
+            "arcount": 0
+          },
+          "question": {
+            "qname_labels_hex": [
+              "4578616d706c65",
+              "434f4d"
+            ],
+            "qtype": 1,
+            "qclass": 1
+          }
+        },
+        "state": "ST-UDP-PENDING",
+        "error": null,
+        "consumed_bytes": null,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "udp_send",
+            "actor": "client",
+            "at_ms": 0,
+            "action": "one complete datagram"
+          }
+        ]
+      },
+      "coverage_notes": "Exact bytes; QNAME has no compression pointer."
+    },
+    {
+      "id": "DNS-VEC-002",
+      "requirement_refs": [
+        "DNS-REQ-002",
+        "DNS-REQ-005"
+      ],
+      "category": "boundary/positive",
+      "description": "Root A/IN query with RD omitted.",
+      "preconditions": [
+        "ST-NEW",
+        "ID seam returns 0xbeef"
+      ],
+      "logical_input": {
+        "name": ".",
+        "qtype": 1,
+        "qclass": 1,
+        "recursion_desired": false
+      },
+      "request_text": "Root QNAME is the single zero octet; flags are zero.",
+      "response_text": "No response.",
+      "provenance": "RFC 1035 2.3.4 and 4.1.2; approved DNS-REQ-002/005.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "local_request",
+          "actor": "client",
+          "at_ms": 0,
+          "action": "build_and_send_udp"
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "emitted_dns_message": {
+            "encoding": "hex",
+            "data": "beef000000010000000000000000010001",
+            "byte_length": 17,
+            "framing": "complete DNS message; no transport prefix"
+          },
+          "header": {
+            "rd": false,
+            "qdcount": 1
+          }
+        },
+        "state": "ST-UDP-PENDING",
+        "error": null,
+        "consumed_bytes": null,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "udp_send",
+            "actor": "client",
+            "at_ms": 0,
+            "action": "one complete datagram"
+          }
+        ]
+      },
+      "coverage_notes": "Root boundary and response-only flags absent."
+    },
+    {
+      "id": "DNS-VEC-003",
+      "requirement_refs": [
+        "DNS-REQ-002",
+        "DNS-REQ-003",
+        "DNS-REQ-022"
+      ],
+      "category": "negative/local-validation",
+      "description": "Reject a 64-octet label locally without I/O.",
+      "preconditions": [
+        "ST-NEW"
+      ],
+      "logical_input": {
+        "name": "64 ASCII a octets followed by root",
+        "qtype": 1,
+        "qclass": 1
+      },
+      "request_text": "No wire request is valid because a DNS label exceeds 63 octets.",
+      "response_text": "None.",
+      "provenance": "RFC 1035 2.3.4; approved DNS-REQ-002 and TR-LOCAL-REJECT.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "local_request",
+          "actor": "client",
+          "at_ms": 0,
+          "action": "validate",
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-LOCAL-VALIDATION",
+            "consumed_bytes": null,
+            "fields": {
+              "sent_packets": 0,
+              "context_retained": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "semantic",
+        "fields": {
+          "principal_fault": "label_length_64",
+          "sent_packets": 0,
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-LOCAL-VALIDATION",
+        "consumed_bytes": null,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "local_validation_error",
+            "actor": "client",
+            "at_ms": 0,
+            "action": "no I/O"
+          }
+        ]
+      },
+      "coverage_notes": "One principal local fault; no speculative bytes."
+    },
+    {
+      "id": "DNS-VEC-004",
+      "requirement_refs": [
+        "DNS-REQ-007",
+        "DNS-REQ-010",
+        "DNS-REQ-012",
+        "DNS-REQ-013",
+        "DNS-REQ-015",
+        "DNS-REQ-017",
+        "DNS-REQ-022"
+      ],
+      "category": "positive/udp-response",
+      "description": "Accept a correlated mixed-case response with one compressed A RR.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP"
+      ],
+      "logical_input": {
+        "response_question": "eXaMpLe.cOm. A IN",
+        "answer": "owner pointer to question; A IN TTL 300 RDATA 192.0.2.1"
+      },
+      "request_text": "Already pending as DNS-VEC-001 logical request.",
+      "response_text": "QR=1,RD=1,RA=1; one echoed question and one A answer. The answer NAME c00c points to the original QNAME at offset 12.",
+      "provenance": "RFC 1035 4.1.1/4.1.3/4.1.4; RFC 4343 case-insensitive comparison; approved DNS-REQ-007/009/010/012/013/015.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "connection_id": "udp-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000100000000076558614d704c6503434f4d0000010001c00c000100010000012c0004c0000201",
+            "byte_length": 45,
+            "framing": "one complete UDP DNS message"
+          },
+          "expected_after": {
+            "state": "ST-COMPLETE",
+            "error": null,
+            "consumed_bytes": 45,
+            "fields": {
+              "case_insensitive_question_match": true,
+              "result_published": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "answer_count": 1,
+          "answer": {
+            "owner_name": "eXaMpLe.cOm.",
+            "type": 1,
+            "class": 1,
+            "ttl": 300,
+            "rdata_hex": "c0000201"
+          },
+          "rcode": 0,
+          "request_context_released": true
+        },
+        "state": "ST-COMPLETE",
+        "error": null,
+        "consumed_bytes": 45,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "publish_result",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "one owned result"
+          }
+        ]
+      },
+      "coverage_notes": "Compression cursor advances two parent bytes; dereference does not increase consumption."
+    },
+    {
+      "id": "DNS-VEC-005",
+      "requirement_refs": [
+        "DNS-REQ-010",
+        "DNS-REQ-011",
+        "DNS-REQ-013",
+        "DNS-REQ-015"
+      ],
+      "category": "positive/unknown-rr",
+      "description": "Retain unknown ordinary RR TYPE 65000 as exact opaque RDATA.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context as DNS-VEC-004"
+      ],
+      "logical_input": {
+        "response": "one question; one TYPE65000 IN RR with RDATA deadbe"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "Unknown ordinary RR is structurally complete and its RDATA is opaque.",
+      "provenance": "RFC 1035 4.1.3; RFC 3597 section 3; approved DNS-REQ-010/011.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000100000000076578616d706c6503636f6d0000010001c00cfde80001000000000003deadbe",
+            "byte_length": 44,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "answer": {
+            "owner_name": "example.com.",
+            "type": 65000,
+            "class": 1,
+            "ttl": 0,
+            "rdata_hex": "deadbe",
+            "rdata_length": 3,
+            "decoded_kind": "opaque"
+          },
+          "result_published": true
+        },
+        "state": "ST-COMPLETE",
+        "error": null,
+        "consumed_bytes": 44,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "publish_result",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "opaque RDATA retained exactly"
+          }
+        ]
+      },
+      "coverage_notes": "Not an OPT/meta RR; type-specific decoding is forbidden."
+    },
+    {
+      "id": "DNS-VEC-006",
+      "requirement_refs": [
+        "DNS-REQ-015",
+        "DNS-REQ-022"
+      ],
+      "category": "positive/dns-status",
+      "description": "A valid correlated NXDOMAIN is a complete DNS-status outcome, not malformed or transport failure.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN and matching peer"
+      ],
+      "logical_input": {
+        "rcode": 3,
+        "question": "example.com. A IN"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "QR=1,RD=1,RA=1,RCODE=3, one echoed question and no RRs.",
+      "provenance": "RFC 1035 4.1.1; approved DNS-REQ-015.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81830001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "rcode": 3,
+          "dns_status": "NXDOMAIN",
+          "result_published": true,
+          "parser_error": null
+        },
+        "state": "ST-COMPLETE",
+        "error": null,
+        "consumed_bytes": 29,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "publish_result",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "DNS status metadata preserved"
+          }
+        ]
+      },
+      "coverage_notes": "Separates DNS outcome from local failure."
+    },
+    {
+      "id": "DNS-VEC-007",
+      "requirement_refs": [
+        "DNS-REQ-006",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/malformed",
+      "description": "Correlated UDP datagram shorter than the DNS header is terminal malformed.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "peer and ID correlate"
+      ],
+      "logical_input": {
+        "datagram_length": 11
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "11 octets cannot form the required 12-octet header.",
+      "provenance": "RFC 1035 4.1.1; approved DNS-REQ-006/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b818000010000000000",
+            "byte_length": 11,
+            "framing": "one complete UDP datagram"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "truncated_header",
+          "result_published": false,
+          "context_released": true
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 11,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "discard partial state"
+          }
+        ]
+      },
+      "coverage_notes": "No partial header/result exposure."
+    },
+    {
+      "id": "DNS-VEC-008",
+      "requirement_refs": [
+        "DNS-REQ-014",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/malformed",
+      "description": "Correlated QUERY response with QDCOUNT=2 is malformed.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "peer and ID correlate"
+      ],
+      "logical_input": {
+        "qdcount": 2,
+        "two_questions": "example.com. A IN twice"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "The complete packet has two valid question encodings but violates the profile QDCOUNT rule.",
+      "provenance": "RFC 9619 section 4; approved DNS-REQ-014/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800002000000000000076578616d706c6503636f6d0000010001076578616d706c6503636f6d0000010001",
+            "byte_length": 46,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "qdcount_gt_one",
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 46,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "terminal malformed_response"
+          }
+        ]
+      },
+      "coverage_notes": "Principal fault is QDCOUNT, not question encoding."
+    },
+    {
+      "id": "DNS-VEC-009",
+      "requirement_refs": [
+        "DNS-REQ-016",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/malformed",
+      "description": "Reserved Z header bit set in an otherwise correlated response is terminal malformed.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "matching context"
+      ],
+      "logical_input": {
+        "flags": "QR RD RA Z=1",
+        "question": "example.com. A IN"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "Flags 0x81c0 set the reserved Z bit.",
+      "provenance": "RFC 1035 4.1.1; approved DNS-REQ-016/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81c00001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "reserved_z_bit",
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 29,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "terminal malformed_response"
+          }
+        ]
+      },
+      "coverage_notes": "AD/CD are not conflated with the reserved bit."
+    },
+    {
+      "id": "DNS-VEC-010",
+      "requirement_refs": [
+        "DNS-REQ-008",
+        "DNS-REQ-009",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/malformed",
+      "description": "Self-referential QNAME compression pointer is rejected.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "matching peer and ID"
+      ],
+      "logical_input": {
+        "question_qname": "pointer c00c at offset 12 points to itself"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "QR response header plus QNAME c00c; pointer target is not earlier than the pointer location.",
+      "provenance": "RFC 1035 4.1.4; approved DNS-REQ-008/009/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000c00c00010001",
+            "byte_length": 18,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "self_pointer_offset_12",
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 18,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "terminal malformed_response"
+          }
+        ]
+      },
+      "coverage_notes": "No forward/self pointer following is allowed."
+    },
+    {
+      "id": "DNS-VEC-011",
+      "requirement_refs": [
+        "DNS-REQ-007",
+        "DNS-REQ-010",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/malformed",
+      "description": "RDLENGTH must not exceed present RDATA bytes.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "matching context"
+      ],
+      "logical_input": {
+        "answer": "A RR declares RDLENGTH=4 but contains 3 bytes"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "Owner compression pointer c00c, A/IN, RDLENGTH=4, only c00002 present.",
+      "provenance": "RFC 1035 4.1.3; approved DNS-REQ-007/010/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000100000000076578616d706c6503636f6d0000010001c00c00010001000000000004c00002",
+            "byte_length": 44,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "rdata_truncated_by_one",
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 44,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "discard all partial records"
+          }
+        ]
+      },
+      "coverage_notes": "Exact enclosing-message bound applies to RDATA."
+    },
+    {
+      "id": "DNS-VEC-012",
+      "requirement_refs": [
+        "DNS-REQ-025",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/unsupported-extension",
+      "description": "Structurally valid correlated OPT is rejected as unsupported_extension, not an unknown ordinary RR.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "matching context"
+      ],
+      "logical_input": {
+        "additional": "root OPT type 41 class 512 TTL 0 RDLENGTH 0"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "One echoed question; ARCOUNT=1; OPT pseudo-RR follows.",
+      "provenance": "RFC 6891 6.1.1/6.1.2; approved DNS-REQ-025 and ordered unsupported-extension disposition.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000001076578616d706c6503636f6d00000100010000290200000000000000",
+            "byte_length": 40,
+            "framing": "one complete UDP DNS message"
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "principal_fault": "opt_pseudo_rr_in_excluded_profile",
+          "structurally_valid_before_profile_disposition": true,
+          "result_published": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-UNSUPPORTED-EXTENSION",
+        "consumed_bytes": 40,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "unsupported_extension",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "terminal cleanup"
+          }
+        ]
+      },
+      "coverage_notes": "OPT disposition is distinct from malformed bytes."
+    },
+    {
+      "id": "DNS-VEC-013",
+      "requirement_refs": [
+        "DNS-REQ-013",
+        "DNS-REQ-017",
+        "DNS-REQ-023"
+      ],
+      "category": "interaction/nonmatching",
+      "description": "Wrong-ID UDP response is ignored and leaves the request pending.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN selected peer/local endpoint"
+      ],
+      "logical_input": {
+        "received_id": "0x1a2c",
+        "otherwise_valid_question": "example.com. A IN"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "Structurally valid response but ID mismatches outstanding context.",
+      "provenance": "RFC 5452 correlation guidance; approved DNS-REQ-013/017/023 and TR-IGNORE-NONMATCHING-UDP.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2c81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "context_retained": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "semantic",
+        "fields": {
+          "result_published": false,
+          "deadline_retained": true,
+          "principal_nonmatch": "id"
+        },
+        "state": "ST-UDP-PENDING",
+        "error": null,
+        "consumed_bytes": 29,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "ignore_datagram",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "do not poison another request"
+          }
+        ]
+      },
+      "coverage_notes": "Nonmatching is not malformed matching input."
+    },
+    {
+      "id": "DNS-VEC-014",
+      "requirement_refs": [
+        "DNS-REQ-018",
+        "DNS-REQ-019",
+        "DNS-REQ-022",
+        "DNS-REQ-021"
+      ],
+      "category": "interaction/udp-tc-to-tcp",
+      "description": "Correlated UDP TC response transitions to TCP; split TCP prefix/body then publish one response.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN; TCP fallback peer is same resolver"
+      ],
+      "logical_input": {
+        "udp_tc_response": "header TC=1 plus echoed question",
+        "tcp_frame": "29-byte complete valid DNS response, split 1 + 1 + 29"
+      },
+      "request_text": "The original logical query is preserved for TCP fallback.",
+      "response_text": "UDP partial content is discarded. TCP prefix 001d is outside the 29-byte DNS message.",
+      "provenance": "RFC 1035 4.1.1/4.2.2 and RFC 7766 section 4/8; approved DNS-REQ-018/019/022.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "connection_id": "udp-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b83800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "expected_after": {
+            "state": "ST-TCP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "udp_partial_discarded": true,
+              "tcp_fallback_initialized": true
+            }
+          }
+        },
+        {
+          "id": "e2",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 20,
+          "connection_id": "tcp-fallback-1",
+          "stream_id": "dns-frame-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "00",
+            "byte_length": 1,
+            "framing": "first byte of 2-byte TCP prefix"
+          },
+          "expected_after": {
+            "state": "ST-TCP-PENDING",
+            "error": null,
+            "consumed_bytes": 1,
+            "fields": {
+              "need_more_input": true,
+              "dns_decoded": false
+            }
+          }
+        },
+        {
+          "id": "e3",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 21,
+          "connection_id": "tcp-fallback-1",
+          "stream_id": "dns-frame-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "1d",
+            "byte_length": 1,
+            "framing": "second byte of TCP prefix"
+          },
+          "expected_after": {
+            "state": "ST-TCP-PENDING",
+            "error": null,
+            "consumed_bytes": 1,
+            "fields": {
+              "declared_body_length": 29,
+              "need_more_input": true
+            }
+          }
+        },
+        {
+          "id": "e4",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 22,
+          "connection_id": "tcp-fallback-1",
+          "stream_id": "dns-frame-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "exact declared TCP DNS message body"
+          },
+          "expected_after": {
+            "state": "ST-COMPLETE",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "result_published": true,
+              "request_context_released": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "udp_tc_causes_publish": false,
+          "tcp_frame_prefix": {
+            "encoding": "hex",
+            "data": "001d",
+            "byte_length": 2,
+            "framing": "TCP prefix only; outside DNS message"
+          },
+          "tcp_dns_message": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "exact TCP frame body"
+          },
+          "result_published_once": true
+        },
+        "state": "ST-COMPLETE",
+        "error": null,
+        "consumed_bytes": 31,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "tcp_fallback_start",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "same query identity"
+          },
+          {
+            "id": "o2",
+            "kind": "publish_result",
+            "actor": "client",
+            "at_ms": 22,
+            "action": "one owned result"
+          }
+        ]
+      },
+      "coverage_notes": "Ordered stateful scenario; total TCP frame consumption is 31 bytes across three parser calls. Explicitly traces UDP-first and TC-triggered TCP fallback to DNS-REQ-021."
+    },
+    {
+      "id": "DNS-VEC-015",
+      "requirement_refs": [
+        "DNS-REQ-019",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/tcp-framing",
+      "description": "A zero-length TCP DNS frame is terminal malformed after consuming only its prefix.",
+      "preconditions": [
+        "ST-TCP-PENDING",
+        "fallback context exists"
+      ],
+      "logical_input": {
+        "tcp_prefix": 0
+      },
+      "request_text": "No new request.",
+      "response_text": "TCP length prefix 0000 has no DNS body and is invalid for this profile.",
+      "provenance": "RFC 1035 4.2.2; approved DNS-REQ-019/023 and TR-TCP-INVALID-FRAME.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 20,
+          "connection_id": "tcp-fallback-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "0000",
+            "byte_length": 2,
+            "framing": "complete TCP length prefix declaring zero body"
+          },
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-MALFORMED-RESPONSE",
+            "consumed_bytes": 2,
+            "fields": {
+              "result_published": false,
+              "context_released": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "zero_tcp_frame_length",
+          "frame_body_decoded": false
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 2,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 20,
+            "action": "discard accumulator"
+          }
+        ]
+      },
+      "coverage_notes": "Prefix is framing, not a DNS message."
+    },
+    {
+      "id": "DNS-VEC-016",
+      "requirement_refs": [
+        "DNS-REQ-019",
+        "DNS-REQ-020",
+        "DNS-REQ-013",
+        "DNS-REQ-022"
+      ],
+      "category": "interaction/tcp-coalesced",
+      "description": "One parse step accepts exactly one nonmatching completed frame and leaves a coalesced matching frame caller-owned.",
+      "preconditions": [
+        "ST-TCP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN"
+      ],
+      "logical_input": {
+        "first_frame": "29-byte otherwise-valid response ID=1a2c",
+        "suffix": "complete 29-byte matching frame follows"
+      },
+      "request_text": "No new request.",
+      "response_text": "First framed response is nonmatching and ignored; implementation must not consume the second frame in the same parse step.",
+      "provenance": "RFC 7766 sections 7-8; approved DOM-CONSUMPTION, TR-TCP-IGNORE-NONMATCHING, DNS-REQ-019/020.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 20,
+          "connection_id": "tcp-fallback-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "001d1a2c81800001000000000000076578616d706c6503636f6d0000010001001d1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 62,
+            "framing": "two coalesced 31-byte TCP frames"
+          },
+          "expected_after": {
+            "state": "ST-TCP-PENDING",
+            "error": null,
+            "consumed_bytes": 31,
+            "fields": {
+              "first_frame_ignored_nonmatching": true,
+              "remaining_caller_bytes": 31,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "accepted_first_frame_bytes": 31,
+          "remaining_suffix_bytes": 31,
+          "first_frame_id": 6700,
+          "second_frame_unconsumed": true,
+          "context_retained": true
+        },
+        "state": "ST-TCP-PENDING",
+        "error": null,
+        "consumed_bytes": 31,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "ignore_frame",
+            "actor": "client",
+            "at_ms": 20,
+            "action": "retain pending request"
+          }
+        ]
+      },
+      "coverage_notes": "Tests one-frame-per-step and isolation; second frame is intentionally not decoded in this case."
+    },
+    {
+      "id": "DNS-VEC-017",
+      "requirement_refs": [
+        "DNS-REQ-019",
+        "DNS-REQ-024",
+        "DNS-REQ-023"
+      ],
+      "category": "boundary/resource-limit",
+      "description": "Configured TCP body limit rejects an oversized declared frame at prefix time.",
+      "preconditions": [
+        "ST-TCP-PENDING",
+        "effective max_tcp_frame_bytes=28",
+        "context otherwise matching"
+      ],
+      "logical_input": {
+        "tcp_prefix": 29,
+        "body": "would be syntactically valid 29-byte response"
+      },
+      "request_text": "No new request.",
+      "response_text": "Declared 29-byte body exceeds explicit configured bound of 28. This prefix-time case makes no claim about precedence against a later malformed or excluded-extension body.",
+      "provenance": "Approved DNS-REQ-024 and ordered DOM-TCP-CORRELATED-DISPOSITION (resource-limit first); RFC 1035 TCP u16 framing.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 20,
+          "connection_id": "tcp-fallback-1",
+          "payload": {
+            "encoding": "hex",
+            "data": "001d",
+            "byte_length": 2,
+            "framing": "complete TCP prefix"
+          },
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-RESOURCE-LIMIT",
+            "consumed_bytes": 2,
+            "fields": {
+              "body_not_accepted": true,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "principal_fault": "declared_frame_exceeds_configured_limit",
+          "request_context_released": true
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-RESOURCE-LIMIT",
+        "consumed_bytes": 2,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "resource_limit",
+            "actor": "client",
+            "at_ms": 20,
+            "action": "terminal cleanup without body decode"
+          }
+        ]
+      },
+      "coverage_notes": "The numerical bound is an explicit vector precondition, not an invented default. This is only prefix-time size rejection; it does not assert a competing later classification."
+    },
+    {
+      "id": "DNS-VEC-018",
+      "requirement_refs": [
+        "DNS-REQ-004",
+        "DNS-REQ-017",
+        "DNS-REQ-022"
+      ],
+      "category": "interaction/terminal-cleanup",
+      "description": "Deadline and cancellation are local terminal events with no result publication.",
+      "preconditions": [
+        "two independent pending contexts: udp-request and tcp-fallback-request"
+      ],
+      "logical_input": {
+        "events": "deadline on UDP request; cancellation on TCP fallback request"
+      },
+      "request_text": "No new request.",
+      "response_text": "No DNS response bytes.",
+      "provenance": "Approved DNS-REQ-004/017/022, TR-TERMINAL-ERROR and TR-CANCEL.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "deadline_or_network_failure",
+          "actor": "network",
+          "at_ms": 100,
+          "connection_id": "udp-1",
+          "action": "deadline_expired",
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-TRANSPORT",
+            "consumed_bytes": null,
+            "fields": {
+              "request_context_released": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e2",
+          "kind": "cancel",
+          "actor": "client",
+          "at_ms": 101,
+          "connection_id": "tcp-fallback-1",
+          "action": "cancel_request",
+          "expected_after": {
+            "state": "ST-CANCELLED",
+            "error": null,
+            "consumed_bytes": null,
+            "fields": {
+              "accumulator_discarded": true,
+              "request_context_released": true,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "semantic",
+        "fields": {
+          "udp_terminal": "transport_error",
+          "tcp_terminal": "cancelled",
+          "surviving_contexts": 0,
+          "owned_results": 0
+        },
+        "state": null,
+        "error": null,
+        "consumed_bytes": null,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "transport_error",
+            "actor": "client",
+            "at_ms": 100,
+            "action": "no result"
+          },
+          {
+            "id": "o2",
+            "kind": "cancelled",
+            "actor": "client",
+            "at_ms": 101,
+            "action": "no result"
+          }
+        ]
+      },
+      "coverage_notes": "Two independent scenarios in one interaction vector; neither is a DNS response."
+    },
+    {
+      "id": "DNS-VEC-019",
+      "requirement_refs": [
+        "DNS-REQ-012",
+        "DNS-REQ-013",
+        "DNS-REQ-017",
+        "DNS-REQ-023"
+      ],
+      "category": "interaction/nonmatching-correlation",
+      "description": "Matching-ID UDP candidates with wrong echoed question tuple or endpoint/transport metadata are ignored independently and retain the pending context.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP deadline=100ms"
+      ],
+      "logical_input": {
+        "all_payloads": "otherwise structurally valid QR=1 QUERY response",
+        "mismatches": [
+          "QNAME other.example.",
+          "QTYPE AAAA",
+          "QCLASS CH",
+          "peer source 192.0.2.99:53",
+          "local destination 192.0.2.10:53001",
+          "transport TCP"
+        ]
+      },
+      "request_text": "Already pending standard UDP query.",
+      "response_text": "Each received candidate has the outstanding ID and a complete one-question response but fails exactly one required correlation dimension.",
+      "provenance": "Approved DNS-REQ-013/017; model TR-IGNORE-NONMATCHING-UDP requires ID/question/peer/local-address-port/transport correlation and preserves context/deadline.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000056f74686572076578616d706c650000010001",
+            "byte_length": 31,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP; wrong QNAME",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 31,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "question_qname",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e2",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 11,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d00001c0001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP; wrong QTYPE AAAA",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "question_qtype",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e3",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 12,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010003",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP; wrong QCLASS CH",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "question_qclass",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e4",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 13,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.99:53 (wrong peer); local=192.0.2.10:53000 transport=UDP",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "peer",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e5",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 14,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.53:53; local=192.0.2.10:53001 (wrong local destination port); transport=UDP",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "local_address_port",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e6",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 15,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "tcp-unexpected-1",
+          "action": "peer/local endpoints otherwise match but received transport=TCP, not pending UDP",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "transport",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "result_published": false,
+          "context_released": false,
+          "deadline_retained": true,
+          "all_candidates_ignored": true
+        },
+        "state": "ST-UDP-PENDING",
+        "error": null,
+        "consumed_bytes": 29,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "ignore_datagram",
+            "actor": "client",
+            "at_ms": 15,
+            "action": "each nonmatching candidate has no result or terminal effect"
+          }
+        ]
+      },
+      "coverage_notes": "Endpoint metadata is explicit for peer, local destination port, and transport; each event has one principal mismatch."
+    },
+    {
+      "id": "DNS-VEC-020",
+      "requirement_refs": [
+        "DNS-REQ-013",
+        "DNS-REQ-026"
+      ],
+      "category": "negative/non-query-opcode",
+      "description": "A complete matching-ID response with IQUERY opcode cannot complete a standard QUERY and is ignored as nonmatching/unsupported.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN peer/local/transport match"
+      ],
+      "logical_input": {
+        "flags": "QR=1 OPCODE=IQUERY(1) RD=1",
+        "question": "example.com. A IN"
+      },
+      "request_text": "Already pending standard OPCODE=QUERY request.",
+      "response_text": "Flags 0x8900 encode QR=1, OPCODE=1 (IQUERY), and RD=1; all remaining correlation fields match.",
+      "provenance": "Approved DNS-REQ-013 and DNS-REQ-026: a wire response whose opcode is not QUERY is nonmatching/unsupported and cannot complete the standard query; model nonmatching disposition retains pending context.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b89000001000000000000076578616d706c6503636f6d0000010001",
+            "byte_length": 29,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "peer=192.0.2.53:53 local=192.0.2.10:53000 transport=UDP",
+          "expected_after": {
+            "state": "ST-UDP-PENDING",
+            "error": null,
+            "consumed_bytes": 29,
+            "fields": {
+              "ignored_nonmatching": true,
+              "principal_nonmatch": "opcode_not_query",
+              "context_retained": true,
+              "deadline_retained": true,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "header_opcode": 1,
+          "result_published": false,
+          "context_released": false,
+          "cannot_complete_standard_query": true
+        },
+        "state": "ST-UDP-PENDING",
+        "error": null,
+        "consumed_bytes": 29,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "ignore_datagram",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "non-QUERY opcode is not accepted as the pending standard QUERY response"
+          }
+        ]
+      },
+      "coverage_notes": "Exact flags establish OPCODE != QUERY. The approved nonmatching/unsupported outcome is nonterminal ignore for this outstanding standard query."
+    },
+    {
+      "id": "DNS-VEC-021",
+      "requirement_refs": [
+        "DNS-REQ-007",
+        "DNS-REQ-009",
+        "DNS-REQ-010",
+        "DNS-REQ-023"
+      ],
+      "category": "positive/authority-section",
+      "description": "A bounded Authority-section NS RR parses after Answer and before Additional and consumes the exact message end.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN matching peer/local/transport"
+      ],
+      "logical_input": {
+        "counts": "QD=1 AN=0 NS=1 AR=0",
+        "authority_rr": "owner pointer to question; NS IN TTL 0; RDLENGTH 2; RDATA pointer to question name"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "Header declares one Authority RR only. After the echoed Question, the NS RR is c00c 0002 0001 00000000 0002 c00c.",
+      "provenance": "RFC 1035 4.1.3 section order and compressed names; approved DNS-REQ-007/009/010/023.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000010000076578616d706c6503636f6d0000010001c00c00020001000000000002c00c",
+            "byte_length": 43,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "matching endpoint metadata",
+          "expected_after": {
+            "state": "ST-COMPLETE",
+            "error": null,
+            "consumed_bytes": 43,
+            "fields": {
+              "answer_records_parsed": 0,
+              "authority_records_parsed": 1,
+              "additional_records_parsed": 0,
+              "exact_message_end": true,
+              "result_published": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "authority_count": 1,
+          "authority_record": {
+            "owner_name": "example.com.",
+            "type": 2,
+            "class": 1,
+            "ttl": 0,
+            "rdata_name": "example.com."
+          },
+          "section_parse_order": [
+            "question",
+            "answer",
+            "authority",
+            "additional"
+          ],
+          "exact_message_end": true,
+          "request_context_released": true
+        },
+        "state": "ST-COMPLETE",
+        "error": null,
+        "consumed_bytes": 43,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "publish_result",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "one result with one Authority NS RR"
+          }
+        ]
+      },
+      "coverage_notes": "Both owner and NS RDATA use in-message pointer c00c; parent consumption includes each two-octet pointer and totals 43 bytes."
+    },
+    {
+      "id": "DNS-VEC-022",
+      "requirement_refs": [
+        "DNS-REQ-018",
+        "DNS-REQ-019",
+        "DNS-REQ-022"
+      ],
+      "category": "negative/tcp-eof",
+      "description": "EOF during an incomplete TCP body is terminal transport failure with no partial DNS result.",
+      "preconditions": [
+        "ST-TCP-PENDING",
+        "fallback context ID=0x1a2b qname=example.com. A IN; TCP accumulator empty"
+      ],
+      "logical_input": {
+        "prefix": 29,
+        "body_supplied_before_eof": 10,
+        "eof": "before remaining 19 bytes"
+      },
+      "request_text": "No new request.",
+      "response_text": "Prefix 001d declares a 29-byte DNS body. Ten body octets follow, then the transport reports EOF.",
+      "provenance": "Approved DNS-REQ-019 and error/recovery profile: EOF interrupts a frame and is ERR-TRANSPORT; model TR-TCP-INVALID-FRAME and TR-TERMINAL-ERROR require accumulator/context cleanup and no result.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "tcp_bytes",
+          "actor": "resolver",
+          "at_ms": 20,
+          "payload": {
+            "encoding": "hex",
+            "data": "001d1a2b8180000100000000",
+            "byte_length": 12,
+            "framing": "TCP framing input"
+          },
+          "connection_id": "tcp-fallback-1",
+          "stream_id": "dns-frame-1",
+          "expected_after": {
+            "state": "ST-TCP-PENDING",
+            "error": null,
+            "consumed_bytes": 12,
+            "fields": {
+              "declared_body_length": 29,
+              "accumulated_body_bytes": 10,
+              "need_more_input": true,
+              "dns_decoded": false,
+              "result_published": false
+            }
+          }
+        },
+        {
+          "id": "e2",
+          "kind": "deadline_or_network_failure",
+          "actor": "network",
+          "at_ms": 21,
+          "connection_id": "tcp-fallback-1",
+          "stream_id": "dns-frame-1",
+          "action": "EOF before frame body completes",
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-TRANSPORT",
+            "consumed_bytes": null,
+            "fields": {
+              "accumulator_discarded": true,
+              "request_context_released": true,
+              "result_published": false
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "both",
+        "fields": {
+          "principal_fault": "tcp_eof_mid_body",
+          "partial_dns_result_exposed": false,
+          "accumulator_discarded": true,
+          "request_context_released": true
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-TRANSPORT",
+        "consumed_bytes": null,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "transport_error",
+            "actor": "client",
+            "at_ms": 21,
+            "action": "terminal cleanup; no partial result"
+          }
+        ]
+      },
+      "coverage_notes": "The 12 accepted bytes are 2 prefix plus 10 incomplete body octets. EOF itself contributes no payload bytes."
+    },
+    {
+      "id": "DNS-VEC-023",
+      "requirement_refs": [
+        "DNS-REQ-007",
+        "DNS-REQ-023"
+      ],
+      "category": "negative/trailing-octet",
+      "description": "A correlated complete DNS message with one trailing octet after all declared sections is terminal malformed.",
+      "preconditions": [
+        "ST-UDP-PENDING",
+        "context ID=0x1a2b qname=example.com. A IN matching endpoint metadata"
+      ],
+      "logical_input": {
+        "declared_sections": "QD=1 AN=NS=AR=0",
+        "trailing_octets": "ff"
+      },
+      "request_text": "Already pending standard query.",
+      "response_text": "The valid 29-byte header/question message is followed by ff although all section counts are exhausted.",
+      "provenance": "Approved DNS-REQ-007 requires parse to end exactly; DNS-REQ-023 classifies response trailing bytes as terminal malformed.",
+      "events": [
+        {
+          "id": "e1",
+          "kind": "udp_datagram",
+          "actor": "resolver",
+          "at_ms": 10,
+          "payload": {
+            "encoding": "hex",
+            "data": "1a2b81800001000000000000076578616d706c6503636f6d0000010001ff",
+            "byte_length": 30,
+            "framing": "one complete UDP DNS message"
+          },
+          "connection_id": "udp-1",
+          "action": "matching endpoint metadata",
+          "expected_after": {
+            "state": "ST-FAILED",
+            "error": "ERR-MALFORMED-RESPONSE",
+            "consumed_bytes": 30,
+            "fields": {
+              "principal_fault": "trailing_octet_after_declared_sections",
+              "exact_message_end": false,
+              "result_published": false,
+              "request_context_released": true
+            }
+          }
+        }
+      ],
+      "expected": {
+        "comparison": "exact_bytes",
+        "fields": {
+          "principal_fault": "trailing_octet_after_declared_sections",
+          "result_published": false,
+          "partial_records_discarded": true,
+          "request_context_released": true
+        },
+        "state": "ST-FAILED",
+        "error": "ERR-MALFORMED-RESPONSE",
+        "consumed_bytes": 30,
+        "output_events": [
+          {
+            "id": "o1",
+            "kind": "protocol_error",
+            "actor": "client",
+            "at_ms": 10,
+            "action": "terminal malformed response; consume complete UDP datagram"
+          }
+        ]
+      },
+      "coverage_notes": "Exact end-of-message assertion: 29 bytes are structurally declared; the 30th ff is forbidden trailing input."
+    }
+  ]
+}
