@@ -346,6 +346,7 @@ static ratos_error read_records(dns_reader *reader, uint16_t count, ratos_dns_se
         if (read_name(reader, &record->name) != RATOS_OK || read_u16(reader, &record->type) != RATOS_OK
             || read_u16(reader, &class_code) != RATOS_OK || read_u32(reader, &record->ttl) != RATOS_OK
             || read_u16(reader, &rdlength) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
+        if (record->type == 41u) { ratos_set_error(reader->ctx, "OPT/EDNS is unsupported"); return RATOS_ERROR_UNSUPPORTED; }
         (void)class_code;
         if ((size_t)rdlength > reader->length - reader->position) { ratos_set_error(reader->ctx, "DNS RDLENGTH exceeds packet bounds"); return RATOS_ERROR_PROTOCOL; }
         end = reader->position + rdlength;

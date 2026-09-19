@@ -47,6 +47,23 @@ typedef struct ratos_dns_packet {
     size_t length;
 } ratos_dns_packet;
 
+struct ratos_dns_request {
+    ratos_context *context;
+    ratos_dns_request_state state;
+    ratos_dns_error_class error_class;
+    ratos_dns_transport_failure transport_failure;
+    uint16_t id;
+    char *name;
+    ratos_dns_type type;
+    uint8_t recursion_desired;
+    ratos_dns_endpoint upstream;
+    uint8_t upstream_address[16];
+    ratos_dns_limits limits;
+    uint8_t prefix[2]; size_t prefix_used;
+    uint8_t *frame; size_t frame_length; size_t frame_used;
+    ratos_dns_result *result;
+};
+
 ratos_error ratos_dns_build_query(ratos_context *ctx, const char *name,
     ratos_dns_type type, uint8_t recursion_desired, uint16_t id,
     ratos_dns_packet *packet, char **effective_name);
