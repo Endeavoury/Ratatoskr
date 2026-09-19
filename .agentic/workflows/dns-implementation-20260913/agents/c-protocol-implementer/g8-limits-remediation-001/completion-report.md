@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | `c-protocol-implementer` |
 | Status | `READY_FOR_REVIEW` |
-| Revision | Local candidate after `git:9275f66dba3c19440da28ca86bd53777490b3e59`; wrapper-mediated commit/push pending |
+| Revision | Wrapper-delivered `git:a8d98b75e9c450734808d5a672a2023e83589fb0`; origin readback matched `a8d98b75e9c450734808d5a672a2023e83589fb0` |
 | Source artifacts | G8 security finding and handoff at `git:90a02df18522b6c311e236dc03c82583971c7511`; reviewed candidate `git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee` |
 | Assumptions | Serialized mutable use; one pending request reserves one potential fallback connection in the approved no-reuse profile. |
 | Open questions | Fresh independent G7 then G8 must judge the candidate. |

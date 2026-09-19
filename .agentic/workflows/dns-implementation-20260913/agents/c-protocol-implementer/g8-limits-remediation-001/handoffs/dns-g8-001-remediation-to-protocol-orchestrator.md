@@ -7,7 +7,7 @@
 | Target | `protocol/dns` |
 | Owner role | `c-protocol-implementer` |
 | Status | `READY_FOR_REVIEW` |
-| Source revision | Local candidate after `git:9275f66dba3c19440da28ca86bd53777490b3e59`; wrapper delivery pending |
+| Source revision | Wrapper-delivered `git:a8d98b75e9c450734808d5a672a2023e83589fb0`; origin readback matched `a8d98b75e9c450734808d5a672a2023e83589fb0` |
 | Source inputs | DNS-G8-001 at security delivery `git:90a02df18522b6c311e236dc03c82583971c7511`; reviewed candidate `git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee` |
 | Limitations | CMake/CTest unavailable (`cmake` absent); existing native test executable passed. |
 
