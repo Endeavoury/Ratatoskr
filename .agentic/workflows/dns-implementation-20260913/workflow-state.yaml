@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T16:47:09Z
+  updated_at: 2026-09-19T20:41:17Z
   scope_mode: implementation
 current_stage: native_verification
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: CHANGES_REQUESTED
+    status: APPROVED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: CHANGES_REQUESTED
+    status: APPROVED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -270,12 +270,12 @@ gates:
   - id: G7
     applicable: true
     rationale: Future native DNS implementation requires independent verification.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
     input_revisions:
-      - implementation-delivery-git:eaa191ba25fde6b4224e0cacccee92adbdfd5701
-      - routing-baseline-git:855c897c46c053978ae72b4dab6bda356bf4168d
-      - reviewer-delivery-git:6dee618f6781525f5a9f7a18f78556598b9e7d9e
+      - corrective-implementation-delivery-git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee
+      - corrective-source-sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
+      - independent-reviewer-assignment:deleg_6773a8dd/task-0
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1082,6 +1082,32 @@ assignments:
     expected_outputs:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/completion-report.md
+  - id: g7-remediation-rereview-002
+    stage_id: native_verification
+    role: protocol-test-engineer
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-remediation-rereview-routing-002/delegations/protocol-test-engineer-g7-remediation-rereview-002.md
+    agent_id: "deleg_6773a8dd/task-0; fresh independent reviewer distinct from c-protocol-implementer/g7-local-label-remediation-001 and protocol-test-engineer/g7-native-verification-001; technical disposition: APPROVED"
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/completion-report.md
+    readonly_paths:
+      - all production source and headers
+      - tests/
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all canonical truth and existing agent workspaces
+    input_artifacts:
+      - corrective candidate git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-local-label-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-local-label-remediation-001/handoffs/dns-g7-001-remediation-to-test-engineer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/handoffs/dns-g7-001-local-label-validation.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1381,3 +1407,17 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-native-verification-routing-001/verification/leaf-delivery-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/handoffs/dns-g7-001-local-label-validation.md
+  - at: 2026-09-19T20:35:33Z
+    actor: protocol-orchestrator/g7-remediation-rereview-routing-002
+    event: "Verified and wrapper-delivered only the authorized DNS-G7-001 corrective candidate under c-protocol-implementer identity. Remote ref readback matches 4b801fbdf782c4aca4c6427ad930a48cb5e029ee; source digest is 6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88. The candidate is READY_FOR_REVIEW. Recorded exactly one fresh independent protocol-test-engineer G7 re-review assignment IN_PROGRESS. G7 remains CHANGES_REQUESTED; no technical disposition, G8, or later stage is advanced."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-remediation-rereview-routing-002/evidence/delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-remediation-rereview-routing-002/delegations/protocol-test-engineer-g7-remediation-rereview-002.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-local-label-remediation-001/implementation-report.md
+  - at: 2026-09-19T20:41:17Z
+    actor: protocol-orchestrator/g7-remediation-rereview-routing-002
+    event: "Verified the returned fresh independent protocol-test-engineer G7 record and its exact three-file workspace boundary. The designated reviewer, not this orchestrator, recorded APPROVED for corrective candidate 4b801fbdf782c4aca4c6427ad930a48cb5e029ee. Recorded G7/native_implementation/native_verification APPROVED administratively from that reviewer record; no G8 or later stage was routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-remediation-rereview-routing-002/evidence/leaf-result-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/completion-report.md
