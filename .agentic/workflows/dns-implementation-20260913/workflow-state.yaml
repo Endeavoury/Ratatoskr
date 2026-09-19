@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T21:22:10Z
+  updated_at: 2026-09-19T21:41:43Z
   scope_mode: implementation
-current_stage: native_implementation
+current_stage: native_verification
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: CHANGES_REQUESTED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -271,13 +271,15 @@ gates:
     applicable: true
     rationale: The prior G7 approval covers only git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee. DNS-G8-001 remediation produced a new implementation candidate, so a fresh independent G7 review is required before fresh G8 re-review.
     status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
     input_revisions:
       - corrective-implementation-delivery-git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee
       - corrective-source-sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
       - independent-reviewer-assignment:deleg_6773a8dd/task-0
       - remediation-candidate-git:a8d98b75e9c450734808d5a672a2023e83589fb0
       - remediation-artifact-delivery-git:a424049521c97969c32ef37f026c63803224b146
+      - independent-reviewer-assignment:deleg_91ea93d7/task-0
+      - independent-review-delivery-git:15d3fc3de3eb733aac7f04d07ba7da02ffe809bd
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1136,6 +1138,34 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/security-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/completion-report.md
+  - id: g7-g8-limits-rereview-001
+    stage_id: native_verification
+    role: protocol-test-engineer
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-g8-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-g8-limits-rereview-001.md
+    agent_id: deleg_91ea93d7/task-0; fresh independent leaf distinct from c-protocol-implementer/g8-limits-remediation-001, protocol-test-engineer/g7-native-verification-001, and protocol-test-engineer/g7-remediation-rereview-002; technical disposition CHANGES_REQUESTED; delivered at 15d3fc3de3eb733aac7f04d07ba7da02ffe809bd
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/completion-report.md
+    readonly_paths:
+      - all production source and headers
+      - tests/
+      - canonical vectors, analysis, model, API/design and prior review artifacts
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all other repository paths
+    input_artifacts:
+      - remediation candidate git:a8d98b75e9c450734808d5a672a2023e83589fb0
+      - remediation artifact delivery git:a424049521c97969c32ef37f026c63803224b146
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/completion-report.md
   - id: g8-limits-remediation-001
     stage_id: native_implementation
     role: c-protocol-implementer
@@ -1184,6 +1214,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/handoffs/maintainer-resource-policy.md
   - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
   - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
+  - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -1498,3 +1529,16 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
+  - at: 2026-09-19T21:33:06Z
+    actor: protocol-orchestrator/g7-g8-limits-rereview-routing-001
+    event: "Recorded exactly one fresh independent protocol-test-engineer G7 review assignment for DNS-G8-001 remediation candidate git:a8d98b75e9c450734808d5a672a2023e83589fb0 and artifact delivery git:a424049521c97969c32ef37f026c63803224b146. Native implementation, native verification/G7, and security/G8 remain CHANGES_REQUESTED pending this G7 disposition; no G8, G9, or later stage is routed or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-g8-limits-rereview-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-g8-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-g8-limits-rereview-001.md
+  - at: 2026-09-19T21:41:43Z
+    actor: protocol-orchestrator/g7-g8-limits-rereview-routing-001
+    event: "Verified the sole fresh independent G7 leaf delivery at remote git:15d3fc3de3eb733aac7f04d07ba7da02ffe809bd. The designated reviewer recorded CHANGES_REQUESTED for DNS-G7-LIMITS-001 against candidate git:a8d98b75e9c450734808d5a672a2023e83589fb0: configured name-expansion and compression-pointer exhaustion becomes malformed-response instead of resource-limit, while no result escapes. Native implementation, G7/native verification, and G8/security remain CHANGES_REQUESTED; the return handoff targets c-protocol-implementer. No G8, G9, or later stage was routed or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/completion-report.md
