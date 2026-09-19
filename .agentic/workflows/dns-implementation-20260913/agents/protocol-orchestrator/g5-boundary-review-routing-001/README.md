@@ -5,7 +5,7 @@
 | Artifact ID | `dns-implementation-20260913-g5-boundary-review-routing-001` |
 | Workflow / target | `dns-implementation-20260913` / `protocol/dns` |
 | Owner role | `protocol-orchestrator` |
-| Status | `IN_PROGRESS` |
+| Status | `COMPLETE` — exactly one designated byte/coverage review verified; analyst review remains pending |
 | Candidate | `vector-designer/g5-boundary-remediation-001/vector-set.json` at `git:b7d05411cacfeb07be9f6bfbc36f705efdd002c5`, SHA-256 `6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6` |
 
 ## Authorized bounded scope
