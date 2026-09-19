@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T10:34:39Z
+  updated_at: 2026-09-19T11:18:28Z
   scope_mode: implementation
 current_stage: vectors
 active_role: protocol-orchestrator
@@ -77,7 +77,7 @@ stages:
     gate: G4
   - id: vectors
     role: vector-designer
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     depends_on: [native_api_design]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
@@ -88,6 +88,9 @@ stages:
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/vector-set.json
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
     gate: G5
   - id: implementation_ready
     role: protocol-orchestrator
@@ -224,9 +227,14 @@ gates:
   - id: G5
     applicable: true
     rationale: Canonical vectors are required before implementation readiness.
-    status: IN_PROGRESS
-    record: null
-    input_revisions: []
+    status: CHANGES_REQUESTED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-remediation-review-routing-001/README.md
+    input_revisions:
+      - candidate-git:a8e631b338df393ddfd3ea9648f333303726d87b
+      - candidate-sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c
+      - delivery-remote-ref:a8e631b338df393ddfd3ea9648f333303726d87b
+      - fresh-byte-coverage-review:pending
+      - fresh-interpretation-review:pending
   - id: G6
     applicable: true
     rationale: No native implementation work starts without G1-G5 approval.
@@ -809,6 +817,101 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/vector-set.json
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/completion-report.md
+  - id: g5-vector-byte-coverage-review-001
+    stage_id: vectors
+    role: protocol-test-engineer
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-review-routing-001/delegations/protocol-test-engineer-g5-vector-byte-coverage-review-001.md
+    agent_id: fresh independent leaf; runtime delegation ID not exposed; distinct from vector author deleg_29cd50f7/task-0 and analyst reviewer assignment
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/reviews/g5-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - candidate vector set at git:84ac705417fac3aa6beaa1800cbfacf02e4ae773 sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089
+      - approved analysis/model/API exactly as listed in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/reviews/g5-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/completion-report.md
+  - id: g5-vector-interpretation-review-001
+    stage_id: vectors
+    role: protocol-analyst
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-review-routing-001/delegations/protocol-analyst-g5-vector-interpretation-review-001.md
+    agent_id: fresh independent leaf; runtime delegation ID not exposed; distinct from vector author deleg_29cd50f7/task-0 and test-engineer reviewer assignment
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/reviews/g5-vector-interpretation-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - candidate vector set at git:84ac705417fac3aa6beaa1800cbfacf02e4ae773 sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089
+      - approved analysis/model/API exactly as listed in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/reviews/g5-vector-interpretation-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/completion-report.md
+  - id: g5-vectors-remediation-001
+    stage_id: vectors
+    role: vector-designer
+    status: READY_FOR_REVIEW
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-remediation-routing-001/delegations/vector-designer-g5-vectors-remediation-001.md
+    agent_id: deleg_18ffa0d9/task-0; fresh leaf distinct from vector author deleg_29cd50f7/task-0 and both completed G5 reviewers; local-only delivery
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/
+      - include/
+      - src/
+      - tests/
+      - fuzz/
+      - bindings/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/{request.md,manifest.yaml}
+    input_artifacts:
+      - reviewed candidate at git:84ac705417fac3aa6beaa1800cbfacf02e4ae773 sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089
+      - completed independent byte/coverage review sha256:8f0a775f24c74bed9b3501a2556d5412831316d7be0c6c8cb92c8c783c09e71f
+      - completed independent interpretation review sha256:954237c9c93fe6ac728f69b463c297cd23ef3d7d1e8a7ebb176e250394e9fe19
+      - approved analysis/model/API exactly as specified in the delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/g5-vectors-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
+  - id: g5-remediation-byte-coverage-review-002
+    stage_id: vectors
+    role: protocol-test-engineer
+    status: NOT_STARTED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-remediation-review-routing-001/delegations/protocol-test-engineer-g5-remediation-byte-coverage-review-002.md
+    agent_id: pending fresh leaf; must be distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/reviews/g5-remediation-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - delivered corrected candidate git:a8e631b338df393ddfd3ea9648f333303726d87b sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c
+      - approved analysis/model/API exactly as specified in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/reviews/g5-remediation-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/completion-report.md
+  - id: g5-remediation-interpretation-review-002
+    stage_id: vectors
+    role: protocol-analyst
+    status: NOT_STARTED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-remediation-review-routing-001/delegations/protocol-analyst-g5-remediation-interpretation-review-002.md
+    agent_id: pending fresh leaf; must be distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/reviews/g5-remediation-vector-interpretation-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - delivered corrected candidate git:a8e631b338df393ddfd3ea9648f333303726d87b sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c
+      - approved analysis/model/API exactly as specified in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/reviews/g5-remediation-vector-interpretation-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1021,3 +1124,27 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/vector-set.json
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/handoffs/g5-vectors-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-001/completion-report.md
+  - at: 2026-09-19T10:50:39Z
+    actor: protocol-orchestrator/g5-review-routing-001
+    event: "Routed exactly the two designated fresh independent G5 reviewers: protocol-test-engineer exact-byte/coverage and protocol-analyst interpretation. Both returned CHANGES_REQUESTED against immutable candidate git:84ac705417fac3aa6beaa1800cbfacf02e4ae773 sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089. Verified output existence, reviewer-only boundaries, distinct identities, and no changes to vector truth/shared state/production/tests by leaves. G5/vectors are CHANGES_REQUESTED; G6 and later remain NOT_STARTED. No absolute executable git-agent wrapper was found, so all routing/reviewer artifacts remain local-only and no raw-Git commit/push or remote delivery verification was performed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-review-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-review-routing-001/delegations/protocol-test-engineer-g5-vector-byte-coverage-review-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-review-routing-001/delegations/protocol-analyst-g5-vector-interpretation-review-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/reviews/g5-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/reviews/g5-vector-interpretation-review.md
+  - at: 2026-09-19T10:59:52Z
+    actor: protocol-orchestrator/g5-vector-remediation-routing-001
+    event: "Recorded exactly one fresh vector-designer corrective authoring assignment after completed independent G5 byte/coverage and interpretation reviews requested changes to immutable candidate git:84ac705417fac3aa6beaa1800cbfacf02e4ae773 sha256:cf1b0a143d7268fcf8a2d0b567822ce0b4792717481a3c908c7213cd3a1b0089. Vectors is IN_PROGRESS; G5 remains CHANGES_REQUESTED pending a new candidate and fresh designated reviews. No reviewer, G6, implementation, or later stage is routed. Required absolute executable git-agent wrapper remains unavailable, so this routing delivery is local-only and no raw-Git commit/push or remote delivery verification is claimed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-remediation-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-remediation-routing-001/delegations/vector-designer-g5-vectors-remediation-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-vector-byte-coverage-review-001/reviews/g5-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-vector-interpretation-review-001/reviews/g5-vector-interpretation-review.md
+  - at: 2026-09-19T11:06:19Z
+    actor: protocol-orchestrator/g5-vector-remediation-routing-001
+    event: "Verified the sole fresh vector-designer leaf delivery locally: candidate SHA-256 0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c, parsed JSON with 23 sequential case IDs, completion READY_FOR_REVIEW, required handoff, and no shared-state/prior-artifact/production/test/fuzzer/binding/docs writes by the leaf. Vectors is READY_FOR_REVIEW; G5 remains CHANGES_REQUESTED pending fresh designated independent reviews. G6 and later stages remain NOT_STARTED and were not routed. Required wrapper remains unavailable, so no raw-Git commit/push or remote delivery verification is claimed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/g5-vectors-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
