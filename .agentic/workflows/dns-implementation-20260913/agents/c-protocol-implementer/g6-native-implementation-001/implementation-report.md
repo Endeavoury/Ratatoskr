@@ -7,7 +7,7 @@
 | Owner role | `c-protocol-implementer` |
 | Status | `READY_FOR_REVIEW` |
 | Baseline | `c46f627a41e5a4fab05f39d8a59872f3f40fe8f3` |
-| Delivery | recorded in the follow-up completion artifact commit |
+| Delivery | `eaa191ba25fde6b4224e0cacccee92adbdfd5701` (wrapper-mediated push read back equal to `refs/heads/hermes/dns-implementation-20260913`) |
 | Inputs | G6 readiness plus approved analysis `5615cae`, model `f267454`, API `e3c63f`, vectors `b7d0541` |
 
 ## Realization trace
