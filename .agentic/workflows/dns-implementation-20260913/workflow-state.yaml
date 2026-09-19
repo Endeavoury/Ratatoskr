@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T16:08:30Z
+  updated_at: 2026-09-19T16:20:43Z
   scope_mode: implementation
-current_stage: vectors
+current_stage: native_implementation
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -97,17 +97,27 @@ stages:
     gate: G5
   - id: implementation_ready
     role: protocol-orchestrator
-    status: NOT_STARTED
+    status: APPROVED
     depends_on: [vectors]
-    input_artifacts: []
-    output_artifacts: []
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/reviews/g1-inventory-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/reviews/g2-analysis-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-disposition-review-001/reviews/g3-disposition-model-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-routing-001/g4-closure-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-gate-closure-001/verification/g5-gate-closure-verification.md
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: NOT_STARTED
+    status: IN_PROGRESS
     depends_on: [implementation_ready]
-    input_artifacts: []
-    output_artifacts: []
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/delegations/c-protocol-implementer-g6-native-implementation-001.md
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/completion-report.md
     gate: null
   - id: native_verification
     role: protocol-test-engineer
@@ -241,9 +251,17 @@ gates:
   - id: G6
     applicable: true
     rationale: No native implementation work starts without G1-G5 approval.
-    status: NOT_STARTED
-    record: null
-    input_revisions: []
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
+    input_revisions:
+      - g1-record-sha256:8165b84902e8147f45c7f8983f9bc79e6000b565cbed82fa96666d1044732ac8
+      - g2-record-sha256:10eb209f071fb2c7f976590be4f732a59bd72120082b576a13b5805e87e12989
+      - model-git:f26745472178649a60f2cb079937d1bbe3f13c0b
+      - model-sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
+      - api-git:e3c63fdb0766afc86d28fc32ec3071d1e7ec762c
+      - api-sha256:69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520
+      - vector-git:b7d05411cacfeb07be9f6bfbc36f705efdd002c5
+      - vector-sha256:6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6
   - id: G7
     applicable: true
     rationale: Future native DNS implementation requires independent verification.
@@ -990,6 +1008,42 @@ assignments:
     expected_outputs:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-gate-closure-001/verification/g5-gate-closure-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-gate-closure-001/completion-report.md
+  - id: g6-native-implementation-001
+    stage_id: native_implementation
+    role: c-protocol-implementer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/delegations/c-protocol-implementer-g6-native-implementation-001.md
+    agent_id: pending dispatch after routing delivery readback
+    allowed_paths:
+      - include/ratatoskr/dns.h
+      - src/core/core_internal.h
+      - src/core/context.c
+      - src/protocols/dns/dns_internal.h
+      - src/protocols/dns/dns_builder.c
+      - src/protocols/dns/dns_client.c
+      - src/protocols/dns/dns_packet.c
+      - src/protocols/dns/dns_parser.c
+      - src/protocols/dns/dns_transport_tcp.c
+      - src/protocols/dns/dns_transport_udp.c
+      - src/protocols/dns/CMakeLists.txt
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/completion-report.md
+    readonly_paths:
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - tests/
+      - fuzz/
+      - bindings/
+      - docs/
+      - cli/
+      - all other repository paths
+    input_artifacts:
+      - G6 record and delegation packet above
+      - approved analysis/model/API/vector revisions recorded by G6
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1269,3 +1323,10 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-gate-closure-001/verification/g5-gate-closure-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-boundary-byte-coverage-review-001/reviews/g5-boundary-vector-byte-coverage-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-boundary-interpretation-review-001/reviews/g5-boundary-vector-interpretation-review.md
+  - at: 2026-09-19T16:20:43Z
+    actor: protocol-orchestrator/g6-implementation-routing-001
+    event: "Independently verified current G1-G5 approvals, exact candidate revisions/digests, remote ancestry, implementation scope/dependencies, wrapper availability, and existing realization paths. Administratively approved G6 and implementation_ready, recorded exactly one c-protocol-implementer native DNS implementation assignment IN_PROGRESS, and did not start, assign, plan, or approve G7 or later stages."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/delegations/c-protocol-implementer-g6-native-implementation-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/completion-report.md
