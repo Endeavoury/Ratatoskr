@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T20:41:17Z
+  updated_at: 2026-09-19T20:52:47Z
   scope_mode: implementation
-current_stage: native_verification
+current_stage: security
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -133,7 +133,7 @@ stages:
     gate: G7
   - id: security
     role: security-reviewer
-    status: NOT_STARTED
+    status: IN_PROGRESS
     depends_on: [native_verification]
     input_artifacts: []
     output_artifacts: []
@@ -279,7 +279,7 @@ gates:
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
-    status: NOT_STARTED
+    status: IN_PROGRESS
     record: null
     input_revisions: []
   - id: G9
@@ -1108,6 +1108,28 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-remediation-rereview-002/completion-report.md
+  - id: g8-security-review-001
+    stage_id: security
+    role: security-reviewer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-security-routing-001/delegations/security-reviewer-g8-security-review-001.md
+    agent_id: pending fresh independent security-reviewer leaf; must be distinct from all implementation, remediation, and G7 review authors
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - approved G7 corrective candidate git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
+      - approved G7 review record and completion at git:1424debe5395a1650a05d2933ba01234c589e535
+      - approved analysis/model/API/vector revisions exactly specified in delegation
+      - docs/agentic/SECURITY_MODEL.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
