@@ -125,6 +125,35 @@ static int endpoint_valid(const ratos_dns_endpoint *e) {
     n = e->family == RATOS_DNS_ADDRESS_FAMILY_IPV4 ? 4u : e->family == RATOS_DNS_ADDRESS_FAMILY_IPV6 ? 16u : 0u;
     return n != 0u && e->address != NULL && e->address_len == n;
 }
+static int request_name_valid(const char *name) {
+    const unsigned char *cursor = (const unsigned char *)name;
+    size_t wire_length = 1u, label_length = 0u;
+    if (strcmp(name, ".") == 0) return 1;
+    while (*cursor != 0u) {
+        if (*cursor == (unsigned char)'.') {
+            if (label_length == 0u) return 0;
+            wire_length += label_length + 1u;
+            ++cursor;
+            if (*cursor == 0u) break;
+            label_length = 0u;
+            continue;
+        }
+        if (*cursor == (unsigned char)'\\') {
+            ++cursor;
+            if (*cursor == 0u) return 0;
+            if (cursor[0] >= '0' && cursor[0] <= '9' && cursor[1] >= '0' && cursor[1] <= '9'
+                && cursor[2] >= '0' && cursor[2] <= '9') {
+                unsigned value = (unsigned)(cursor[0] - '0') * 100u + (unsigned)(cursor[1] - '0') * 10u + (unsigned)(cursor[2] - '0');
+                if (value > 255u) return 0;
+                cursor += 3;
+            } else ++cursor;
+        } else ++cursor;
+        if (label_length >= 63u || wire_length + label_length + 2u > 255u) return 0;
+        ++label_length;
+    }
+    if (label_length != 0u) wire_length += label_length + 1u;
+    return wire_length <= 255u;
+}
 static void request_event(ratos_dns_request *r, ratos_dns_event *e, ratos_dns_event_kind kind) {
     ratos_dns_event_init(e); e->kind = kind; if (r != NULL) { e->state = r->state; e->error_class = r->error_class; e->transport_failure = r->transport_failure; }
 }
@@ -145,7 +174,7 @@ ratos_error ratos_dns_request_start(ratos_context *ctx, const char *name, const 
     ratos_dns_request *r; size_t n;
     if (out != NULL) *out = NULL;
     if (ctx == NULL || name == NULL || o == NULL || out == NULL || o->struct_size < sizeof(*o) || o->recursion_desired > 1u || o->reserved[0] || o->reserved[1] || o->reserved0[0] || o->reserved0[1] || o->reserved0[2] || o->reserved0[3] || o->reserved0[4] || o->reserved0[5] || o->reserved0[6] || !endpoint_valid(o->upstream)) return RATOS_ERROR_INVALID_ARGUMENT;
-    n = strlen(name); if (n == 0u || n > 255u) return RATOS_ERROR_INVALID_ARGUMENT;
+    n = strlen(name); if (n == 0u || n > 255u || !request_name_valid(name)) return RATOS_ERROR_INVALID_ARGUMENT;
     r = (ratos_dns_request *)calloc(1u, sizeof(*r)); if (r == NULL) return RATOS_ERROR_OUT_OF_MEMORY;
     r->name = ratos_strdup(name); if (r->name == NULL) { free(r); return RATOS_ERROR_OUT_OF_MEMORY; }
     r->context = ctx; r->id = query_id(); r->type = RATOS_DNS_A; r->recursion_desired = o->recursion_desired; r->limits = ctx->dns_limits; r->state = RATOS_DNS_REQUEST_STATE_UDP_PENDING;

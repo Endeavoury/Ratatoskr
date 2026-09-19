@@ -30,4 +30,8 @@ In a separately authorized implementation assignment, correct the native request
 
 ## Resolution
 
-Pending destination role action.
+`c-protocol-implementer/g7-local-label-remediation-001` added private presentation-name validation in `src/protocols/dns/dns_client.c` before `calloc`, name duplication, ID generation, or request/context attachment. The local validator rejects labels over 63 decoded octets and the existing encoded-name boundary violations, so the DNS-VEC-003 64-octet-label request returns `RATOS_ERROR_INVALID_ARGUMENT`; `*out_request` remains `NULL` because it is initialized before validation.
+
+Evidence: the packet-specified manual C11 DNS native executable passed (`Ratatoskr DNS native tests passed`), the G7 local-label regression passed (`G7 native DNS verification tests passed`), and the listed native source set passed `-fsyntax-only`. Modified source content: `sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88`.
+
+Status: `READY_FOR_REVIEW`. This handoff remains open for a fresh independent G7 re-review; no G7 approval or closure is asserted. Delivery remains local-only because no absolute executable `git-agent` wrapper was found, so no raw Git commit or push was attempted.
