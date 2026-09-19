@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T11:18:28Z
+  updated_at: 2026-09-19T11:27:27Z
   scope_mode: implementation
 current_stage: vectors
 active_role: protocol-orchestrator
@@ -77,7 +77,7 @@ stages:
     gate: G4
   - id: vectors
     role: vector-designer
-    status: READY_FOR_REVIEW
+    status: CHANGES_REQUESTED
     depends_on: [native_api_design]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
@@ -91,6 +91,9 @@ stages:
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/completion-report.md
     gate: G5
   - id: implementation_ready
     role: protocol-orchestrator
@@ -233,8 +236,9 @@ gates:
       - candidate-git:a8e631b338df393ddfd3ea9648f333303726d87b
       - candidate-sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c
       - delivery-remote-ref:a8e631b338df393ddfd3ea9648f333303726d87b
-      - fresh-byte-coverage-review:pending
-      - fresh-interpretation-review:pending
+      - fresh-byte-coverage-review-002-remote-git:43979c78c33247cf990002ec1392606f24bc7427
+      - fresh-interpretation-review-002-remote-git:525ba264e97e579c5a2720db8706bb286d85d343
+      - finding:DNS-G5-COV-004
   - id: G6
     applicable: true
     rationale: No native implementation work starts without G1-G5 approval.
@@ -883,9 +887,9 @@ assignments:
   - id: g5-remediation-byte-coverage-review-002
     stage_id: vectors
     role: protocol-test-engineer
-    status: NOT_STARTED
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-remediation-review-routing-001/delegations/protocol-test-engineer-g5-remediation-byte-coverage-review-002.md
-    agent_id: pending fresh leaf; must be distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
+    agent_id: fresh independent leaf; delivery remote git:43979c78c33247cf990002ec1392606f24bc7427; distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/reviews/g5-remediation-vector-byte-coverage-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/completion-report.md
@@ -899,9 +903,9 @@ assignments:
   - id: g5-remediation-interpretation-review-002
     stage_id: vectors
     role: protocol-analyst
-    status: NOT_STARTED
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-remediation-review-routing-001/delegations/protocol-analyst-g5-remediation-interpretation-review-002.md
-    agent_id: pending fresh leaf; must be distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
+    agent_id: fresh independent leaf; delivery remote git:525ba264e97e579c5a2720db8706bb286d85d343 (ancestor of current remote); distinct from deleg_18ffa0d9/task-0, deleg_29cd50f7/task-0, and prior G5 reviewers
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/reviews/g5-remediation-vector-interpretation-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/completion-report.md
@@ -912,6 +916,28 @@ assignments:
     expected_outputs:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/reviews/g5-remediation-vector-interpretation-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/completion-report.md
+  - id: g5-boundary-remediation-001
+    stage_id: vectors
+    role: vector-designer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-boundary-remediation-routing-001/delegations/vector-designer-g5-boundary-remediation-001.md
+    agent_id: pending one fresh leaf; must be distinct from deleg_29cd50f7/task-0, deleg_18ffa0d9/task-0, and all G5 reviewers
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - corrected candidate git:a8e631b338df393ddfd3ea9648f333303726d87b sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c
+      - byte/coverage review remote git:43979c78c33247cf990002ec1392606f24bc7427 disposition:CHANGES_REQUESTED finding:DNS-G5-COV-004
+      - interpretation review remote git:525ba264e97e579c5a2720db8706bb286d85d343 disposition:APPROVED
+      - approved analysis/model/API exactly as specified in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/vector-set.json
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/handoffs/g5-boundary-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-boundary-remediation-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1148,3 +1174,11 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/vector-set.json
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/handoffs/g5-vectors-remediation-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/vector-designer/g5-vectors-remediation-001/completion-report.md
+  - at: 2026-09-19T11:27:27Z
+    actor: protocol-orchestrator/g5-boundary-remediation-routing-001
+    event: "Wrapper-verified both completed fresh G5 remediation reviews against immutable candidate git:a8e631b338df393ddfd3ea9648f333303726d87b sha256:0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c. Byte/coverage review at remote 43979c78c33247cf990002ec1392606f24bc7427 is CHANGES_REQUESTED for blocking DNS-G5-COV-004; interpretation review at 525ba264e97e579c5a2720db8706bb286d85d343 is APPROVED and an ancestor of current remote. Recorded the two review assignments COMPLETE and G5/vectors CHANGES_REQUESTED. Routed exactly one fresh vector-designer corrective assignment for the DNS-REQ-002 0/1/63/64/255/256 mechanically consumable local-request boundary matrix, preserving VEC-014, 017, and 019-023. No G5 synthesis, reviewer, G6, or later work is routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-boundary-remediation-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-boundary-remediation-routing-001/delegations/vector-designer-g5-boundary-remediation-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g5-remediation-byte-coverage-review-002/reviews/g5-remediation-vector-byte-coverage-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/g5-remediation-interpretation-review-002/reviews/g5-remediation-vector-interpretation-review.md
