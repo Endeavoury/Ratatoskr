@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T16:38:53Z
+  updated_at: 2026-09-19T16:47:09Z
   scope_mode: implementation
 current_stage: native_verification
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: READY_FOR_REVIEW
+    status: CHANGES_REQUESTED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: CHANGES_REQUESTED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -270,11 +270,12 @@ gates:
   - id: G7
     applicable: true
     rationale: Future native DNS implementation requires independent verification.
-    status: IN_PROGRESS
-    record: null
+    status: CHANGES_REQUESTED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
     input_revisions:
       - implementation-delivery-git:eaa191ba25fde6b4224e0cacccee92adbdfd5701
       - routing-baseline-git:855c897c46c053978ae72b4dab6bda356bf4168d
+      - reviewer-delivery-git:6dee618f6781525f5a9f7a18f78556598b9e7d9e
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1018,7 +1019,7 @@ assignments:
   - id: g6-native-implementation-001
     stage_id: native_implementation
     role: c-protocol-implementer
-    status: READY_FOR_REVIEW
+    status: CHANGES_REQUESTED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/delegations/c-protocol-implementer-g6-native-implementation-001.md
     agent_id: c-protocol-implementer delivery eaa191ba25fde6b4224e0cacccee92adbdfd5701; evidence completion at 855c897c46c053978ae72b4dab6bda356bf4168d
     allowed_paths:
@@ -1054,9 +1055,9 @@ assignments:
   - id: g7-native-verification-001
     stage_id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: CHANGES_REQUESTED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-native-verification-routing-001/delegations/protocol-test-engineer-g7-native-verification-001.md
-    agent_id: pending exactly one independent protocol-test-engineer leaf dispatch after routing delivery readback
+    agent_id: deleg_4182e060/task-0; independent leaf delivery remote git:6dee618f6781525f5a9f7a18f78556598b9e7d9e; disposition:CHANGES_REQUESTED
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
@@ -1373,3 +1374,10 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-native-verification-routing-001/verification/g6-native-delivery-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-native-verification-routing-001/delegations/protocol-test-engineer-g7-native-verification-001.md
+  - at: 2026-09-19T16:47:09Z
+    actor: protocol-orchestrator/g7-native-verification-routing-001
+    event: "Dispatched exactly one independent protocol-test-engineer G7 leaf after routing remote readback. Verified its exact remote delivery, required reports/handoff, permitted five-file diff, diff check, and preservation of unrelated untracked workspaces. Recorded the designated reviewer CHANGES_REQUESTED finding DNS-G7-001 faithfully: submitted request-start accepts a 64-octet label contrary to DNS-REQ-002/DNS-VEC-003. G7/native verification/native implementation are CHANGES_REQUESTED; no remediation, G8, or later route was dispatched."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-native-verification-routing-001/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-native-verification-001/handoffs/dns-g7-001-local-label-validation.md
