@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | `vector-designer` |
 | Status | `READY_FOR_REVIEW` |
-| Revision | Candidate content SHA-256 `6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6`; wrapper-mediated delivery commit pending. |
+| Revision | Candidate content SHA-256 `6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6`; vector delivery commit `b7d05411cacfeb07be9f6bfbc36f705efdd002c5`. |
 | Source artifacts | Prior candidate `git:a8e631b338df393ddfd3ea9648f333303726d87b` / SHA-256 `0a34f720c7b4f06739da5a00bde83c177ae147e9551df0ea10d54366e09e481c`; byte/coverage review remote `git:43979c78c33247cf990002ec1392606f24bc7427`; interpretation review remote `git:525ba264e97e579c5a2720db8706bb286d85d343`; approved analysis/model/API revisions in `vector-set.json`. |
 | Assumptions | Approved UDP-first local-request profile and vector-local deterministic ID seam apply. |
 | Open questions | None. |
