@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T04:45:08+02:00
+  updated_at: 2026-09-20T08:42:15+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: APPROVED
+    status: IN_PROGRESS
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: APPROVED
+    status: CHANGES_REQUESTED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -269,8 +269,8 @@ gates:
       - vector-sha256:6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6
   - id: G7
     applicable: true
-    rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 remediation is recorded for the new candidate; this administrative state update does not decide G8.
-    status: APPROVED
+    rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 is approved for candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25, but that approval does not cover the new G8 corrective candidate required for DNS-G8-001 and DNS-G8-002.
+    status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
     input_revisions:
       - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
@@ -1281,6 +1281,35 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/completion-report.md
+  - id: g8-global-limits-remediation-001
+    stage_id: native_implementation
+    role: c-protocol-implementer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-global-limits-remediation-routing-001/delegations/c-protocol-implementer-g8-global-limits-remediation-001.md
+    agent_id: pending fresh corrective leaf; must remain independent of security-reviewer/g8-limits-rereview-001
+    allowed_paths:
+      - src/protocols/dns/dns_client.c
+      - src/protocols/dns/dns_parser.c
+      - src/protocols/dns/dns_internal.h
+      - src/protocols/dns/dns_transport_udp.c
+      - src/protocols/dns/dns_transport_tcp.c
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-incomplete.md (Resolution section only)
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-002-global-request-tracker-race.md (Resolution section only)
+    readonly_paths:
+      - all public headers, tests, vectors, docs, build configuration, workflow-root records, reviews, and other repository paths
+    input_artifacts:
+      - candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
+      - approved G7 reviewer delivery git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
+      - blocking G8 reviewer delivery git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+      - blocking handoffs DNS-G8-001 and DNS-G8-002 in security-reviewer/g8-limits-rereview-001
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
