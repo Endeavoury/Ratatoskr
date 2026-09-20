@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T15:38:00+02:00
+  updated_at: 2026-09-20T19:14:24+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: BLOCKED
+    status: IN_PROGRESS
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -1485,6 +1485,35 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/completion-report.md
+  - id: g8-configured-limits-remediation-002
+    stage_id: native_implementation
+    role: c-protocol-implementer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/delegations/c-protocol-implementer-g8-configured-limits-remediation-002.md
+    agent_id: direct Hermes CLI invocation pending; required route openai-codex/gpt-5.6-sol high
+    allowed_paths:
+      - src/protocols/dns/dns_parser.c
+      - src/protocols/dns/dns_transport_udp.c
+      - src/protocols/dns/dns_client.c
+      - src/protocols/dns/dns_internal.h
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md (Resolution section only)
+    readonly_paths:
+      - all tests and test registration
+      - all public headers, core source, approved truth, build files, reviews, and workflow-root records
+      - all other role workspaces except the permitted Resolution section
+      - all other repository paths
+    input_artifacts:
+      - current baseline git:9afc2e8825619dccc73e8eed00a431f838dd8a47
+      - accounting corrective candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175
+      - fresh approved G7 delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
+      - completed G8 CHANGES_REQUESTED delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/completion-report.md
 blocked_by:
   - id: DNS-G8-001
     reason: Configured parser resource disposition and synchronous oversized-UDP admission remain incomplete for candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175; completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 requires an implementation correction followed by fresh independent G7 and G8 reviews.
@@ -1943,3 +1972,9 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-001/delegations/c-protocol-implementer-g8-configured-limits-remediation-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
+  - at: 2026-09-20T19:14:24+02:00
+    actor: protocol-orchestrator/g8-configured-limits-remediation-routing-003
+    event: "Wrapper-fetched and reconciled divergent remote delivery ref git:5fe96f16812e1c98ca4b1f68c120a72a3d54d00b with local routing history without overwrite; merge baseline is git:9afc2e8825619dccc73e8eed00a431f838dd8a47. Verified DNS-G8-001 remains the only required corrective blocker and prepared exactly one fresh direct-CLI c-protocol-implementer assignment requiring openai-codex/gpt-5.6-sol high. The prior Terra-inherited g8-configured-limits-remediation-001 attempt remains historical BLOCKED with no substantive work. G7, G8, G9, and all other work remain unrouted and technically unchanged."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/preflight-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/delegations/c-protocol-implementer-g8-configured-limits-remediation-002.md
