@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: CHANGES_REQUESTED
+    status: IN_PROGRESS
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -270,13 +270,15 @@ gates:
   - id: G7
     applicable: true
     rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 is approved for candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25, but that approval does not cover the new G8 corrective candidate required for DNS-G8-001 and DNS-G8-002.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
+    status: IN_PROGRESS
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
     input_revisions:
       - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
       - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
       - fresh-independent-reviewer-assignment:deleg_c770b2ea/task-0
       - independent-review-delivery-git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
+      - accounting-candidate-git:c38a7fa
+      - accounting-routing-preflight:.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1363,6 +1365,42 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
+  - id: g7-accounting-native-verification-001
+    stage_id: native_verification
+    role: protocol-test-engineer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/delegations/protocol-test-engineer-g7-accounting-native-verification-001.md
+    agent_id: pending fresh independent leaf dispatch; must be distinct from c-protocol-implementer/g8-accounting-implementation-001 and every prior G7 reviewer
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/completion-report.md
+      - tests/dns/dns_g7_accounting_native_verification_tests.c (only if inspection strictly establishes necessity)
+      - tests/integration/dns_g7_accounting_native_verification_test.py (only if inspection strictly establishes necessity)
+      - tests/fixtures/dns/g7-accounting-native-verification-fixtures.json (only if inspection strictly establishes necessity)
+      - tests/CMakeLists.txt (only scoped registration if inspection strictly establishes necessity)
+    readonly_paths:
+      - all production source and headers
+      - all approved designs, vectors, reviews, and existing agent workspaces
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - existing tests except the explicit scoped exception above
+      - fuzz/
+      - bindings/
+      - docs/
+      - all paths outside allowed_paths
+    input_artifacts:
+      - accounting corrective production candidate git:c38a7fa, parent git:62a2dda24194020904a75e1edce9b3d74fbd70a4
+      - candidate reports/handoff in c-protocol-implementer/g8-accounting-implementation-001
+      - prerequisite design/review approvals git:4a37fc293c842b206190bad369e2a3e1ad00008c, git:e04fefa07e72427adc7ecbab339fef96bc04b3b7, git:aa2ebfaa8379d74a539ef95caf02d925f799d229
+      - routing preflight .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/completion-report.md
 blocked_by:
   - id: DNS-G8-ACCOUNTING-AUTHORITY-001
     reason: The required safe replacement for the global DNS request tracker needs approved context-owned accounting and destruction semantics plus exact internal core write authority; the current DNS-only packet cannot safely realize it.
@@ -1781,3 +1819,12 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/completion-report.md
+  - at: 2026-09-20T14:15:37+02:00
+    actor: protocol-orchestrator/g7-accounting-native-verification-routing-001
+    event: "Administratively verified the G8 accounting implementation candidate at git:c38a7fa: required wrapper/origin/branch/current-ref, ancestry, parent boundary, diff check, prerequisite approvals, candidate artifacts, and absence of an active or pre-existing G7 accounting leaf workspace. Recorded exactly one fresh independent protocol-test-engineer G7 assignment IN_PROGRESS for this candidate. No technical G7 approval is asserted; G8, fuzzing, bindings, documentation, compatibility, and later stages were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/delegations/protocol-test-engineer-g7-accounting-native-verification-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/handoffs/g8-accounting-implementation-to-protocol-orchestrator.md
