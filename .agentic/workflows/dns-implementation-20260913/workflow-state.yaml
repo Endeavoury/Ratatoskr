@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: READY_FOR_REVIEW
+    status: APPROVED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: APPROVED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -269,17 +269,14 @@ gates:
       - vector-sha256:6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6
   - id: G7
     applicable: true
-    rationale: The prior G7 approval covers only git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee. DNS-G8-001 remediation produced a new implementation candidate, so a fresh independent G7 review is required before fresh G8 re-review.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
+    rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 remediation is recorded for the new candidate; this administrative state update does not decide G8.
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
     input_revisions:
-      - corrective-implementation-delivery-git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee
-      - corrective-source-sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
-      - independent-reviewer-assignment:deleg_6773a8dd/task-0
-      - remediation-candidate-git:a8d98b75e9c450734808d5a672a2023e83589fb0
-      - remediation-artifact-delivery-git:a424049521c97969c32ef37f026c63803224b146
-      - independent-reviewer-assignment:deleg_91ea93d7/task-0
-      - independent-review-delivery-git:15d3fc3de3eb733aac7f04d07ba7da02ffe809bd
+      - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
+      - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
+      - fresh-independent-reviewer-assignment:deleg_c770b2ea/task-0
+      - independent-review-delivery-git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1229,9 +1226,9 @@ assignments:
   - id: g7-limits-rereview-001
     stage_id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-limits-rereview-001.md
-    agent_id: pending exactly one fresh independent protocol-test-engineer leaf; must be distinct from c-protocol-implementer/g7-limits-remediation-001 and all prior G7 review authors
+    agent_id: deleg_c770b2ea/task-0; fresh independent reviewer distinct from c-protocol-implementer/g7-limits-remediation-001 and all prior G7 review authors; delivered APPROVED at defb3e03ee0d2b6fc3a59b2ed446b0509512362d
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
@@ -1614,3 +1611,11 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/verification/ready-delivery-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-limits-rereview-001.md
+  - at: 2026-09-20T02:04:04Z
+    actor: protocol-orchestrator/g7-limits-rereview-routing-001
+    event: "Verified the sole fresh independent protocol-test-engineer G7 delivery at remote git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d: required reviewer artifacts, declared independence, reviewer-only boundary, diff check, and exact origin readback. The designated reviewer recorded APPROVED for candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25 after independently verifying configured name-expansion and compression-pointer resource-limit terminal/no-result behavior. Recorded native_implementation, native_verification, and G7 APPROVED; closed the remediation handoff. G8/security remains CHANGES_REQUESTED; G9 and later stages remain unchanged and were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md
