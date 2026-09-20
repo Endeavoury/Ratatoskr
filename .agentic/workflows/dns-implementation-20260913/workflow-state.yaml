@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-19T21:41:43Z
+  updated_at: 2026-09-20T01:43:57Z
   scope_mode: implementation
 current_stage: native_verification
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: CHANGES_REQUESTED
+    status: READY_FOR_REVIEW
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: CHANGES_REQUESTED
+    status: IN_PROGRESS
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -1196,6 +1196,64 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/completion-report.md
+  - id: g7-limits-remediation-001
+    stage_id: native_implementation
+    role: c-protocol-implementer
+    status: READY_FOR_REVIEW
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-remediation-routing-001/delegations/c-protocol-implementer-g7-limits-remediation-001.md
+    agent_id: deleg_75f038be/task-0; corrective leaf delivery candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25 and artifact delivery git:3bb81004050ca860ce8d9572f4e834847daf5b96
+    allowed_paths:
+      - src/protocols/dns/dns_parser.c
+      - src/protocols/dns/dns_client.c
+      - src/protocols/dns/dns_internal.h
+      - src/protocols/dns/dns_transport_udp.c
+      - src/protocols/dns/dns_transport_tcp.c
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md (Resolution section only)
+    readonly_paths:
+      - include/ratatoskr/dns.h
+      - tests/
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all reviews and all other role workspaces
+      - all other repository paths
+    input_artifacts:
+      - G7 finding and return handoff delivery git:15d3fc3de3eb733aac7f04d07ba7da02ffe809bd
+      - historical configured-limits candidate git:a8d98b75e9c450734808d5a672a2023e83589fb0 and artifact delivery git:a424049521c97969c32ef37f026c63803224b146
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/completion-report.md
+  - id: g7-limits-rereview-001
+    stage_id: native_verification
+    role: protocol-test-engineer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-limits-rereview-001.md
+    agent_id: pending exactly one fresh independent protocol-test-engineer leaf; must be distinct from c-protocol-implementer/g7-limits-remediation-001 and all prior G7 review authors
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md (destination Resolution section only)
+    readonly_paths:
+      - all production code and headers
+      - tests/
+      - canonical vectors and all upstream truth
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all other role artifacts except the permitted Resolution section
+      - all G8/G9/later artifacts
+    input_artifacts:
+      - candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25; delivered at origin git:3bb81004050ca860ce8d9572f4e834847daf5b96
+      - remediation implementation/completion/handoff exactly named in delegation
+      - prior G7 finding/report exactly named in delegation, as stale context only
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1542,3 +1600,17 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/completion-report.md
+  - at: 2026-09-20T01:43:57Z
+    actor: protocol-orchestrator/g7-limits-remediation-routing-001
+    event: "Dispatched exactly one c-protocol-implementer leaf for DNS-G7-LIMITS-001 after re-verifying the historical G7 record, packet, baseline, remote ref, wrapper, and absence of live execution. Verified wrapper-delivered candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25 and artifact delivery git:3bb81004050ca860ce8d9572f4e834847daf5b96 at the exact origin ref. Candidate source delta is only dns_parser.c; artifact delta is only the leaf workspace plus permitted destination Resolution. The leaf is READY_FOR_REVIEW; G7/native verification and G8/security remain CHANGES_REQUESTED. No G7 review, G8 re-review, or later stage was dispatched or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-remediation-routing-001/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/completion-report.md
+  - at: 2026-09-20T01:58:04Z
+    actor: protocol-orchestrator/g7-limits-rereview-routing-001
+    event: "Verified READY_FOR_REVIEW DNS-G7-LIMITS-001 delivery candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25 and exact origin artifact delivery git:3bb81004050ca860ce8d9572f4e834847daf5b96 via the required wrapper. Recorded exactly one fresh independent protocol-test-engineer G7 review assignment IN_PROGRESS. G7 remains CHANGES_REQUESTED; G8, G9, and later stages are unchanged and not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/verification/ready-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-limits-rereview-001.md
