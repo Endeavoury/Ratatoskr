@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T09:05:00+02:00
+  updated_at: 2026-09-20T09:14:22+02:00
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -1340,6 +1340,29 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/api-design.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/completion-report.md
+  - id: g8-accounting-lifetime-review-001
+    stage_id: native_api_design
+    role: binding-api-designer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/delegations/binding-api-designer-g8-accounting-lifetime-review-001.md
+    agent_id: pending fresh independent binding-api-designer leaf; must be distinct from protocol-api-designer/g8-accounting-design-001
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
+    readonly_paths:
+      - all other repository paths, including workflow-root records, candidate-author artifacts, existing reviewer artifacts, public headers, source, tests, vectors, fuzzers, bindings, docs, and pre-existing untracked workspaces
+    input_artifacts:
+      - exact candidate api design, decision, handoff, and completion at git:4a37fc293c842b206190bad369e2a3e1ad00008c
+      - G8 reviewer delivery git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+      - implementation authority blocker delivery git:d46df3b86118ab0a7bda8aef6953ac26ec937164
+      - approved model git:f26745472178649a60f2cb079937d1bbe3f13c0b and prior G4 candidate git:e3c63fdb0766afc86d28fc32ec3071d1e7ec762c
+      - docs/abi.md and public declarations under include/ratatoskr/
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
 blocked_by:
   - id: DNS-G8-ACCOUNTING-AUTHORITY-001
     reason: The required safe replacement for the global DNS request tracker needs approved context-owned accounting and destruction semantics plus exact internal core write authority; the current DNS-only packet cannot safely realize it.
@@ -1743,3 +1766,9 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/api-design.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/handoffs/accounting-design-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/completion-report.md
+  - at: 2026-09-20T09:14:22+02:00
+    actor: protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001
+    event: "Recorded exactly one fresh independent binding-api-designer review assignment for the READY_FOR_REVIEW G8 accounting design candidate git:4a37fc293c842b206190bad369e2a3e1ad00008c. G4 remains CHANGES_REQUESTED and compatibility review remains separately mandatory; no compatibility review, implementation, G6 renewal, G7/G8, or later stage is routed or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/delegations/binding-api-designer-g8-accounting-lifetime-review-001.md
