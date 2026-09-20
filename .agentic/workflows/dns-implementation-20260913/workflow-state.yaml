@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T09:22:16+02:00
+  updated_at: 2026-09-20T14:52:26+02:00
   scope_mode: implementation
-current_stage: native_api_design
+current_stage: security
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -65,7 +65,7 @@ stages:
     gate: G3
   - id: native_api_design
     role: protocol-api-designer
-    status: READY_FOR_REVIEW
+    status: APPROVED
     depends_on: [modeling]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: BLOCKED
+    status: APPROVED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: APPROVED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -229,19 +229,15 @@ gates:
   - id: G4
     applicable: true
     rationale: Existing public C ABI requires designated independent binding-safety and compatibility evidence. The prior public-API approval remains evidence for its original candidate, but a new private context-ownership/lifecycle design candidate at git:4a37fc293c842b206190bad369e2a3e1ad00008c requires fresh scoped binding-lifetime and compatibility reviews before renewed implementation authority.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-routing-001/g4-closure-verification.md
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-g4-g6-implementation-routing-001/preflight-verification.md
     input_revisions:
-      - model-git:f26745472178649a60f2cb079937d1bbe3f13c0b
-      - model-sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
-      - analysis-git:5615caed0b7ad0a321d6794e71b79c4195e90384
-      - analysis-sha256:5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444
-      - candidate-git:e3c63fdb0766afc86d28fc32ec3071d1e7ec762c
-      - candidate-sha256:69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520
-      - binding-safety-rereview-002-remote-git:0f0eb9db033f4c26481a302df397184515dc60ad
-      - binding-safety-rereview-002-sha256:e5ead3b0fa6e966c50b4a3ed7e0999d4001bb4e1b497629252699673b3354bb8
-      - compatibility-rereview-001-remote-git:fe1f99c03ad32241909935947d8d3dfa641759b0
-      - compatibility-rereview-001-sha256:43d75a4c70432384b6ae3f3210add57c4292936a7dd7a1ce5707883c795c52b1
+      - accounting-design-git:4a37fc293c842b206190bad369e2a3e1ad00008c
+      - accounting-design-sha256:45206e6aaaaab1323af010eabe17e9ea2e19acac4c61ab5c73a8b21bd4c0b331
+      - binding-lifetime-review-git:e04fefa07e72427adc7ecbab339fef96bc04b3b7
+      - binding-lifetime-review-sha256:a1add54587bd3ad5823e5999b92413afa802065e570eb8fdf74bf2def472044f
+      - compatibility-review-002-git:aa2ebfaa8379d74a539ef95caf02d925f799d229
+      - compatibility-review-002-sha256:de4b368529cf6dfa3e59bed86b6f4c0e3e8401ad4bb0efa0c0ba19b7ff1b9eda
   - id: G5
     applicable: true
     rationale: Canonical vectors are required before implementation readiness. Administrative synthesis verified the immutable boundary-remediation candidate and both designated fresh independent APPROVED reviews.
@@ -256,29 +252,28 @@ gates:
   - id: G6
     applicable: true
     rationale: No native implementation work starts without G1-G5 approval. The prior G6 record remains historical evidence, but it is stale for the G8 accounting correction because the supplemental design and required core-internal paths were not in its approved candidate/write scope.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-g4-g6-implementation-routing-001/preflight-verification.md
     input_revisions:
-      - g1-record-sha256:8165b84902e8147f45c7f8983f9bc79e6000b565cbed82fa96666d1044732ac8
-      - g2-record-sha256:10eb209f071fb2c7f976590be4f732a59bd72120082b576a13b5805e87e12989
-      - model-git:f26745472178649a60f2cb079937d1bbe3f13c0b
-      - model-sha256:155eabcff91d1b062c509e3873dfbbc36f15be05df0f2d0506ca94635fab8700
-      - api-git:e3c63fdb0766afc86d28fc32ec3071d1e7ec762c
-      - api-sha256:69be123010e74dbaa9e1329178bc2cd37fa9b35e6de400bf8cb7db9a3a3ab520
-      - vector-git:b7d05411cacfeb07be9f6bfbc36f705efdd002c5
-      - vector-sha256:6950a88d55db12fc892fd39e72f84219bea6d5a81426ef4b73b4c9923232dcd6
+      - g4-accounting-synthesis:4a37fc293c842b206190bad369e2a3e1ad00008c
+      - binding-lifetime-review:e04fefa07e72427adc7ecbab339fef96bc04b3b7
+      - compatibility-review-002:aa2ebfaa8379d74a539ef95caf02d925f799d229
+      - implementation-baseline:685242c528517ec2e704c28a1f520ed4c1b76672
+      - authorized-private-paths:src/core/core_internal.h,src/core/context.c,src/protocols/dns/dns_internal.h,src/protocols/dns/dns_client.c
   - id: G7
     applicable: true
     rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 is approved for candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25, but that approval does not cover the new G8 corrective candidate required for DNS-G8-001 and DNS-G8-002.
-    status: IN_PROGRESS
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
     input_revisions:
       - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
       - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
       - fresh-independent-reviewer-assignment:deleg_c770b2ea/task-0
       - independent-review-delivery-git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
-      - accounting-candidate-git:c38a7fa
-      - accounting-routing-preflight:.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/preflight-verification.md
+      - accounting-candidate-git:c38a7faf937571de5f0eb64885b8e5c61e5b9175
+      - accounting-candidate-parent-git:62a2dda24194020904a75e1edce9b3d74fbd70a4
+      - accounting-independent-review-delivery-git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
+      - accounting-independent-review-disposition:APPROVED
   - id: G8
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
@@ -1365,12 +1360,41 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
+  - id: g8-accounting-compatibility-review-001
+    stage_id: native_api_design
+    role: compatibility-reviewer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-compatibility-review-routing-001/delegations/compatibility-reviewer-g8-accounting-compatibility-review-001.md
+    agent_id: "deleg_077e20d4/task-0; fresh independent compatibility-reviewer distinct from protocol-api-designer/g8-accounting-design-001 and binding-api-designer/g8-accounting-lifetime-review-001; actual runtime openai-codex/gpt-5.6-terra, reasoning unknown/unset; scoped disposition BLOCKED"
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/compatibility-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/reviews/g12-g4-g8-accounting-compatibility-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md (Resolution section only)
+    readonly_paths:
+      - workflow-root records
+      - candidate-author artifacts except read-only inputs
+      - all source, headers, tests, docs, vectors, fuzzers, bindings, build/workflow files, and all other role workspaces
+      - unrelated existing untracked workspaces
+      - all paths outside allowed_paths
+    input_artifacts:
+      - exact immutable candidate api design, decision, handoff, and completion at git:4a37fc293c842b206190bad369e2a3e1ad00008c
+      - fresh binding-lifetime scoped approval review at git:e04fefa07e72427adc7ecbab339fef96bc04b3b7
+      - docs/abi.md and public declarations under include/ratatoskr/ at baseline git:e804eb46f9aca14c4be6152e154a0b518f34c7fe
+      - workflow state, manifest, role skill and required shared contracts
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/compatibility-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/reviews/g12-g4-g8-accounting-compatibility-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/completion-report.md
   - id: g7-accounting-native-verification-001
     stage_id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-accounting-native-verification-routing-001/delegations/protocol-test-engineer-g7-accounting-native-verification-001.md
-    agent_id: pending fresh independent leaf dispatch; must be distinct from c-protocol-implementer/g8-accounting-implementation-001 and every prior G7 reviewer
+    agent_id: fresh independent protocol-test-engineer delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd; distinct from c-protocol-implementer/g8-accounting-implementation-001 and every prior G7 reviewer; technical disposition APPROVED
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/test-report.md
@@ -1401,6 +1425,27 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/completion-report.md
+  - id: g8-accounting-security-rereview-001
+    stage_id: security
+    role: security-reviewer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/delegations/security-reviewer-g8-accounting-security-rereview-001.md
+    agent_id: fresh independent direct CLI security-reviewer session required; route verified before dispatch as openai-codex/gpt-5.6-sol high; distinct from c-protocol-implementer/g8-accounting-implementation-001, all prior G7 reviewers, and security-reviewer/g8-limits-rereview-001
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - accounting corrective candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175
+      - approved independent G7 delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
+      - prior G8 findings DNS-G8-001 and DNS-G8-002 at delivery git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/completion-report.md
 blocked_by:
   - id: DNS-G8-ACCOUNTING-AUTHORITY-001
     reason: The required safe replacement for the global DNS request tracker needs approved context-owned accounting and destruction semantics plus exact internal core write authority; the current DNS-only packet cannot safely realize it.
@@ -1819,6 +1864,21 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/completion-report.md
+  - at: 2026-09-20T09:34:01+02:00
+    actor: protocol-orchestrator/g8-accounting-compatibility-review-routing-001
+    event: "Recorded exactly one fresh independent compatibility-reviewer assignment for immutable G8 accounting candidate git:4a37fc293c842b206190bad369e2a3e1ad00008c after verifying the separately mandatory fresh binding-lifetime approval delivery git:e04fefa07e72427adc7ecbab339fef96bc04b3b7. G4 remains CHANGES_REQUESTED; G6, implementation, G7/G8, and later stages remain unapproved and unrouted. The packet requires requested Sol/medium and an absolute git-agent wrapper verification; parent preflight found inherited Terra/unset reasoning and no accessible executable wrapper, so the leaf must record BLOCKED and stop if either is unavailable."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-compatibility-review-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-compatibility-review-routing-001/delegations/compatibility-reviewer-g8-accounting-compatibility-review-001.md
+  - at: 2026-09-20T09:39:21+02:00
+    actor: protocol-orchestrator/g8-accounting-compatibility-review-routing-001
+    event: "Verified the sole fresh compatibility-reviewer leaf's five required workspace artifacts, exact subject/baseline identifiers, explicit independence from the candidate author and binding-lifetime reviewer, and reviewer boundary: exactly the five permitted leaf files plus only the named binding-lifetime handoff Resolution section changed. `git diff --check` passed; existing unrelated untracked workspaces remain present. The leaf's actual scoped disposition is BLOCKED, not a technical approval or changes request: runtime was openai-codex/gpt-5.6-terra with reasoning unknown/unset rather than requested gpt-5.6-sol/medium, and no executable absolute git-agent wrapper was verified. No raw commit/push or remote delivery is claimed; origin ref remains e804eb46f9aca14c4be6152e154a0b518f34c7fe. G4 remains CHANGES_REQUESTED; G6, implementation, G7/G8, and later stages remain unrouted/unapproved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/compatibility-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/reviews/g12-g4-g8-accounting-compatibility-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/handoffs/g8-accounting-compatibility-blocked-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
   - at: 2026-09-20T14:15:37+02:00
     actor: protocol-orchestrator/g7-accounting-native-verification-routing-001
     event: "Administratively verified the G8 accounting implementation candidate at git:c38a7fa: required wrapper/origin/branch/current-ref, ancestry, parent boundary, diff check, prerequisite approvals, candidate artifacts, and absence of an active or pre-existing G7 accounting leaf workspace. Recorded exactly one fresh independent protocol-test-engineer G7 assignment IN_PROGRESS for this candidate. No technical G7 approval is asserted; G8, fuzzing, bindings, documentation, compatibility, and later stages were not routed."
@@ -1828,3 +1888,10 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/handoffs/g8-accounting-implementation-to-protocol-orchestrator.md
+  - at: 2026-09-20T14:52:26+02:00
+    actor: protocol-orchestrator/g8-accounting-security-rereview-routing-001
+    event: "Verified the fresh independent G7 accounting delivery at current HEAD and origin git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd for exact candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175. The designated G7 review is APPROVED, has a distinct reviewer identity, exact inputs, reviewer-only delivery boundary, and recorded check limitations. Administratively recorded native_implementation, native_verification, and G7 APPROVED from that review, not by technical self-approval. Verified a dedicated openai-codex/gpt-5.6-sol high session and routed exactly one fresh independent G8 accounting security re-review. Security/G8 remains CHANGES_REQUESTED pending the reviewer record; G9 and all other stages remain unrouted."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/verification/g7-accounting-evidence-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/delegations/security-reviewer-g8-accounting-security-rereview-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
