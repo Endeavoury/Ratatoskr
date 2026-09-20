@@ -34,4 +34,4 @@
 
 ## Resolution (destination)
 
-Pending protocol-orchestrator verification and separately mandatory compatibility review.
+Fresh `compatibility-reviewer/g8-accounting-compatibility-review-002` reviewed the same exact subject `git:4a37fc293c842b206190bad369e2a3e1ad00008c` against baseline `git:e804eb46f9aca14c4be6152e154a0b518f34c7fe` and recorded scoped `APPROVED`. The live runtime was explicitly `openai-codex/gpt-5.6-sol` with `medium` reasoning. See `.agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g8-accounting-compatibility-review-002/{compatibility-report.md,reviews/g12-g4-g8-accounting-compatibility-review.md,completion-report.md}`. This resolves the fresh compatibility-review prerequisite only; it does not close G4, renew G6, authorize implementation, or approve G7/G8/later work. `protocol-orchestrator` must verify both scoped review deliveries and perform any permitted synthesis.
