@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T14:52:26+02:00
+  updated_at: 2026-09-20T15:35:00+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: APPROVED
+    status: CHANGES_REQUESTED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: APPROVED
+    status: CHANGES_REQUESTED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -135,8 +135,13 @@ stages:
     role: security-reviewer
     status: CHANGES_REQUESTED
     depends_on: [native_verification]
-    input_artifacts: []
-    output_artifacts: []
+    input_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
+    output_artifacts:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
     gate: G8
   - id: fuzzing
     role: fuzz-engineer
@@ -262,8 +267,8 @@ gates:
       - authorized-private-paths:src/core/core_internal.h,src/core/context.c,src/protocols/dns/dns_internal.h,src/protocols/dns/dns_client.c
   - id: G7
     applicable: true
-    rationale: Fresh independent G7 review of DNS-G7-LIMITS-001 is approved for candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25, but that approval does not cover the new G8 corrective candidate required for DNS-G8-001 and DNS-G8-002.
-    status: APPROVED
+    rationale: Fresh independent G7 approved accounting/lifecycle candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175 at delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd, but completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 leaves blocking DNS-G8-001 implementation defects. Any corrective candidate requires a fresh independent G7 review, so G7 is CHANGES_REQUESTED for the active remediation route.
+    status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
     input_revisions:
       - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
@@ -276,16 +281,18 @@ gates:
       - accounting-independent-review-disposition:APPROVED
   - id: G8
     applicable: true
-    rationale: DNS hostile-input and network behavior requires security review.
+    rationale: Completed fresh G8 re-review of candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175 resolved DNS-G8-002 but left DNS-G8-001 blocking across configured resource disposition, hard/effective guard ordering, enforceable traversal configuration, and synchronous oversized UDP detection.
     status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
+    record: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
     input_revisions:
-      - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
-      - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
-      - approved-g7-review-delivery-git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
-      - prior-security-review-delivery-git:90a02df18522b6c311e236dc03c82583971c7511
-      - fresh-independent-security-reviewer-session:20260920_043221_83f7e6
-      - security-rereview-delivery-git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+      - accounting-candidate-git:c38a7faf937571de5f0eb64885b8e5c61e5b9175
+      - fresh-approved-g7-delivery-git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
+      - prior-security-rereview-delivery-git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+      - fresh-independent-security-reviewer-session:20260920_145846_deae3c
+      - completed-security-rereview-delivery-git:1d33a8155dc6bcd3be16689d8aa134044b4449b0
+      - disposition:CHANGES_REQUESTED
+      - resolved-finding:DNS-G8-002
+      - blocking-finding:DNS-G8-001
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
@@ -1428,9 +1435,9 @@ assignments:
   - id: g8-accounting-security-rereview-001
     stage_id: security
     role: security-reviewer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/delegations/security-reviewer-g8-accounting-security-rereview-001.md
-    agent_id: fresh independent direct CLI security-reviewer session required; route verified before dispatch as openai-codex/gpt-5.6-sol high; distinct from c-protocol-implementer/g8-accounting-implementation-001, all prior G7 reviewers, and security-reviewer/g8-limits-rereview-001
+    agent_id: direct Hermes CLI session 20260920_145846_deae3c; fresh independent security-reviewer; verified openai-codex/gpt-5.6-sol high; delivered CHANGES_REQUESTED at 1d33a8155dc6bcd3be16689d8aa134044b4449b0
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/security-review.md
@@ -1446,11 +1453,43 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/security-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/completion-report.md
+  - id: g8-configured-limits-remediation-001
+    stage_id: native_implementation
+    role: c-protocol-implementer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-002/delegations/c-protocol-implementer-g8-configured-limits-remediation-001.md
+    agent_id: pending exactly one fresh leaf; parent preflight observed inherited Terra/unset reasoning, so leaf must verify openai-codex/gpt-5.6-sol high before substantive work
+    allowed_paths:
+      - src/protocols/dns/dns_parser.c
+      - src/protocols/dns/dns_transport_udp.c
+      - src/protocols/dns/dns_client.c
+      - src/protocols/dns/dns_internal.h
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md (Resolution section only)
+    readonly_paths:
+      - all tests and test registration
+      - all public headers, core source, approved truth, build files, reviews, and workflow-root records
+      - all other role workspaces except the permitted Resolution section
+      - all other repository paths
+    input_artifacts:
+      - accounting corrective candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175
+      - fresh approved G7 delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
+      - completed G8 CHANGES_REQUESTED delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0
+      - prior G8 finding delivery git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-001/completion-report.md
 blocked_by:
-  - id: DNS-G8-ACCOUNTING-AUTHORITY-001
-    reason: The required safe replacement for the global DNS request tracker needs approved context-owned accounting and destruction semantics plus exact internal core write authority; the current DNS-only packet cannot safely realize it.
-    owner_role: protocol-api-designer
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md
+  - id: DNS-G8-001
+    reason: Configured parser resource disposition and synchronous oversized-UDP admission remain incomplete for candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175; completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 requires an implementation correction followed by fresh independent G7 and G8 reviews.
+    owner_role: c-protocol-implementer
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
@@ -1469,6 +1508,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
   - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
+  - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
 history:
   - at: 2026-09-13T17:21:47Z
     actor: protocol-orchestrator/intake-001
@@ -1895,3 +1935,11 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/verification/g7-accounting-evidence-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-security-rereview-routing-001/delegations/security-reviewer-g8-accounting-security-rereview-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
+  - at: 2026-09-20T15:24:50+02:00
+    actor: protocol-orchestrator/g8-configured-limits-remediation-routing-001
+    event: "Verified completed fresh G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 and recorded its CHANGES_REQUESTED disposition faithfully: DNS-G8-002 is resolved for candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175 while DNS-G8-001 remains blocking. Marked the completed G8 leaf COMPLETE; native implementation/native verification, G7, security, and G8 are CHANGES_REQUESTED for the required correction and fresh reviews. Recorded exactly one c-protocol-implementer assignment IN_PROGRESS on verified openai-codex/gpt-5.6-sol high. No G7, G8, G9, or later review route is authorized."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-001/state-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-001/delegations/c-protocol-implementer-g8-configured-limits-remediation-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/reviews/g8-accounting-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
