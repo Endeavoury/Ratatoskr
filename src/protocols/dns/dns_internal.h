@@ -68,6 +68,8 @@ struct ratos_dns_request {
     uint8_t upstream_address[16];
     ratos_dns_limits limits;
     struct ratos_dns_request *next_context_request;
+    uint8_t outstanding_slot_held;
+    uint8_t tcp_connection_slot_held;
     uint8_t prefix[2]; size_t prefix_used;
     uint8_t *frame; size_t frame_length; size_t frame_used;
     ratos_dns_result *result;
