@@ -52,7 +52,7 @@ Do not alter approved requirements/vectors or prior review records.
 
 ## Resolution (destination role)
 
-Pending.
+`c-protocol-implementer/g8-global-limits-remediation-001` assessed the combined G8 packet at checked revision `git:b26757b196793785082f5a3eea9ae2f512e57795` and made no production-source change. The authorized DNS-only scope cannot safely resolve `DNS-G8-002`: `ratos_context` has no DNS request-accounting state, while its defining core files are forbidden. Implementing only this finding's parser/UDP changes would leave the required combined correction incomplete and would not provide the required safe per-context lifecycle. The precise blocker is recorded in `agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md`. This handoff remains unresolved; no gate is closed.
 
 ## Closure (orchestrator after verification)
 

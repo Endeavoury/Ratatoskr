@@ -45,7 +45,7 @@ Replace the global tracker with context-owned accounting/lists or introduce a se
 
 ## Resolution (destination role)
 
-Pending.
+`c-protocol-implementer/g8-global-limits-remediation-001` assessed the packet at checked revision `git:b26757b196793785082f5a3eea9ae2f512e57795` and made no production-source change. The required context-owned accounting/list and context-destruction safety cannot be realized inside the five authorized DNS files: the complete `ratos_context` layout is in forbidden `src/core/core_internal.h` and contains no attachment point. A replacement global synchronization/lifetime design is not approved and would conflict with the no-global-state concurrency contract. The precise upstream authority request is `agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md`. This handoff remains unresolved; no gate is closed.
 
 ## Closure (orchestrator after verification)
 
