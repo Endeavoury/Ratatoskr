@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T02:13:25Z
+  updated_at: 2026-09-20T04:45:08+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -281,12 +281,14 @@ gates:
     applicable: true
     rationale: DNS hostile-input and network behavior requires security review.
     status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/reviews/g8-security-review.md
+    record: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
     input_revisions:
-      - corrective-implementation-delivery-git:4b801fbdf782c4aca4c6427ad930a48cb5e029ee
-      - corrective-source-sha256:6eb4165fa6507289e9008490745f8066cf7e2da226691f917898008848f4aa88
-      - independent-security-reviewer-assignment:deleg_661ae1a2/task-0
-      - security-review-delivery-git:90a02df18522b6c311e236dc03c82583971c7511
+      - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
+      - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
+      - approved-g7-review-delivery-git:defb3e03ee0d2b6fc3a59b2ed446b0509512362d
+      - prior-security-review-delivery-git:90a02df18522b6c311e236dc03c82583971c7511
+      - fresh-independent-security-reviewer-session:20260920_043221_83f7e6
+      - security-rereview-delivery-git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
@@ -1254,9 +1256,9 @@ assignments:
   - id: g8-limits-rereview-001
     stage_id: security
     role: security-reviewer
-    status: BLOCKED
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/delegations/security-reviewer-g8-limits-rereview-001.md
-    agent_id: not dispatched; required openai-codex/gpt-5.6-sol high route unavailable (current inherited route gpt-5.6-terra; agent.reasoning_effort unset)
+    agent_id: direct Hermes CLI session 20260920_043221_83f7e6; fresh independent security-reviewer; requested/recorded current-session route openai-codex/gpt-5.6-sol high; delivered CHANGES_REQUESTED at 844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/security-review.md
@@ -1654,3 +1656,12 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/delegations/security-reviewer-g8-limits-rereview-001.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/completion-report.md
+  - at: 2026-09-20T04:45:08+02:00
+    actor: protocol-orchestrator/g8-limits-rereview-dispatch-001
+    event: "Verified the sole fresh direct-CLI security-reviewer delivery at remote git:844cc88ad3f57f3c70c5d3cab7dd80b4a05d794f. Leaf artifacts record openai-codex/gpt-5.6-sol with high reasoning; candidate/delivery/G7 ancestry, reviewer-only six-file boundary, diff check, and exact origin readback were independently verified. The designated reviewer recorded CHANGES_REQUESTED for blocking DNS-G8-001 and DNS-G8-002. Security/G8 remain CHANGES_REQUESTED; G9 and later stages were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-dispatch-001/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-incomplete.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-002-global-request-tracker-race.md
