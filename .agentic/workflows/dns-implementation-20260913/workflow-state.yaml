@@ -65,7 +65,7 @@ stages:
     gate: G3
   - id: native_api_design
     role: protocol-api-designer
-    status: APPROVED
+    status: READY_FOR_REVIEW
     depends_on: [modeling]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g3-disposition-partition-001/protocol-model.yaml
@@ -228,8 +228,8 @@ gates:
       - reviewer-delivery-git:865fa190ee19e041c5ddfab8279b49829baaa240
   - id: G4
     applicable: true
-    rationale: Existing public C ABI requires designated independent binding-safety and compatibility evidence. The protocol-orchestrator verified the approved G3 prerequisite, immutable corrective candidate, fresh scoped binding-safety rereview, and fresh scoped compatibility rereview before administrative synthesis.
-    status: APPROVED
+    rationale: Existing public C ABI requires designated independent binding-safety and compatibility evidence. The prior public-API approval remains evidence for its original candidate, but a new private context-ownership/lifecycle design candidate at git:4a37fc293c842b206190bad369e2a3e1ad00008c requires fresh scoped binding-lifetime and compatibility reviews before renewed implementation authority.
+    status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g5-vector-routing-001/g4-closure-verification.md
     input_revisions:
       - model-git:f26745472178649a60f2cb079937d1bbe3f13c0b
@@ -255,8 +255,8 @@ gates:
       - boundary-interpretation-review-001-remote-git:8008c874ca04cec2c55a52745012176a775175fa
   - id: G6
     applicable: true
-    rationale: No native implementation work starts without G1-G5 approval.
-    status: APPROVED
+    rationale: No native implementation work starts without G1-G5 approval. The prior G6 record remains historical evidence, but it is stale for the G8 accounting correction because the supplemental design and required core-internal paths were not in its approved candidate/write scope.
+    status: CHANGES_REQUESTED
     record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
     input_revisions:
       - g1-record-sha256:8165b84902e8147f45c7f8983f9bc79e6000b565cbed82fa96666d1044732ac8
@@ -1313,9 +1313,9 @@ assignments:
   - id: g8-accounting-design-001
     stage_id: native_api_design
     role: protocol-api-designer
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-design-routing-001/delegations/protocol-api-designer-g8-accounting-design-001.md
-    agent_id: pending direct Hermes Sol/medium leaf; distinct from all prior API-design and security-review assignments
+    agent_id: direct Hermes leaf session 20260920_085757_8e1f9b; requested/observed openai-codex/gpt-5.6-sol; delivery remote git:4a37fc293c842b206190bad369e2a3e1ad00008c; fresh design author distinct from prior API-design and security-review assignments
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/api-design.md
@@ -1735,3 +1735,11 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/completion-report.md
+  - at: 2026-09-20T09:05:00+02:00
+    actor: protocol-orchestrator/g8-accounting-design-routing-001
+    event: "No live specialist execution existed. Routed exactly one fresh protocol-api-designer Sol/medium leaf for the G8 context-owned accounting/lifetime authority gap. Verified its READY_FOR_REVIEW design delivery at remote git:4a37fc293c842b206190bad369e2a3e1ad00008c: six permitted design/handoff paths only, exact remote readback, and diff check. The candidate requires fresh independent binding-lifetime and compatibility reviews before renewed G6; implementation, G7/G8, G9, and later stages were not routed or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-design-routing-001/delegations/protocol-api-designer-g8-accounting-design-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/handoffs/accounting-design-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/completion-report.md
