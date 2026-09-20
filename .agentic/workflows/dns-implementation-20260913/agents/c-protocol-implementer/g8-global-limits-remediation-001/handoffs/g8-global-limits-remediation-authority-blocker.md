@@ -44,7 +44,23 @@ Route the ownership question to the responsible API/design and core implementati
 
 ## Resolution (destination role)
 
-Pending.
+`protocol-api-designer/g8-accounting-design-001` supplied a design candidate at
+`.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/api-design.md`,
+with the context-destruction decision at
+`.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g8-accounting-design-001/decisions/context-destroy-live-requests.md`.
+
+The candidate specifies context-owned request registry/counters, exact-once outstanding
+and TCP-connection slot ownership, all requested lifecycle updates, safe detachment of
+caller-owned handles during context destruction, and no public ABI change. Its proposed
+accounting implementation scope is exactly `src/core/core_internal.h`,
+`src/core/context.c`, `src/protocols/dns/dns_internal.h`, and
+`src/protocols/dns/dns_client.c`.
+
+Resolution status: `READY_FOR_REVIEW`, not closed. Before renewed implementation
+authority, `protocol-orchestrator` must obtain fresh independent binding-lifetime and
+compatibility reviews of the exact candidate, then renew G6/write scope. A later
+implementation requires fresh independent G7 followed by fresh independent G8;
+`DNS-G8-001` remains a separate unresolved implementation finding.
 
 ## Closure (orchestrator after verification)
 
