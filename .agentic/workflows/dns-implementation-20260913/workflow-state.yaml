@@ -10,9 +10,9 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T01:43:57Z
+  updated_at: 2026-09-20T02:13:25Z
   scope_mode: implementation
-current_stage: native_verification
+current_stage: security
 active_role: protocol-orchestrator
 stages:
   - id: request
@@ -1251,6 +1251,34 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/completion-report.md
+  - id: g8-limits-rereview-001
+    stage_id: security
+    role: security-reviewer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/delegations/security-reviewer-g8-limits-rereview-001.md
+    agent_id: not dispatched; required openai-codex/gpt-5.6-sol high route unavailable (current inherited route gpt-5.6-terra; agent.reasoning_effort unset)
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/completion-report.md
+    readonly_paths:
+      - all production code, headers, tests, fuzz, bindings, docs, vectors, and build configuration
+      - all prior role artifacts, reviews, and handoffs
+      - .agentic/workflows/dns-implementation-20260913/{request.md,manifest.yaml,workflow-state.yaml}
+      - all other repository paths
+    input_artifacts:
+      - remediation candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25; author-artifact delivery git:3bb81004050ca860ce8d9572f4e834847daf5b96
+      - approved G7 review .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/reviews/g7-limits-rereview.md
+      - prior G8 reviewer record/security report/handoff at security-reviewer/g8-security-review-001 delivery git:90a02df18522b6c311e236dc03c82583971c7511
+      - approved upstream requirements/model/API/vectors exactly named in workflow state and the existing G8 packet
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1619,3 +1647,10 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/test-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-limits-rereview-001/completion-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/handoffs/dns-g7-limits-001-remediation-to-protocol-orchestrator.md
+  - at: 2026-09-20T02:13:25Z
+    actor: protocol-orchestrator/g8-limits-rereview-routing-001
+    event: "Verified the fresh G7 APPROVED record, DNS-G8-001 remediation candidate git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25, author-artifact delivery git:3bb81004050ca860ce8d9572f4e834847daf5b96, prior G8 CHANGES_REQUESTED record, candidate/delivery ancestry, branch/origin ref, and required wrapper. Created and will deliver one complete durable G8 security-reviewer packet, but did not dispatch a leaf: security-reviewer policy requires openai-codex/gpt-5.6-sol with high reasoning while the current delegation route inherits gpt-5.6-terra and agent.reasoning_effort is unset. G8/security remains CHANGES_REQUESTED; G9 and later stages remain NOT_STARTED and were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/delegations/security-reviewer-g8-limits-rereview-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-limits-rereview-routing-001/completion-report.md
