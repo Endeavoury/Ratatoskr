@@ -77,7 +77,9 @@ ratos_error ratos_dns_effective_limits(const ratos_dns_limits *configured,
         || effective->max_compression_pointer_traversals == 0u || effective->max_typed_field_bytes == 0u
         || effective->max_outstanding_requests == 0u || effective->max_connections == 0u
         || effective->max_udp_message_bytes > RATOS_DNS_MAX_PACKET || effective->max_tcp_frame_bytes > RATOS_DNS_MAX_PACKET
-        || effective->max_total_rrs > RATOS_DNS_MAX_RECORDS || effective->max_connections > effective->max_outstanding_requests)
+        || effective->max_total_rrs > RATOS_DNS_MAX_RECORDS
+        || effective->max_compression_pointer_traversals > RATOS_DNS_MAX_COMPRESSION_POINTER_TRAVERSALS
+        || effective->max_connections > effective->max_outstanding_requests)
         return RATOS_ERROR_INVALID_ARGUMENT;
     return RATOS_OK;
 }

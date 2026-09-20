@@ -16,6 +16,7 @@ typedef int ratos_socklen;
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <sys/uio.h>
 #include <unistd.h>
 typedef int ratos_socket;
 typedef socklen_t ratos_socklen;
@@ -92,8 +93,27 @@ ratos_error ratos_dns_udp_exchange(ratos_context *ctx, const char *server,
         if (buffer == NULL) { ratos_close_socket(socket_handle); final_error = RATOS_ERROR_OUT_OF_MEMORY; break; }
 #ifdef _WIN32
         received = recv(socket_handle, (char *)buffer, (int)limits->max_udp_message_bytes, 0);
+        if (received == SOCKET_ERROR && WSAGetLastError() == WSAEMSGSIZE) {
+            free(buffer); ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();
+            ratos_set_error(ctx, "DNS UDP response exceeds configured message limit");
+            return RATOS_ERROR_OUT_OF_MEMORY;
+        }
 #else
-        received = (int)recv(socket_handle, buffer, limits->max_udp_message_bytes, 0);
+        {
+            struct iovec vector;
+            struct msghdr message;
+            memset(&message, 0, sizeof(message));
+            vector.iov_base = buffer;
+            vector.iov_len = limits->max_udp_message_bytes;
+            message.msg_iov = &vector;
+            message.msg_iovlen = 1u;
+            received = (int)recvmsg(socket_handle, &message, 0);
+            if (received >= 0 && (message.msg_flags & MSG_TRUNC) != 0) {
+                free(buffer); ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();
+                ratos_set_error(ctx, "DNS UDP response exceeds configured message limit");
+                return RATOS_ERROR_OUT_OF_MEMORY;
+            }
+        }
 #endif
         if (received > 0) {
             ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();

@@ -94,8 +94,10 @@ static ratos_error read_name(dns_reader *reader, char **name) {
             size_t location = cursor - 1u;
             if (cursor >= reader->length) goto malformed;
             pointer = ((size_t)(label_length & 0x3fu) << 8) | reader->data[cursor++];
-            if (pointer >= reader->length || pointer >= location || hops++ >= 128u) goto malformed;
+            if (pointer >= reader->length || pointer >= location) goto malformed;
             if (reader->compression_pointer_traversals >= reader->limits->max_compression_pointer_traversals) goto resource_limit;
+            if (hops >= RATOS_DNS_MAX_COMPRESSION_POINTER_TRAVERSALS) goto malformed;
+            ++hops;
             ++reader->compression_pointer_traversals;
             if ((visited[pointer / 8u] & (uint8_t)(1u << (pointer % 8u))) != 0u) goto malformed;
             visited[pointer / 8u] |= (uint8_t)(1u << (pointer % 8u));
@@ -371,8 +373,10 @@ static ratos_error read_records(dns_reader *reader, uint16_t count, ratos_dns_se
         size_t end;
         ratos_error error;
         record->section = section;
-        if (read_name(reader, &record->name) != RATOS_OK || read_u16(reader, &record->type) != RATOS_OK
-            || read_u16(reader, &class_code) != RATOS_OK || read_u32(reader, &record->ttl) != RATOS_OK
+        error = read_name(reader, &record->name);
+        if (error != RATOS_OK) return error;
+        if (read_u16(reader, &record->type) != RATOS_OK || read_u16(reader, &class_code) != RATOS_OK
+            || read_u32(reader, &record->ttl) != RATOS_OK
             || read_u16(reader, &rdlength) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
         if (record->type == 41u) { ratos_set_error(reader->ctx, "OPT/EDNS is unsupported"); return RATOS_ERROR_UNSUPPORTED; }
         (void)class_code;
@@ -416,8 +420,8 @@ ratos_error ratos_dns_parse_response_limited(ratos_context *ctx, const uint8_t *
     if ((flags & 0x8000u) == 0u || (flags & 0x0040u) != 0u || (flags & 0x7800u) != 0u) { ratos_set_error(ctx, "Invalid DNS response flags or opcode"); return RATOS_ERROR_PROTOCOL; }
     if (qd != 1u) { ratos_set_error(ctx, "DNS response must echo exactly one question"); return RATOS_ERROR_PROTOCOL; }
     total = (size_t)an + ns + ar;
-    if (total > RATOS_DNS_MAX_RECORDS) { ratos_set_error(ctx, "DNS response exceeds implementation record limit"); return RATOS_ERROR_PROTOCOL; }
     if (total > limits->max_total_rrs) { ratos_set_error(ctx, "DNS response exceeds configured record limit"); return RATOS_ERROR_OUT_OF_MEMORY; }
+    if (total > RATOS_DNS_MAX_RECORDS) { ratos_set_error(ctx, "DNS response exceeds implementation record limit"); return RATOS_ERROR_PROTOCOL; }
     error = read_name(&reader, &question);
     if (error != RATOS_OK) goto cleanup;
     if (read_u16(&reader, &qtype) != RATOS_OK || read_u16(&reader, &qclass) != RATOS_OK) goto cleanup;
