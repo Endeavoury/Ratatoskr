@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T09:14:22+02:00
+  updated_at: 2026-09-20T09:22:16+02:00
   scope_mode: implementation
 current_stage: native_api_design
 active_role: protocol-orchestrator
@@ -1343,9 +1343,9 @@ assignments:
   - id: g8-accounting-lifetime-review-001
     stage_id: native_api_design
     role: binding-api-designer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/delegations/binding-api-designer-g8-accounting-lifetime-review-001.md
-    agent_id: pending fresh independent binding-api-designer leaf; must be distinct from protocol-api-designer/g8-accounting-design-001
+    agent_id: "deleg_8efb9cd3/task-0; fresh independent binding-api-designer distinct from protocol-api-designer/g8-accounting-design-001; reviewer delivery remote git:e04fefa07e72427adc7ecbab339fef96bc04b3b7; scoped technical disposition: APPROVED"
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
@@ -1772,3 +1772,12 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/delegations/binding-api-designer-g8-accounting-lifetime-review-001.md
+  - at: 2026-09-20T09:22:16+02:00
+    actor: protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001
+    event: "Verified exactly one fresh independent binding-api-designer delivery at remote git:e04fefa07e72427adc7ecbab339fef96bc04b3b7 for immutable candidate git:4a37fc293c842b206190bad369e2a3e1ad00008c. Required artifacts exist; reviewer declared independence from protocol-api-designer/g8-accounting-design-001; reviewer-only four-file diff and diff check are clean; subject/delivery ancestry and exact origin readback match. Recorded only the designated scoped APPROVED lifetime/representability disposition. G4 remains CHANGES_REQUESTED and compatibility review remains mandatory; no compatibility route, implementation, G6 renewal, G7/G8, or later stage was routed or approved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/reviews/g4-g8-accounting-binding-lifetime-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/handoffs/g8-accounting-binding-lifetime-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g8-accounting-lifetime-review-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-accounting-binding-lifetime-review-routing-001/completion-report.md
