@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T08:42:15+02:00
+  updated_at: 2026-09-20T08:47:00+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: BLOCKED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -1284,9 +1284,9 @@ assignments:
   - id: g8-global-limits-remediation-001
     stage_id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-global-limits-remediation-routing-001/delegations/c-protocol-implementer-g8-global-limits-remediation-001.md
-    agent_id: pending fresh corrective leaf; must remain independent of security-reviewer/g8-limits-rereview-001
+    agent_id: deleg_cc92b541/task-0; fresh corrective leaf distinct from security-reviewer/g8-limits-rereview-001; delivered BLOCKED at d46df3b86118ab0a7bda8aef6953ac26ec937164
     allowed_paths:
       - src/protocols/dns/dns_client.c
       - src/protocols/dns/dns_parser.c
@@ -1311,6 +1311,10 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/completion-report.md
 blocked_by:
+  - id: DNS-G8-ACCOUNTING-AUTHORITY-001
+    reason: The required safe replacement for the global DNS request tracker needs approved context-owned accounting and destruction semantics plus exact internal core write authority; the current DNS-only packet cannot safely realize it.
+    owner_role: protocol-api-designer
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
@@ -1694,3 +1698,10 @@ history:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/reviews/g8-limits-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-incomplete.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-limits-rereview-001/handoffs/dns-g8-002-global-request-tracker-race.md
+  - at: 2026-09-20T08:47:00+02:00
+    actor: protocol-orchestrator/g8-global-limits-remediation-routing-001
+    event: "Verified the single fresh c-protocol-implementer leaf delivery at remote git:d46df3b86118ab0a7bda8aef6953ac26ec937164. Its delivery is confined to its three owned artifacts and permitted Resolution sections. The leaf made no production change and recorded BLOCKED: the DNS-only packet cannot safely replace the unsynchronized global request list without an approved context-owned accounting/destruction design and exact core-internal write authority. Native implementation is BLOCKED; G7/native verification and G8/security remain CHANGES_REQUESTED; G9 and later stages remain unstarted."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/implementation-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/handoffs/g8-global-limits-remediation-authority-blocker.md
+      - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-global-limits-remediation-001/completion-report.md
