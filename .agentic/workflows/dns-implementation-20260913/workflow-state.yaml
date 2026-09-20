@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-20T15:35:00+02:00
+  updated_at: 2026-09-20T15:38:00+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: CHANGES_REQUESTED
+    status: BLOCKED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -1456,9 +1456,9 @@ assignments:
   - id: g8-configured-limits-remediation-001
     stage_id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-002/delegations/c-protocol-implementer-g8-configured-limits-remediation-001.md
-    agent_id: pending exactly one fresh leaf; parent preflight observed inherited Terra/unset reasoning, so leaf must verify openai-codex/gpt-5.6-sol high before substantive work
+    agent_id: deleg_5d57b750/task-0; stopped BLOCKED before substantive work because actual route was openai-codex/gpt-5.6-terra rather than required openai-codex/gpt-5.6-sol high; no leaf artifacts or source changes
     allowed_paths:
       - src/protocols/dns/dns_parser.c
       - src/protocols/dns/dns_transport_udp.c
