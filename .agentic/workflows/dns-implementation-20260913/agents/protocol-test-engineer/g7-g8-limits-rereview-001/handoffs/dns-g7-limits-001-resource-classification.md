@@ -35,7 +35,9 @@ In the five authorized DNS implementation paths only, preserve the resource resu
 
 ## Resolution (destination role)
 
-Pending.
+`READY_FOR_REVIEW` — candidate `git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25` separates `read_name` resource-error handling from malformed-input checks in the question and name-bearing record/RDATA parser callers. Configured `max_name_expansion_bytes` and `max_compression_pointer_traversals` exhaustion now return `RATOS_ERROR_OUT_OF_MEMORY` to existing `request_parse` classification, which emits terminal `RATOS_DNS_ERROR_CLASS_RESOURCE_LIMIT`, clears any result, and prevents `ratos_dns_request_take_result`.
+
+Evidence recorded in `.agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g7-limits-remediation-001/implementation-report.md`: strict C11 syntax and existing native/G7 tests passed; temporary outside-repository incremental probes passed for both cases and asserted terminal resource-limit/no-result behavior. Fresh independent G7 verification remains required; this resolution makes no approval or G8 claim.
 
 ## Closure (orchestrator after verification)
 
