@@ -133,7 +133,7 @@ stages:
     gate: G7
   - id: security
     role: security-reviewer
-    status: CHANGES_REQUESTED
+    status: IN_PROGRESS
     depends_on: [native_verification]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-accounting-implementation-001/implementation-report.md
@@ -1647,6 +1647,38 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
   - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
+  - id: g8-configured-limits-security-rereview-001
+    stage_id: security
+    role: security-reviewer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-security-rereview-routing-001/delegations/security-reviewer-g8-configured-limits-security-rereview-001.md
+    agent_id: fresh direct Hermes CLI leaf requested; must evidence openai-codex/gpt-5.6-sol/high and be independent of c-protocol-implementer/g8-configured-limits-remediation-002 and all prior G8 reviewers
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/completion-report.md
+    readonly_paths:
+      - all production source and headers
+      - tests/
+      - vectors/
+      - fuzz/
+      - bindings/
+      - docs/
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all other agent artifacts except read-only evidence
+      - all other repository paths
+    input_artifacts:
+      - configured-limits candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f
+      - approved G7 record agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md at reviewer delivery git:510b5a131bcb3272caeb7eb1821444b35644cfcd and remote reflection git:7720bfe2bf96020fa0f84ccf2d6bbb52247c510d
+      - candidate implementation/completion/return handoff at c-protocol-implementer/g8-configured-limits-remediation-002/
+      - prior G8 security report and unresolved DNS-G8-001 handoff at security-reviewer/g8-accounting-security-rereview-001/
+      - approved G1-G6 inputs referenced by workflow state
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/security-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/completion-report.md
 history:
   - at: 2026-09-26T13:48:00+02:00
     actor: protocol-orchestrator/g7-configured-limits-rereview-routing-003
