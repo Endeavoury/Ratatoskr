@@ -8,7 +8,7 @@
 | Target | `protocol/dns` |
 | Owner role | `protocol-orchestrator/g9-post-fuzz-blocker-routing-001` |
 | Status | `BLOCKED` |
-| Revision | Pre-delivery baseline `git:5bac8c1e9771ac9281b6b696da98efe718efc27f`; evidence delivery `git:4fe0e9417b659759786c41cb6707d15077111b15` |
+| Revision | Pre-delivery baseline `git:5bac8c1e9771ac9281b6b696da98efe718efc27f`; evidence delivery `git:4fe0e9417b659759786c41cb6707d15077111b15`; state/coordination delivery `git:86d686ec8b7462150f95a179503beb22bd2ca96e` |
 | Source artifacts | Current workflow state; G9 packet; delivered fuzz-engineer artifacts |
 | Assumptions | None. |
 | Open questions | Environment maintainer ownership and provisioning completion. |
@@ -51,7 +51,8 @@ WORKING DIRECTORIES:
 
 VALIDATION EVIDENCE:
 - Verified G7/G8 remain approved and G9 was the active stage.
-- Verified local/remote baseline, remote absence of the untracked fuzz artifacts, five-file wrapper delivery boundary, clean cached diff, and exact remote readback `4fe0e9417b659759786c41cb6707d15077111b15`.
+- Verified local/remote baseline, remote absence of the untracked fuzz artifacts, five-file wrapper delivery boundary, clean cached diff, and exact evidence-delivery remote readback `4fe0e9417b659759786c41cb6707d15077111b15`.
+- Verified the state/coordination delivery at `86d686ec8b7462150f95a179503beb22bd2ca96e`: remote `workflow-state.yaml` contains workflow, fuzzing, G9, and assignment `BLOCKED` plus `DNS-G9-FUZZ-TOOLCHAIN-001` owned by `environment maintainer`.
 - Reviewed the specialist result and handoff; no campaign, sanitizer, coverage, finding, or G9 review is claimed.
 
 MODEL / REASONING USED:
