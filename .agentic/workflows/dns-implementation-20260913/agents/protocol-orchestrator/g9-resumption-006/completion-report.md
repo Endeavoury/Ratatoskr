@@ -1,60 +1,63 @@
-# Specialist completion
+# Specialist completion report
 
 | Metadata | Value |
 | --- | --- |
 | Template version | 1 |
-| Artifact ID | `dns-implementation-20260913-g9-resumption-006-completion` |
+| Artifact ID | `dns-implementation-20260913-protocol-orchestrator-g9-resumption-006-completion` |
 | Workflow ID | `dns-implementation-20260913` |
 | Target | `protocol/dns` |
 | Owner role | `protocol-orchestrator/g9-resumption-006` |
 | Status | `BLOCKED` |
-| Revision | baseline `git:a6cac040bd4de2d07ba0c14199778e0fee525ea0`; delivery commit pending |
-| Source artifacts | Workflow state; G9 plan; previous environment blocker; current preflight |
-| Assumptions | Pre-existing untracked paths were preserved. |
-| Open questions | Execution-capable host/image required from workspace-orchestrator / maintainer. |
-| Limitations | Current host lacks the required CMake + Clang compiler-rt toolchain. |
+| Revision | Pre-delivery local/remote baseline `git:f32bb2d32cf6ea29be8daaa6084bbf88d17d2fca` |
+| Source artifacts | Current workflow state, historical G9 evidence/blocker routing, and current toolchain preflight |
+| Assumptions | Existing untracked paths predate this assignment and were preserved. |
+| Open questions | When will the environment maintainer provide the required Clang/compiler-rt environment? |
+| Limitations | No libFuzzer campaign was configured, built, or run. |
 
-ROLE: protocol-orchestrator / `g9-resumption-006`
+ROLE: `protocol-orchestrator/g9-resumption-006`
 
-STATUS: BLOCKED
+STATUS: `BLOCKED`
 
 SUMMARY:
-Performed one bounded current-environment preflight. The host cannot satisfy the G9 libFuzzer prerequisite because CMake, Clang, Clang++, and llvm-config are absent. No leaf was dispatched, no G9 security review was routed, and no shared workflow state changed.
+Performed one administrative current-toolchain re-check. CMake 3.31.6, CTest 3.31.6, and Ninja 1.12.1 are available, but Clang, LLVM coverage tools, and compiler-rt libFuzzer/ASan/UBSan verification remain unavailable. G9 stays BLOCKED; no technical gate disposition or security-review route was made.
 
 ARTIFACTS CREATED:
-- `g9-execution-environment-preflight.md`
-- `handoffs/dns-g9-execution-environment-blocker-006.md`
+- `README.md`
+- `g9-current-toolchain-preflight.md`
 - `completion-report.md`
 
 ARTIFACTS MODIFIED:
-None outside this assigned workspace. `workflow-state.yaml` is unchanged.
+- `.agentic/workflows/dns-implementation-20260913/workflow-state.yaml` — factual blocker evidence only: CMake/CTest/Ninja availability and remaining missing Clang/compiler-rt capability.
 
 DECISIONS MADE:
-- `DNS-G9-EXECUTION-ENVIRONMENT-006`: retain G9 as blocked pending independently verifiable toolchain and all-target build evidence.
+- Retained `DNS-G9-FUZZ-TOOLCHAIN-001` as the sole G9 execution blocker.
+- Did not substitute GCC, install/configure tools, create a new fuzz-engineer packet, dispatch a leaf, route G9 security review, or claim G9 approval.
 
 OPEN QUESTIONS:
-- Workspace-orchestrator / maintainer must provide or authorize an execution-capable host/image.
+- Environment maintainer: provide an authorized Linux environment with `clang`/`clang++` and matching compiler-rt libFuzzer, ASan, and UBSan support.
 
 BLOCKERS:
-- CMake, `clang`, `clang++`, and `llvm-config` are absent from `PATH`; compiler-rt libFuzzer/ASan/UBSan capability and the required three-target build cannot be verified.
+- `DNS-G9-FUZZ-TOOLCHAIN-001`: Clang is absent; therefore the required `-fsanitize=fuzzer,address,undefined` build and all three recorded campaigns cannot execute.
 
 HANDOFF REQUIRED:
-- `workspace-orchestrator` / maintainer: resolve `DNS-G9-EXECUTION-ENVIRONMENT-006` with host/image identity and successful prerequisite evidence. Do not route G9 security review.
+- Environment maintainer, then `protocol-orchestrator` for a complete fresh fuzz-engineer execution assignment after verified toolchain availability.
 
 RECOMMENDED NEXT ROLE:
-`workspace-orchestrator` / maintainer for execution-environment provisioning; return to protocol-orchestrator only after evidence exists.
+- Environment maintainer; afterward `protocol-orchestrator`.
 
 WORKING DIRECTORIES:
-Command root: `/home/hermes/hermes-workspace/projects/Ratatoskr`. Artifact workspace: `.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/`. Shared paths changed: none. Pre-existing untracked paths were not cleaned, reset, stashed, or staged.
+- Command workdir: `/home/hermes/hermes-workspace/projects/Ratatoskr`
+- Artifact workspace: `.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/`
+- No production, headers, tests, fuzz source/CMake, bindings, docs, other role workspace, or handoff-resolution write occurred.
 
 VALIDATION EVIDENCE:
-- Verified Git root, origin, branch and local baseline `a6cac040bd4de2d07ba0c14199778e0fee525ea0`.
-- Before writing, attempted wrapper-mediated remote read using the literal supplied `-- git ls-remote ...` form; its wrapper invoked Git with an extra `git` argument and failed locally (`git: 'git' is not a git command`). The wrapper script was then read and confirms its documented syntax takes Git arguments after `--`; subsequent commit/push/readback use that executable syntax.
-- Current probes at `2026-09-26T22:26:07+02:00`: `cmake`, `clang`, `clang++`, and `llvm-config` unavailable; compiler-rt probes unavailable; existing CMake registration and all three fuzz source paths confirmed.
-- No configure, build, or fuzz campaign was attempted because prerequisites failed.
+- Wrapper-verified repository root, branch, HEAD, origin, and target remote ref all at `f32bb2d32cf6ea29be8daaa6084bbf88d17d2fca`.
+- Ran the documented current CMake/CTest/Ninja/Clang/LLVM/compiler-rt probes. Required Clang/compiler-rt capability remains missing.
+- Preserved all pre-existing untracked paths reported by wrapper-mediated status.
+- No quota or rate-limit response occurred.
 
 MODEL / REASONING USED:
-Requested `openai-codex/gpt-5.6-terra` / `low`; observed route `openai-codex/gpt-5.6-terra`; reasoning-effort telemetry unknown.
+- Policy: `openai-codex/gpt-5.6-terra` / `low` for protocol orchestration. Observed session model: `openai-codex/gpt-5.6-terra`; reasoning telemetry unavailable.
 
 USAGE AND ESCALATIONS:
-One bounded orchestration attempt. No delegation and no model escalation. Usage/spend telemetry unknown.
+- One administrative stage; zero child dispatches, zero campaigns, zero security-review routes, and no configuration/install attempt. Usage telemetry unknown.

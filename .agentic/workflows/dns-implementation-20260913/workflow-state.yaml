@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-26T17:48:57+02:00
+  updated_at: 2026-09-27T01:44:38+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1673,7 +1673,7 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/completion-report.md
 blocked_by:
   - id: DNS-G9-FUZZ-TOOLCHAIN-001
-    reason: Delivered G9 fuzz-engineer evidence at git:4fe0e9417b659759786c41cb6707d15077111b15 records cmake/ctest, Clang/libFuzzer, Ninja, and LLVM coverage tools absent. The configured CMake libFuzzer path cannot be built; no campaign or independent G9 review is authorized.
+    reason: Delivered G9 fuzz-engineer evidence at git:4fe0e9417b659759786c41cb6707d15077111b15 recorded the former unavailable toolchain. Current administrative preflight at 2026-09-27T01:44:38+02:00 found CMake/CTest 3.31.6 and Ninja 1.12.1, but no clang, clang-16/17/18, llvm-profdata, llvm-cov, or Clang compiler-rt libFuzzer/ASan/UBSan runtime. The configured -fsanitize=fuzzer,address,undefined path remains unbuildable; no campaign or independent G9 review is authorized.
     owner_role: environment maintainer
     handoff: .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
   - id: DNS-BINDING-SCOPE-001
@@ -1728,6 +1728,13 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/completion-report.md
 history:
+  - at: 2026-09-27T01:44:38+02:00
+    actor: protocol-orchestrator/g9-resumption-006
+    event: "Performed one administrative G9 current-toolchain preflight. CMake/CTest 3.31.6 and Ninja 1.12.1 are now present, but clang, LLVM coverage tools, and Clang compiler-rt libFuzzer/ASan/UBSan support remain unavailable. Updated only factual blocker evidence; workflow/fuzzing/G9 remain BLOCKED. No fresh fuzz-engineer assignment or leaf, G9 security review, technical approval, installation, configuration, or campaign was performed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-results.md
   - at: 2026-09-26T17:48:57+02:00
     actor: protocol-orchestrator/g9-post-fuzz-blocker-routing-001
     event: "Verified the G9 fuzz-engineer artifacts were untracked and absent from the pre-delivery remote tree, preserved exactly those five artifacts through the required protocol-orchestrator git-agent wrapper, and read back exact origin ref git:4fe0e9417b659759786c41cb6707d15077111b15. The specialist result is BLOCKED solely by absent CMake/CTest, Clang/libFuzzer, Ninja, and LLVM coverage tools; no fuzz campaign, finding, technical G9 approval, or G9 security-review route occurred. Reflected fuzzing/G9/workflow BLOCKED and returned the external prerequisite to the environment maintainer."
