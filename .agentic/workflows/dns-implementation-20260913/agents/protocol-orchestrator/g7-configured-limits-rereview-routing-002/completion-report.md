@@ -2,20 +2,26 @@
 
 ROLE: `protocol-orchestrator`
 
-STATUS: `IN_PROGRESS`
+STATUS: `BLOCKED`
 
-SUMMARY: Preflight and durable routing are being recorded for exactly one fresh independent `protocol-test-engineer` G7 review of candidate `1a371fe8083e72304740d983dcb7f9f6033b6b7f`. No technical disposition is asserted in this record.
+SUMMARY: Created, wrapper-committed, pushed, and exact-remote-read the complete G7 packet, then invoked exactly one fresh direct `protocol-test-engineer` leaf with explicit `openai-codex/gpt-5.6-terra/medium`. The leaf session `20260926_131240_e03773` stopped before review because its Hermes workspace could not see the committed packet. It produced no review artifact and no delivery commit.
 
-ARTIFACTS CREATED: README, preflight verification, delegation packet, and this completion record in this assignment workspace.
+ARTIFACTS CREATED:
+- `README.md`
+- `preflight-verification.md`
+- `delegations/protocol-test-engineer-g7-configured-limits-rereview-002.md`
+- `verification/leaf-delivery-verification.md`
+- this completion report
 
-ARTIFACTS MODIFIED: Pending workflow-state administrative assignment entry only.
+ARTIFACTS MODIFIED:
+- workflow-root `workflow-state.yaml` only, to record the assignment and its blocked execution result.
 
-DECISIONS MADE: Route only G7; G8/G9/later work is forbidden for this assignment.
+DECISIONS MADE: No technical verdict was made. G7/G8 remain `CHANGES_REQUESTED`; no G8/G9/later route was made.
 
-OPEN QUESTIONS: The designated leaf’s independently established disposition.
+OPEN QUESTIONS: Why the direct one-shot session searched `/home/hermes/hermes-workspace` rather than the supplied Ratatoskr workspace and could not see the remotely delivered packet.
 
-BLOCKERS: None at preflight; leaf execution and delivery verification remain pending.
+BLOCKERS: Sole authorized leaf could not access its required packet. It reported no work, commit, or push.
 
-HANDOFF REQUIRED: Leaf return to `protocol-orchestrator` only.
+HANDOFF REQUIRED: Return to `protocol-orchestrator` for environment/packet-visibility diagnosis and a new authorized lifecycle if retry is desired.
 
-RECOMMENDED NEXT ROLE: `protocol-test-engineer` in the exact assigned leaf workspace.
+RECOMMENDED NEXT ROLE: `protocol-orchestrator`.
