@@ -6,11 +6,11 @@ workflow:
   target:
     kind: protocol
     id: dns
-  status: IN_PROGRESS
+  status: BLOCKED
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-26T14:17:12+02:00
+  updated_at: 2026-09-26T17:48:57+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -145,7 +145,7 @@ stages:
     gate: G8
   - id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     depends_on: [security]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
@@ -312,13 +312,14 @@ gates:
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
-    status: IN_PROGRESS
-    record: null
+    status: BLOCKED
+    record: .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-results.md
     input_revisions:
       - dispatch-baseline:a4ae4e3fd94871bba4d5644b4edff891ae213047
       - g7-candidate:1a371fe8083e72304740d983dcb7f9f6033b6b7f
       - g7-review-delivery:510b5a131bcb3272caeb7eb1821444b35644cfcd
       - g8-review-delivery:5d81f9f26945ad9f80f5b818bf6b147f6b37bfff
+      - fuzz-evidence-delivery:4fe0e9417b659759786c41cb6707d15077111b15
   - id: BINDING_DESIGN
     applicable: false
     rationale: No binding target has been selected; existing bindings are out of current scope pending maintainer decision.
@@ -1640,9 +1641,9 @@ assignments:
   - id: g9-fuzz-evidence-001
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-fuzz-routing-001/delegations/fuzz-engineer-g9-fuzz-evidence-001.md
-    agent_id: pending fresh leaf dispatch
+    agent_id: fuzz-engineer/g9-fuzz-evidence-001 delivered BLOCKED evidence at git:4fe0e9417b659759786c41cb6707d15077111b15; no live specialist
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-plan.md
@@ -1671,10 +1672,10 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/completion-report.md
 blocked_by:
-  - id: DNS-G8-001
-    reason: Fresh independent G7 approved configured-limits corrective candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f. DNS-G8-001 remains blocking only pending a separately authorized fresh independent G8 review; no G8 action was routed here.
-    owner_role: security-reviewer
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
+  - id: DNS-G9-FUZZ-TOOLCHAIN-001
+    reason: Delivered G9 fuzz-engineer evidence at git:4fe0e9417b659759786c41cb6707d15077111b15 records cmake/ctest, Clang/libFuzzer, Ninja, and LLVM coverage tools absent. The configured CMake libFuzzer path cannot be built; no campaign or independent G9 review is authorized.
+    owner_role: environment maintainer
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
@@ -1727,6 +1728,14 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/completion-report.md
 history:
+  - at: 2026-09-26T17:48:57+02:00
+    actor: protocol-orchestrator/g9-post-fuzz-blocker-routing-001
+    event: "Verified the G9 fuzz-engineer artifacts were untracked and absent from the pre-delivery remote tree, preserved exactly those five artifacts through the required protocol-orchestrator git-agent wrapper, and read back exact origin ref git:4fe0e9417b659759786c41cb6707d15077111b15. The specialist result is BLOCKED solely by absent CMake/CTest, Clang/libFuzzer, Ninja, and LLVM coverage tools; no fuzz campaign, finding, technical G9 approval, or G9 security-review route occurred. Reflected fuzzing/G9/workflow BLOCKED and returned the external prerequisite to the environment maintainer."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-post-fuzz-blocker-routing-001/verification/g9-fuzz-blocker-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/completion-report.md
   - at: 2026-09-26T14:17:12+02:00
     actor: protocol-orchestrator/g9-fuzz-routing-001
     event: "Verified G7 and G8 APPROVED prerequisite records for exact candidate 1a371fe8083e72304740d983dcb7f9f6033b6b7f, repository baseline/origin/branch/ref, current DNS source/fuzz/CMake inputs, unrelated untracked paths, and the executable absolute role-scoped git-agent wrapper. Recorded exactly one fresh G9 fuzz-engineer assignment IN_PROGRESS with a complete packet. G9 remains unapproved; no security review or later work is routed."
