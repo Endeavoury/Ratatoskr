@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -1488,9 +1488,9 @@ assignments:
   - id: g8-configured-limits-remediation-002
     stage_id: native_implementation
     role: c-protocol-implementer
-    status: IN_PROGRESS
+    status: READY_FOR_REVIEW
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/delegations/c-protocol-implementer-g8-configured-limits-remediation-002.md
-    agent_id: direct Hermes CLI invocation pending; required route openai-codex/gpt-5.6-sol high
+    agent_id: direct Hermes one-shot c-protocol-implementer; verified openai-codex/gpt-5.6-sol high; candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f
     allowed_paths:
       - src/protocols/dns/dns_parser.c
       - src/protocols/dns/dns_transport_udp.c
@@ -1514,6 +1514,40 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/implementation-report.md
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/handoffs/
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-configured-limits-remediation-002/completion-report.md
+  - id: g7-configured-limits-rereview-001
+    stage_id: native_verification
+    role: protocol-test-engineer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-configured-limits-rereview-001.md
+    agent_id: not dispatched; actual child reasoning effort unknown/unset and therefore incompatible with required verified medium effort
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/reviews/g7-configured-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/completion-report.md
+      - tests/dns/dns_g7_configured_limits_rereview_tests.c (only if inspection strictly establishes necessity)
+      - tests/integration/dns_g7_configured_limits_rereview_test.py (only if inspection strictly establishes necessity)
+      - tests/fixtures/dns/g7-configured-limits-rereview-fixtures.json (only if inspection strictly establishes necessity)
+      - tests/CMakeLists.txt (only scoped registration if inspection strictly establishes necessity)
+    readonly_paths:
+      - all production source and headers
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - all canonical vectors, approved analysis/model/API, prior reviews and role workspaces
+      - docs/
+      - fuzz/
+      - bindings/
+      - cli/
+      - all paths outside allowed_paths
+    input_artifacts:
+      - candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f; origin/hermes/dns-implementation-20260913 readback matched exactly
+      - c-protocol-implementer/g8-configured-limits-remediation-002 completion, implementation report, and return handoff
+      - security-reviewer/g8-accounting-security-rereview-001 DNS-G8-001 originating handoff
+      - required G1-G6 approvals and G7 CHANGES_REQUESTED rationale in workflow-state.yaml
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/reviews/g7-configured-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-001/completion-report.md
 blocked_by:
   - id: DNS-G8-001
     reason: Configured parser resource disposition and synchronous oversized-UDP admission remain incomplete for candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175; completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 requires an implementation correction followed by fresh independent G7 and G8 reviews.
@@ -1978,3 +2012,10 @@ history:
     references:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/preflight-verification.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g8-configured-limits-remediation-routing-003/delegations/c-protocol-implementer-g8-configured-limits-remediation-002.md
+  - at: 2026-09-26T12:35:48+02:00
+    actor: protocol-orchestrator/g7-configured-limits-rereview-routing-001
+    event: "Verified the pushed corrective candidate at local HEAD and origin/hermes/dns-implementation-20260913 git:1a371fe8083e72304740d983dcb7f9f6033b6b7f, its required implementation/completion/return handoff, the originating G8 handoff, nesting configuration, wrapper mode, root/origin/branch, and unrelated-worktree preservation. Prepared exactly one complete fresh independent G7 protocol-test-engineer packet, but recorded it BLOCKED without dispatch: actual provider/model is openai-codex/gpt-5.6-terra while the required medium reasoning effort is unknown/unset. No G7 or G8 approval is asserted; G8, G9, and later stages were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-001/delegations/protocol-test-engineer-g7-configured-limits-rereview-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-001/completion-report.md
