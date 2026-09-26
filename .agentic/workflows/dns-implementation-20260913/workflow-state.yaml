@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T01:55:07+02:00
+  updated_at: 2026-09-27T01:55:06+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -152,10 +152,10 @@ stages:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
     output_artifacts:
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/fuzz-plan.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/fuzz-results.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/handoffs/g9-fuzz-evidence-to-security-reviewer.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/completion-report.md
     gate: G9
   - id: binding_design
     role: binding-api-designer
@@ -312,7 +312,7 @@ gates:
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fresh fuzz evidence for implementation work. An explicit versioned-LLVM 19 preflight configured and built all three existing DNS libFuzzer harness targets, resolving the former PATH-only toolchain conclusion; this does not provide G9 campaign evidence or approval.
-    status: NOT_STARTED
+    status: IN_PROGRESS
     record: null
     input_revisions:
       - dispatch-baseline:a4ae4e3fd94871bba4d5644b4edff891ae213047
@@ -1727,9 +1727,9 @@ handoffs:
   - id: g9-fuzz-evidence-002
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: SUPERSEDED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-007/delegations/fuzz-engineer-g9-fuzz-evidence-002.md
-    agent_id: pending fresh leaf dispatch
+    agent_id: historical packet only; no leaf dispatched; superseded by g9-fuzz-execution-002
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/fuzz-plan.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/fuzz-results.md
@@ -1751,7 +1751,35 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/handoffs/g9-fuzz-evidence-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-002/completion-report.md
+  - id: g9-fuzz-execution-002
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-execution-routing-002/delegations/fuzz-engineer-g9-fuzz-execution-002.md
+    agent_id: pending fresh leaf dispatch
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/completion-report.md
+    readonly_paths:
+      - all other repository paths
+    input_artifacts:
+      - G7 APPROVED and G8 APPROVED exact records named in the delegation at dispatch baseline git:f37171a33e62f2ad2c1440ce41295a22596c5ee3
+      - LLVM 19 preflight at .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
+      - fixed local corpus fuzz/dns/corpus/ and the three pre-existing DNS fuzz targets
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/completion-report.md
 history:
+  - at: 2026-09-27T01:55:06+02:00
+    actor: protocol-orchestrator/g9-execution-routing-002
+    event: "Classified the prior g9-fuzz-evidence-002 IN_PROGRESS packet as historical-only with no dispatched leaf. Verified approved G7/G8 and the current explicit LLVM 19 preflight, then recorded exactly one fresh fuzz-engineer execution assignment IN_PROGRESS. G9 remains unapproved; no security review or later stage is routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-execution-routing-002/delegations/fuzz-engineer-g9-fuzz-execution-002.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
   - at: 2026-09-27T01:44:38+02:00
     actor: protocol-orchestrator/g9-resumption-006
     event: "Performed one administrative G9 current-toolchain preflight. CMake/CTest 3.31.6 and Ninja 1.12.1 are now present, but clang, LLVM coverage tools, and Clang compiler-rt libFuzzer/ASan/UBSan support remain unavailable. Updated only factual blocker evidence; workflow/fuzzing/G9 remain BLOCKED. No fresh fuzz-engineer assignment or leaf, G9 security review, technical approval, installation, configuration, or campaign was performed."
