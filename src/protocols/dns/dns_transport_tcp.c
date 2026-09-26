@@ -123,11 +123,11 @@ static int receive_all(ratos_socket handle, uint8_t *data, size_t length) {
 
 ratos_error ratos_dns_tcp_exchange(ratos_context *ctx, const char *server,
     uint16_t port, uint32_t timeout_ms, const uint8_t *query, size_t query_length,
-    uint8_t **response, size_t *response_length) {
+    const ratos_dns_limits *limits, uint8_t **response, size_t *response_length) {
     struct addrinfo hints, *addresses = NULL, *address;
     char service[6];
     ratos_error error = RATOS_ERROR_NETWORK;
-    if (response == NULL || response_length == NULL || query_length > RATOS_DNS_MAX_PACKET) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (response == NULL || response_length == NULL || limits == NULL || query_length > RATOS_DNS_MAX_PACKET || limits->max_tcp_frame_bytes > RATOS_DNS_MAX_PACKET) return RATOS_ERROR_INVALID_ARGUMENT;
     *response = NULL; *response_length = 0u;
     if (!socket_start()) return RATOS_ERROR_NETWORK;
     memset(&hints, 0, sizeof(hints)); hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
@@ -155,6 +155,7 @@ ratos_error ratos_dns_tcp_exchange(ratos_context *ctx, const char *server,
         }
         length = ((size_t)prefix[0] << 8) | prefix[1];
         if (length < RATOS_DNS_HEADER_SIZE) { ratos_close_socket(handle); error = RATOS_ERROR_PROTOCOL; continue; }
+        if (length > limits->max_tcp_frame_bytes) { ratos_close_socket(handle); error = RATOS_ERROR_OUT_OF_MEMORY; break; }
         buffer = (uint8_t *)malloc(length);
         if (buffer == NULL) { ratos_close_socket(handle); error = RATOS_ERROR_OUT_OF_MEMORY; break; }
         if (!receive_all(handle, buffer, length)) { error = timed_out() ? RATOS_ERROR_TIMEOUT : RATOS_ERROR_NETWORK; free(buffer); ratos_close_socket(handle); continue; }

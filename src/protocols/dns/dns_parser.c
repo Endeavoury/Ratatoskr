@@ -12,9 +12,12 @@
 
 typedef struct dns_reader {
     ratos_context *ctx;
+    const ratos_dns_limits *limits;
     const uint8_t *data;
     size_t length;
     size_t position;
+    size_t name_expansion_bytes;
+    size_t compression_pointer_traversals;
 } dns_reader;
 
 static const char *format_address(int family, const uint8_t *bytes, char *output, size_t capacity) {
@@ -91,7 +94,11 @@ static ratos_error read_name(dns_reader *reader, char **name) {
             size_t location = cursor - 1u;
             if (cursor >= reader->length) goto malformed;
             pointer = ((size_t)(label_length & 0x3fu) << 8) | reader->data[cursor++];
-            if (pointer >= reader->length || pointer >= location || hops++ >= 128u) goto malformed;
+            if (pointer >= reader->length || pointer >= location) goto malformed;
+            if (reader->compression_pointer_traversals >= reader->limits->max_compression_pointer_traversals) goto resource_limit;
+            if (hops >= RATOS_DNS_MAX_COMPRESSION_POINTER_TRAVERSALS) goto malformed;
+            ++hops;
+            ++reader->compression_pointer_traversals;
             if ((visited[pointer / 8u] & (uint8_t)(1u << (pointer % 8u))) != 0u) goto malformed;
             visited[pointer / 8u] |= (uint8_t)(1u << (pointer % 8u));
             if (!jumped) { resume = cursor; jumped = 1; }
@@ -100,6 +107,8 @@ static ratos_error read_name(dns_reader *reader, char **name) {
         }
         if ((label_length & 0xc0u) != 0u || label_length > 63u) goto malformed;
         if (label_length == 0u) {
+            if (reader->name_expansion_bytes >= reader->limits->max_name_expansion_bytes) goto resource_limit;
+            ++reader->name_expansion_bytes;
             reader->position = jumped ? resume : cursor;
             if (used == 0u) output[used++] = '.';
             output[used] = '\0';
@@ -107,6 +116,8 @@ static ratos_error read_name(dns_reader *reader, char **name) {
             return *name != NULL ? RATOS_OK : RATOS_ERROR_OUT_OF_MEMORY;
         }
         if ((size_t)label_length > reader->length - cursor || wire_length + (size_t)label_length + 1u > 255u) goto malformed;
+        if ((size_t)label_length + 1u > reader->limits->max_name_expansion_bytes - reader->name_expansion_bytes) goto resource_limit;
+        reader->name_expansion_bytes += (size_t)label_length + 1u;
         if (used != 0u) output[used++] = '.';
         for (i = 0u; i < label_length; ++i)
             if (append_name_octet(output, sizeof(output), &used, reader->data[cursor + i]) != RATOS_OK) goto malformed;
@@ -116,6 +127,9 @@ static ratos_error read_name(dns_reader *reader, char **name) {
 malformed:
     ratos_set_error(reader->ctx, "Malformed or cyclic DNS name at offset %zu", reader->position);
     return RATOS_ERROR_PROTOCOL;
+resource_limit:
+    ratos_set_error(reader->ctx, "DNS name expansion or compression traversal limit exceeded");
+    return RATOS_ERROR_OUT_OF_MEMORY;
 }
 
 static int names_equal(const char *left, const char *right) {
@@ -212,6 +226,7 @@ static ratos_error parse_txt(dns_reader *reader, struct ratos_dns_record *record
 
 static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record *record, uint16_t class_code, size_t end) {
     char *first = NULL, *second = NULL, address[INET6_ADDRSTRLEN];
+    ratos_error error;
     uint16_t a, b, c;
     uint32_t one, two, three, four, five;
     int needed;
@@ -228,11 +243,16 @@ static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record
         reader->position = end; record->text = ratos_strdup(address); break;
     case RATOS_DNS_NS: case RATOS_DNS_MD: case RATOS_DNS_MF: case RATOS_DNS_CNAME:
     case RATOS_DNS_MB: case RATOS_DNS_MG: case RATOS_DNS_MR: case RATOS_DNS_PTR:
-        if (read_name(reader, &first) != RATOS_OK || reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
+        error = read_name(reader, &first);
+        if (error != RATOS_OK) { free(first); return error; }
+        if (reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
         if (append_string_field(record, first) != RATOS_OK) { free(first); return RATOS_ERROR_OUT_OF_MEMORY; }
         record->text = first; break;
     case RATOS_DNS_MX:
-        if (read_u16(reader, &a) != RATOS_OK || read_name(reader, &first) != RATOS_OK || reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
+        if (read_u16(reader, &a) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
+        error = read_name(reader, &first);
+        if (error != RATOS_OK) { free(first); return error; }
+        if (reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
         record->values16[0] = a; record->values16_count = 1u;
         if (append_string_field(record, first) != RATOS_OK) { free(first); return RATOS_ERROR_OUT_OF_MEMORY; }
         needed = snprintf(NULL, 0, "%u %s", (unsigned)a, first);
@@ -252,9 +272,11 @@ static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record
         if (record->text != NULL) (void)snprintf(record->text, (size_t)needed + 1u, "\"%s\" \"%s\"", first, second);
         free(first); free(second); break;
     case RATOS_DNS_MINFO:
-        if (read_name(reader, &first) != RATOS_OK || read_name(reader, &second) != RATOS_OK || reader->position != end) {
-            free(first); free(second); return RATOS_ERROR_PROTOCOL;
-        }
+        error = read_name(reader, &first);
+        if (error != RATOS_OK) { free(first); return error; }
+        error = read_name(reader, &second);
+        if (error != RATOS_OK) { free(first); free(second); return error; }
+        if (reader->position != end) { free(first); free(second); return RATOS_ERROR_PROTOCOL; }
         if (append_string_field(record, first) != RATOS_OK || append_string_field(record, second) != RATOS_OK) {
             free(first); free(second); return RATOS_ERROR_OUT_OF_MEMORY;
         }
@@ -272,7 +294,10 @@ static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record
     case RATOS_DNS_TXT:
         return parse_txt(reader, record, end, &record->text);
     case RATOS_DNS_SRV:
-        if (read_u16(reader, &a) != RATOS_OK || read_u16(reader, &b) != RATOS_OK || read_u16(reader, &c) != RATOS_OK || read_name(reader, &first) != RATOS_OK || reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
+        if (read_u16(reader, &a) != RATOS_OK || read_u16(reader, &b) != RATOS_OK || read_u16(reader, &c) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
+        error = read_name(reader, &first);
+        if (error != RATOS_OK) { free(first); return error; }
+        if (reader->position != end) { free(first); return RATOS_ERROR_PROTOCOL; }
         record->values16[0] = a; record->values16[1] = b; record->values16[2] = c; record->values16_count = 3u;
         if (append_string_field(record, first) != RATOS_OK) { free(first); return RATOS_ERROR_OUT_OF_MEMORY; }
         needed = snprintf(NULL, 0, "%u %u %u %s", (unsigned)a, (unsigned)b, (unsigned)c, first);
@@ -280,8 +305,11 @@ static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record
         if (record->text != NULL) (void)snprintf(record->text, (size_t)needed + 1u, "%u %u %u %s", (unsigned)a, (unsigned)b, (unsigned)c, first);
         free(first); break;
     case RATOS_DNS_SOA:
-        if (read_name(reader, &first) != RATOS_OK || read_name(reader, &second) != RATOS_OK
-            || read_u32(reader, &one) != RATOS_OK || read_u32(reader, &two) != RATOS_OK
+        error = read_name(reader, &first);
+        if (error != RATOS_OK) { free(first); return error; }
+        error = read_name(reader, &second);
+        if (error != RATOS_OK) { free(first); free(second); return error; }
+        if (read_u32(reader, &one) != RATOS_OK || read_u32(reader, &two) != RATOS_OK
             || read_u32(reader, &three) != RATOS_OK || read_u32(reader, &four) != RATOS_OK
             || read_u32(reader, &five) != RATOS_OK || reader->position != end) { free(first); free(second); return RATOS_ERROR_PROTOCOL; }
         if (append_string_field(record, first) != RATOS_OK || append_string_field(record, second) != RATOS_OK) { free(first); free(second); return RATOS_ERROR_OUT_OF_MEMORY; }
@@ -296,10 +324,12 @@ static ratos_error parse_record_text(dns_reader *reader, struct ratos_dns_record
             if (read_u16(reader, &a) != RATOS_OK || read_u16(reader, &b) != RATOS_OK
                 || read_character_string(reader, end, &first) != RATOS_OK
                 || read_character_string(reader, end, &second) != RATOS_OK
-                || read_character_string(reader, end, &third) != RATOS_OK
-                || read_name(reader, &fourth) != RATOS_OK || reader->position != end) {
+                || read_character_string(reader, end, &third) != RATOS_OK) {
                 free(first); free(second); free(third); free(fourth); return RATOS_ERROR_PROTOCOL;
             }
+            error = read_name(reader, &fourth);
+            if (error != RATOS_OK) { free(first); free(second); free(third); free(fourth); return error; }
+            if (reader->position != end) { free(first); free(second); free(third); free(fourth); return RATOS_ERROR_PROTOCOL; }
             record->values16[0] = a; record->values16[1] = b; record->values16_count = 2u;
             if (append_string_field(record, first) != RATOS_OK || append_string_field(record, second) != RATOS_OK
                 || append_string_field(record, third) != RATOS_OK || append_string_field(record, fourth) != RATOS_OK) {
@@ -343,11 +373,15 @@ static ratos_error read_records(dns_reader *reader, uint16_t count, ratos_dns_se
         size_t end;
         ratos_error error;
         record->section = section;
-        if (read_name(reader, &record->name) != RATOS_OK || read_u16(reader, &record->type) != RATOS_OK
-            || read_u16(reader, &class_code) != RATOS_OK || read_u32(reader, &record->ttl) != RATOS_OK
+        error = read_name(reader, &record->name);
+        if (error != RATOS_OK) return error;
+        if (read_u16(reader, &record->type) != RATOS_OK || read_u16(reader, &class_code) != RATOS_OK
+            || read_u32(reader, &record->ttl) != RATOS_OK
             || read_u16(reader, &rdlength) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
+        if (record->type == 41u) { ratos_set_error(reader->ctx, "OPT/EDNS is unsupported"); return RATOS_ERROR_UNSUPPORTED; }
         (void)class_code;
         if ((size_t)rdlength > reader->length - reader->position) { ratos_set_error(reader->ctx, "DNS RDLENGTH exceeds packet bounds"); return RATOS_ERROR_PROTOCOL; }
+        if ((size_t)rdlength > reader->limits->max_typed_field_bytes) { ratos_set_error(reader->ctx, "DNS typed field exceeds configured limit"); return RATOS_ERROR_OUT_OF_MEMORY; }
         end = reader->position + rdlength;
         record->raw_length = rdlength;
         if (rdlength != 0u) {
@@ -365,9 +399,10 @@ static ratos_error read_records(dns_reader *reader, uint16_t count, ratos_dns_se
     return RATOS_OK;
 }
 
-ratos_error ratos_dns_parse_response(ratos_context *ctx, const uint8_t *data,
+ratos_error ratos_dns_parse_response_limited(ratos_context *ctx, const uint8_t *data,
     size_t length, uint16_t expected_id, const char *expected_name,
-    ratos_dns_type expected_type, const char *server, ratos_dns_result **out_result) {
+    ratos_dns_type expected_type, const char *server, const ratos_dns_limits *limits,
+    ratos_dns_result **out_result) {
     dns_reader reader;
     ratos_dns_result *result = NULL;
     uint16_t id, flags, qd, an, ns, ar, qtype, qclass;
@@ -375,9 +410,9 @@ ratos_error ratos_dns_parse_response(ratos_context *ctx, const uint8_t *data,
     char *question = NULL;
     ratos_error error = RATOS_ERROR_PROTOCOL;
     if (out_result != NULL) *out_result = NULL;
-    if (ctx == NULL || data == NULL || expected_name == NULL || server == NULL || out_result == NULL) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (ctx == NULL || data == NULL || expected_name == NULL || server == NULL || limits == NULL || out_result == NULL) return RATOS_ERROR_INVALID_ARGUMENT;
     if (length < RATOS_DNS_HEADER_SIZE || length > RATOS_DNS_MAX_PACKET) { ratos_set_error(ctx, "Invalid DNS packet length: %zu", length); return RATOS_ERROR_PROTOCOL; }
-    reader.ctx = ctx; reader.data = data; reader.length = length; reader.position = 0u;
+    reader.ctx = ctx; reader.limits = limits; reader.data = data; reader.length = length; reader.position = 0u; reader.name_expansion_bytes = 0u; reader.compression_pointer_traversals = 0u;
     if (read_u16(&reader, &id) != RATOS_OK || read_u16(&reader, &flags) != RATOS_OK
         || read_u16(&reader, &qd) != RATOS_OK || read_u16(&reader, &an) != RATOS_OK
         || read_u16(&reader, &ns) != RATOS_OK || read_u16(&reader, &ar) != RATOS_OK) return RATOS_ERROR_PROTOCOL;
@@ -385,8 +420,11 @@ ratos_error ratos_dns_parse_response(ratos_context *ctx, const uint8_t *data,
     if ((flags & 0x8000u) == 0u || (flags & 0x0040u) != 0u || (flags & 0x7800u) != 0u) { ratos_set_error(ctx, "Invalid DNS response flags or opcode"); return RATOS_ERROR_PROTOCOL; }
     if (qd != 1u) { ratos_set_error(ctx, "DNS response must echo exactly one question"); return RATOS_ERROR_PROTOCOL; }
     total = (size_t)an + ns + ar;
-    if (total > RATOS_DNS_MAX_RECORDS) { ratos_set_error(ctx, "DNS response exceeds record limit"); return RATOS_ERROR_PROTOCOL; }
-    if (read_name(&reader, &question) != RATOS_OK || read_u16(&reader, &qtype) != RATOS_OK || read_u16(&reader, &qclass) != RATOS_OK) goto cleanup;
+    if (total > limits->max_total_rrs) { ratos_set_error(ctx, "DNS response exceeds configured record limit"); return RATOS_ERROR_OUT_OF_MEMORY; }
+    if (total > RATOS_DNS_MAX_RECORDS) { ratos_set_error(ctx, "DNS response exceeds implementation record limit"); return RATOS_ERROR_PROTOCOL; }
+    error = read_name(&reader, &question);
+    if (error != RATOS_OK) goto cleanup;
+    if (read_u16(&reader, &qtype) != RATOS_OK || read_u16(&reader, &qclass) != RATOS_OK) goto cleanup;
     if (!names_equal(question, expected_name) || qtype != (uint16_t)expected_type || qclass != 1u) { ratos_set_error(ctx, "DNS response question does not match query"); goto cleanup; }
     result = (ratos_dns_result *)calloc(1u, sizeof(*result));
     if (result == NULL) { error = RATOS_ERROR_OUT_OF_MEMORY; goto cleanup; }
@@ -409,4 +447,13 @@ cleanup:
     free(question);
     if (result != NULL) { result->count = index < result->count ? index + 1u : result->count; ratos_dns_result_destroy(result); }
     return error;
+}
+
+ratos_error ratos_dns_parse_response(ratos_context *ctx, const uint8_t *data,
+    size_t length, uint16_t expected_id, const char *expected_name,
+    ratos_dns_type expected_type, const char *server, ratos_dns_result **out_result) {
+    ratos_dns_limits limits;
+    if (ctx == NULL || ratos_dns_effective_limits(&ctx->dns_limits, &limits) != RATOS_OK) return RATOS_ERROR_INVALID_ARGUMENT;
+    return ratos_dns_parse_response_limited(ctx, data, length, expected_id, expected_name,
+        expected_type, server, &limits, out_result);
 }
