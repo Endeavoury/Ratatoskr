@@ -6,63 +6,65 @@
 | Artifact ID | `dns-implementation-20260913-g9-resumption-006-preflight` |
 | Workflow ID / stage | `dns-implementation-20260913` / `fuzzing` (G9) |
 | Target / owner | `protocol/dns` / `protocol-orchestrator/g9-resumption-006` |
-| Status | `BLOCKED` |
-| Baseline observed | local `git:a6cac040bd4de2d07ba0c14199778e0fee525ea0` |
-| Remote observed before artifact write | `refs/heads/hermes/dns-implementation-20260913` at `a6cac040bd4de2d07ba0c14199778e0fee525ea0` |
-| Checked at | `2026-09-26T22:26:07+02:00` |
+| Status | `COMPLETE` — administrative preflight only; G9 remains unapproved |
+| Baseline observed | local and remote `git:2e0eb1d4fa2e554c7fb62d7612b731e9d89935c5` |
+| Remote observed before artifact write | `refs/heads/hermes/dns-implementation-20260913` at `2e0eb1d4fa2e554c7fb62d7612b731e9d89935c5` |
+| Checked at | `2026-09-27T01:47:54+02:00` |
 | Source artifacts | Workflow state; approved G7/G8 records; existing G9 plan and blocked results; resumption-005 blocker |
 | Assumptions | Pre-existing untracked paths are unrelated and remain untouched. |
-| Limitations | Required fuzz toolchain is absent, so no configure, build, or campaign command was attempted. |
+| Limitations | No fuzz campaign was run; successful target builds establish only the execution prerequisite. |
 
 ## Scope and decision
 
 ACTIVE ROLE: `protocol-orchestrator`.
 
-This bounded resumption independently checked the current host capability required by the approved G9 campaign. The workflow state remains `BLOCKED` at `fuzzing`; G7 and G8 are recorded `APPROVED`. The existing G9 evidence was read only as the approved campaign definition and is not live work.
+This bounded resumption independently checked the current host capability required by the approved G9 campaign. Historical G9 evidence remains read-only history; G7 and G8 remain recorded `APPROVED`. No fuzz-engineer was dispatched and no security reviewer was routed.
 
-No fuzz-engineer was dispatched. The prerequisite set is not fully verified because CMake, Clang, Clang++, and llvm-config are unavailable in `PATH`; consequently matching compiler-rt libFuzzer/ASan/UBSan support and a build of all three targets cannot be demonstrated.
+The required compiler/runtime capability is present when the installed versioned executables are selected explicitly. CMake 3.31.6 generated a Ninja build with `/usr/bin/clang-19` and `/usr/bin/clang++-19`; Ninja 1.12.1 then built all three existing DNS fuzz targets. The project CMake registration supplies `-fsanitize=fuzzer,address,undefined`, so the successful links exercise matching libFuzzer, ASan, and UBSan compiler-rt availability.
 
-## Current probes
+## Current probes and build evidence
 
-All commands ran from `/home/hermes/hermes-workspace/projects/Ratatoskr`.
+All commands ran from `/home/hermes/hermes-workspace/projects/Ratatoskr`; build output is disposable at `/tmp/ratatoskr-g9-toolchain-preflight-20260927`.
 
 ```text
-$ command -v cmake; cmake --version
-cmake: absent
-/usr/bin/bash: cmake: command not found
+$ /usr/bin/clang-19 --version
+Debian clang version 19.1.7 (3+b1)
 
-$ command -v clang; clang --version
-clang: absent
-/usr/bin/bash: clang: command not found
+$ /usr/bin/clang++-19 --version
+Debian clang version 19.1.7 (3+b1)
 
-$ command -v clang++; clang++ --version
-clang++: absent
-/usr/bin/bash: clang++: command not found
+$ /usr/bin/clang-19 -print-file-name=libclang_rt.fuzzer-x86_64.a
+/usr/lib/llvm-19/lib/clang/19/lib/linux/libclang_rt.fuzzer-x86_64.a
+$ /usr/bin/clang-19 -print-file-name=libclang_rt.asan-x86_64.a
+/usr/lib/llvm-19/lib/clang/19/lib/linux/libclang_rt.asan-x86_64.a
+$ /usr/bin/clang-19 -print-file-name=libclang_rt.ubsan_standalone-x86_64.a
+/usr/lib/llvm-19/lib/clang/19/lib/linux/libclang_rt.ubsan_standalone-x86_64.a
 
-$ command -v llvm-config; llvm-config --version
-llvm-config: absent
-/usr/bin/bash: llvm-config: command not found
+$ cmake -S . -B /tmp/ratatoskr-g9-toolchain-preflight-20260927 -G Ninja \
+    -DCMAKE_C_COMPILER=/usr/bin/clang-19 \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++-19 \
+    -DRATOS_BUILD_FUZZERS=ON -DRATOS_BUILD_TESTS=OFF
+-- The C compiler identification is Clang 19.1.7
+-- Configuring done
+-- Generating done
 
-$ git grep -n 'ratos_fuzz_dns_\|RATOS_BUILD_FUZZERS' -- CMakeLists.txt fuzz
-CMakeLists.txt:20:if(RATOS_BUILD_FUZZERS)
-fuzz/CMakeLists.txt:2:    add_executable(ratos_fuzz_dns_${fuzzer} dns/fuzz_dns_${fuzzer}.c)
-fuzz/CMakeLists.txt:7:    target_compile_options(ratos_fuzz_dns_${fuzzer} PRIVATE -fsanitize=fuzzer,address,undefined)
-fuzz/CMakeLists.txt:8:    target_link_options(ratos_fuzz_dns_${fuzzer} PRIVATE -fsanitize=fuzzer,address,undefined)
-
-$ clang -print-file-name=libclang_rt.fuzzer-x86_64.a
-(no output; clang unavailable)
-$ clang -print-file-name=libclang_rt.asan-x86_64.a
-(no output; clang unavailable)
-$ clang -print-file-name=libclang_rt.ubsan_standalone-x86_64.a
-(no output; clang unavailable)
+$ cmake --build /tmp/ratatoskr-g9-toolchain-preflight-20260927 \
+    --target ratos_fuzz_dns_packet ratos_fuzz_dns_name ratos_fuzz_dns_record --parallel 2
+[15/17] Linking C executable fuzz/ratos_fuzz_dns_packet
+[16/17] Linking C executable fuzz/ratos_fuzz_dns_name
+[17/17] Linking C executable fuzz/ratos_fuzz_dns_record
 ```
 
-The repository tracks all required existing target sources: `fuzz/dns/fuzz_dns_packet.c`, `fuzz/dns/fuzz_dns_name.c`, and `fuzz/dns/fuzz_dns_record.c`. Their registration cannot be configured or built without the missing CMake/Clang toolchain. The required capability `-fsanitize=fuzzer,address,undefined` is therefore unverified and unavailable on this host.
+The resulting executable targets are `fuzz/ratos_fuzz_dns_packet`, `fuzz/ratos_fuzz_dns_name`, and `fuzz/ratos_fuzz_dns_record` under that build directory.
 
 ## Required next input
 
-Provide an authorized execution host/image with CMake, `clang`, `clang++`, and matching compiler-rt support for libFuzzer, ASan, and UBSan. Independently verify that it configures and builds `ratos_fuzz_dns_packet`, `ratos_fuzz_dns_name`, and `ratos_fuzz_dns_record` with `-fsanitize=fuzzer,address,undefined` before dispatching exactly one fresh fuzz-engineer.
+No environment-maintainer action is required. The protocol-orchestrator may create exactly one fresh, correctly scoped fuzz-engineer execution packet against the recorded approved inputs. That packet must define campaign budget, corpus/provenance, expected outputs, and an independent G9 security-review handoff after actual fuzz results exist. This preflight does not itself authorize G9 approval or a security-review route.
+
+## Next-dispatch safety envelope
+
+A future G9 specialist must operate within OpenAI safety rules: only the authorized local Ratatoskr repository is in scope; it may build and run only `ratos_fuzz_dns_packet`, `ratos_fuzz_dns_name`, and `ratos_fuzz_dns_record` with a fixed local seed corpus already tracked by the repository. No network access, remote targets, credential access, payload development, scanning, persistence, or exploitation is allowed. The packet must impose bounded runtime, memory, and disk consumption; retain only build/run logs and sanitizer diagnostics; and require an immediate stop-and-handoff for any crash or policy ambiguity. No campaign was run in this preflight.
 
 ## State and boundary result
 
-No shared workflow-state change is warranted. No fuzz-engineer or security-reviewer was routed. No production code, headers, tests, fuzz sources, docs, configurations, manifest, request, or other role workspace was modified.
+`DNS-G9-FUZZ-TOOLCHAIN-001` is resolved because the prior unavailable-toolchain claim was caused by checking only unversioned `clang` on `PATH`. The workflow is ready to resume at fuzzing, but G9 remains `NOT_STARTED` pending fresh fuzz evidence. No production code, headers, tests, fuzz source/CMake, bindings, documentation, manifest, request, or other role workspace was modified.

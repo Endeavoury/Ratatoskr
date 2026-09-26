@@ -19,4 +19,6 @@
 
 ## Administrative disposition
 
-`g9-fuzz-evidence-001` is historical BLOCKED evidence, not a live specialist. G7 and G8 remain recorded APPROVED. Current CMake/CTest and Ninja availability is a material improvement over the recorded missing-tool state, but `clang` is absent and therefore compiler-rt libFuzzer, ASan, and UBSan cannot be verified or used. G9 remains BLOCKED by `DNS-G9-FUZZ-TOOLCHAIN-001`; no G9 approval, fresh fuzz-engineer assignment, or G9 security-review route is authorized.
+`g9-fuzz-evidence-001` remains historical BLOCKED evidence, not a live specialist. G7 and G8 remain recorded APPROVED. On this host, explicitly selecting `/usr/bin/clang-19` and `/usr/bin/clang++-19` (Debian Clang 19.1.7) exposes matching compiler-rt libFuzzer, ASan, and UBSan runtimes. CMake 3.31.6 configured the existing DNS fuzz harnesses and Ninja 1.12.1 built `ratos_fuzz_dns_packet`, `ratos_fuzz_dns_name`, and `ratos_fuzz_dns_record` successfully with `-fsanitize=fuzzer,address,undefined` from their existing CMake registration.
+
+`DNS-G9-FUZZ-TOOLCHAIN-001` is therefore resolved as a false `PATH`-only conclusion, not an execution blocker. G9 is ready for the protocol-orchestrator's next correctly scoped fresh `fuzz-engineer` dispatch. No fuzz-engineer assignment, fuzz campaign, G9 security-review route, or G9 approval was created by this preflight.

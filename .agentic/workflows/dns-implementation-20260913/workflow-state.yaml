@@ -6,11 +6,11 @@ workflow:
   target:
     kind: protocol
     id: dns
-  status: BLOCKED
+  status: IN_PROGRESS
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T01:44:38+02:00
+  updated_at: 2026-09-27T01:47:54+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -145,7 +145,7 @@ stages:
     gate: G8
   - id: fuzzing
     role: fuzz-engineer
-    status: BLOCKED
+    status: NOT_STARTED
     depends_on: [security]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
@@ -311,15 +311,16 @@ gates:
       - preserved-finding:DNS-G8-002
   - id: G9
     applicable: true
-    rationale: DNS parser is hostile-input surface and requires fuzz evidence for implementation work.
-    status: BLOCKED
-    record: .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-results.md
+    rationale: DNS parser is hostile-input surface and requires fresh fuzz evidence for implementation work. An explicit versioned-LLVM 19 preflight configured and built all three existing DNS libFuzzer harness targets, resolving the former PATH-only toolchain conclusion; this does not provide G9 campaign evidence or approval.
+    status: NOT_STARTED
+    record: null
     input_revisions:
       - dispatch-baseline:a4ae4e3fd94871bba4d5644b4edff891ae213047
       - g7-candidate:1a371fe8083e72304740d983dcb7f9f6033b6b7f
       - g7-review-delivery:510b5a131bcb3272caeb7eb1821444b35644cfcd
       - g8-review-delivery:5d81f9f26945ad9f80f5b818bf6b147f6b37bfff
-      - fuzz-evidence-delivery:4fe0e9417b659759786c41cb6707d15077111b15
+      - historical-fuzz-evidence-delivery:4fe0e9417b659759786c41cb6707d15077111b15
+      - toolchain-preflight:.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md at baseline git:2e0eb1d4fa2e554c7fb62d7612b731e9d89935c5
   - id: BINDING_DESIGN
     applicable: false
     rationale: No binding target has been selected; existing bindings are out of current scope pending maintainer decision.
@@ -1672,10 +1673,6 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/completion-report.md
 blocked_by:
-  - id: DNS-G9-FUZZ-TOOLCHAIN-001
-    reason: Delivered G9 fuzz-engineer evidence at git:4fe0e9417b659759786c41cb6707d15077111b15 recorded the former unavailable toolchain. Current administrative preflight at 2026-09-27T01:44:38+02:00 found CMake/CTest 3.31.6 and Ninja 1.12.1, but no clang, clang-16/17/18, llvm-profdata, llvm-cov, or Clang compiler-rt libFuzzer/ASan/UBSan runtime. The configured -fsanitize=fuzzer,address,undefined path remains unbuildable; no campaign or independent G9 review is authorized.
-    owner_role: environment maintainer
-    handoff: .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
