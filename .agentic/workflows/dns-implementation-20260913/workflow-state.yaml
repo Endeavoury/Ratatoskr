@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-26T13:35:00+02:00
+  updated_at: 2026-09-26T13:48:00+02:00
   scope_mode: implementation
 current_stage: security
 active_role: protocol-orchestrator
@@ -110,7 +110,7 @@ stages:
     gate: G6
   - id: native_implementation
     role: c-protocol-implementer
-    status: READY_FOR_REVIEW
+    status: APPROVED
     depends_on: [implementation_ready]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g6-implementation-routing-001/verification/g6-implementation-readiness-verification.md
@@ -121,7 +121,7 @@ stages:
     gate: null
   - id: native_verification
     role: protocol-test-engineer
-    status: CHANGES_REQUESTED
+    status: APPROVED
     depends_on: [native_implementation]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g6-native-implementation-001/implementation-report.md
@@ -267,9 +267,9 @@ gates:
       - authorized-private-paths:src/core/core_internal.h,src/core/context.c,src/protocols/dns/dns_internal.h,src/protocols/dns/dns_client.c
   - id: G7
     applicable: true
-    rationale: Fresh independent G7 approved accounting/lifecycle candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175 at delivery git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd, but completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 leaves blocking DNS-G8-001 implementation defects. Any corrective candidate requires a fresh independent G7 review, so G7 is CHANGES_REQUESTED for the active remediation route.
-    status: CHANGES_REQUESTED
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-accounting-native-verification-001/reviews/g7-accounting-native-verification.md
+    rationale: Fresh independent G7 reviewer approved configured-limits corrective candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f at reviewer delivery git:510b5a131bcb3272caeb7eb1821444b35644cfcd. G8 remains separately CHANGES_REQUESTED pending a fresh independent security review; this G7 reflection does not route G8.
+    status: APPROVED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
     input_revisions:
       - remediation-candidate-git:7a0875e32ebaedb1d11b1736483e5d2a1df6dc25
       - remediation-artifact-delivery-git:3bb81004050ca860ce8d9572f4e834847daf5b96
@@ -279,6 +279,12 @@ gates:
       - accounting-candidate-parent-git:62a2dda24194020904a75e1edce9b3d74fbd70a4
       - accounting-independent-review-delivery-git:8c1383e4bcfa2aab7692dd863f9532f14a13a0bd
       - accounting-independent-review-disposition:APPROVED
+      - configured-limits-candidate-git:1a371fe8083e72304740d983dcb7f9f6033b6b7f
+      - configured-limits-candidate-parent-git:509114307b862e8e339ded3eea5d483ea861d2d4
+      - fresh-independent-reviewer-assignment:direct-hermes-cli-session-20260926_132538_e89c6a
+      - configured-limits-review-delivery-git:510b5a131bcb3272caeb7eb1821444b35644cfcd
+      - configured-limits-review-remote-delivery-git:7720bfe2bf96020fa0f84ccf2d6bbb52247c510d
+      - configured-limits-review-disposition:APPROVED
   - id: G8
     applicable: true
     rationale: Completed fresh G8 re-review of candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175 resolved DNS-G8-002 but left DNS-G8-001 blocking across configured resource disposition, hard/effective guard ordering, enforceable traversal configuration, and synchronous oversized UDP detection.
@@ -1585,9 +1591,9 @@ assignments:
   - id: g7-configured-limits-rereview-003
     stage_id: native_verification
     role: protocol-test-engineer
-    status: IN_PROGRESS
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-003/delegations/protocol-test-engineer-g7-configured-limits-rereview-003.md
-    agent_id: direct Hermes CLI pending; requested openai-codex/gpt-5.6-terra medium; fresh independent of c-protocol-implementer/g8-configured-limits-remediation-002 and all prior relevant G7 reviewers
+    agent_id: direct Hermes CLI session 20260926_132538_e89c6a; requested openai-codex/gpt-5.6-terra medium; exposed route openai-codex/gpt-5.6-terra, effort telemetry unknown; fresh independent of c-protocol-implementer/g8-configured-limits-remediation-002 and all prior relevant G7 reviewers; delivery 510b5a131bcb3272caeb7eb1821444b35644cfcd; remote readback 7720bfe2bf96020fa0f84ccf2d6bbb52247c510d; disposition APPROVED
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/README.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/test-report.md
@@ -1619,8 +1625,8 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/completion-report.md
 blocked_by:
   - id: DNS-G8-001
-    reason: Configured parser resource disposition and synchronous oversized-UDP admission remain incomplete for candidate git:c38a7faf937571de5f0eb64885b8e5c61e5b9175; completed G8 delivery git:1d33a8155dc6bcd3be16689d8aa134044b4449b0 requires an implementation correction followed by fresh independent G7 and G8 reviews.
-    owner_role: c-protocol-implementer
+    reason: Fresh independent G7 approved configured-limits corrective candidate git:1a371fe8083e72304740d983dcb7f9f6033b6b7f. DNS-G8-001 remains blocking only pending a separately authorized fresh independent G8 review; no G8 action was routed here.
+    owner_role: security-reviewer
     handoff: .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
@@ -1642,6 +1648,14 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
   - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-accounting-security-rereview-001/handoffs/dns-g8-001-configured-limits-remediation-still-incomplete.md
 history:
+  - at: 2026-09-26T13:48:00+02:00
+    actor: protocol-orchestrator/g7-configured-limits-rereview-routing-003
+    event: "Verified exactly one fresh direct-CLI protocol-test-engineer G7 delivery: reviewer artifacts, independence declaration, candidate and delivery ancestry, allowed reviewer workspace plus scoped test boundary, diff check, exact remote readback 7720bfe2bf96020fa0f84ccf2d6bbb52247c510d, and APPROVED designated review record for candidate 1a371fe8083e72304740d983dcb7f9f6033b6b7f. Administratively reflected native_implementation, native_verification, and G7 as APPROVED. G8/security remains CHANGES_REQUESTED; G8, G9, and later stages were not routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-003/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/test-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/completion-report.md
   - at: 2026-09-26T13:35:00+02:00
     actor: protocol-orchestrator/g7-configured-limits-rereview-routing-003
     event: "Verified exact candidate 1a371fe8083e72304740d983dcb7f9f6033b6b7f, its parent, four authorized private DNS source paths, ancestry to HEAD, required wrapper, and exact origin ref readback. Recorded exactly one fresh independent protocol-test-engineer G7 assignment IN_PROGRESS. G7 and G8 remain CHANGES_REQUESTED; G8, G9, and later stages are not routed."

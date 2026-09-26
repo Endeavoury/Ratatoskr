@@ -57,4 +57,11 @@ Pending protocol-orchestrator verification and independent routing.
 
 ## Closure (orchestrator after verification)
 
-Pending.
+`protocol-orchestrator/g7-configured-limits-rereview-routing-003` verified the exact
+candidate, reviewer delivery ancestry, permitted output boundary, required reviewer
+artifacts, `git diff --check`, and wrapper remote readback
+`git:7720bfe2bf96020fa0f84ccf2d6bbb52247c510d`. Fresh independent
+`protocol-test-engineer/g7-configured-limits-rereview-003` recorded G7 `APPROVED` for
+candidate `git:1a371fe8083e72304740d983dcb7f9f6033b6b7f`; G7 state is administratively
+reflected. This closure does not approve, route, or perform G8, G9, or later work.
+G8 remains `CHANGES_REQUESTED` pending a separately authorized independent review.
