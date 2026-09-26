@@ -64,7 +64,24 @@ Do not alter approved requirements, model, vectors, prior reviews, or workflow s
 
 ## Resolution (destination role)
 
-Pending.
+`c-protocol-implementer/g8-configured-limits-remediation-002` produced corrective candidate
+`git:1a371fe8083e72304740d983dcb7f9f6033b6b7f` within the four authorized private DNS
+paths. Record-owner parsing now preserves the exact `read_name` error; explicit
+compression traversal limits above the named 128-step implementation maximum are
+rejected; configured/effective pointer and total-RR resource checks precede their
+overlapping hard malformed guards; and synchronous UDP detects POSIX `MSG_TRUNC` or
+Windows `WSAEMSGSIZE` before returning bytes to fallback detection or parsing.
+
+Strict C11 compilation, existing native DNS and G7 executables, ASan/UBSan runs, and
+wrapper `git diff --check` passed. CMake/CTest, Windows cross-compilation, dynamic
+socket-truncation reproduction, fresh parser-boundary probes, and ThreadSanitizer were
+not available/executed and are not claimed. Public ABI and the `DNS-G8-002`
+context-owned accounting/lifetime control flow remain unchanged by the candidate.
+
+Status: `READY_FOR_REVIEW`. Return handoff:
+`agents/c-protocol-implementer/g8-configured-limits-remediation-002/handoffs/dns-g8-001-configured-limits-remediation-to-protocol-orchestrator.md`.
+Fresh independent G7 approval and then fresh independent G8 verification remain
+required; this resolution does not close the finding or assert either gate passed.
 
 ## Closure (orchestrator after verification)
 
