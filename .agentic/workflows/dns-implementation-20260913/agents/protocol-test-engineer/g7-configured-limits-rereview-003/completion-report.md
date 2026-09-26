@@ -8,7 +8,7 @@
 | Target | `protocol/dns` configured parser limits and synchronous UDP admission |
 | Owner role | `protocol-test-engineer/g7-configured-limits-rereview-003` |
 | Status | `APPROVED` |
-| Revision | Candidate `git:1a371fe8083e72304740d983dcb7f9f6033b6b7f`; reviewer delivery pending wrapper commit/readback |
+| Revision | Candidate `git:1a371fe8083e72304740d983dcb7f9f6033b6b7f`; reviewer delivery `git:510b5a131bcb3272caeb7eb1821444b35644cfcd`, wrapper remote readback matched |
 | Source artifacts | Candidate author reports/handoff and originating `DNS-G8-001` handoff |
 | Assumptions | POSIX `MSG_TRUNC` branch tested on Linux. |
 | Open questions | None for this G7 review. |

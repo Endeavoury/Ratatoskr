@@ -8,7 +8,7 @@
 | Target | `protocol/dns` configured parser limits and synchronous UDP admission |
 | Owner role | `protocol-test-engineer/g7-configured-limits-rereview-003` |
 | Status | `READY_FOR_REVIEW` |
-| Revision | Candidate `git:1a371fe8083e72304740d983dcb7f9f6033b6b7f`; reviewer delivery pending wrapper commit/readback |
+| Revision | Candidate `git:1a371fe8083e72304740d983dcb7f9f6033b6b7f`; reviewer delivery `git:510b5a131bcb3272caeb7eb1821444b35644cfcd`, wrapper remote readback matched |
 | Source artifacts | `test-report.md`; `reviews/g7-configured-limits-rereview.md`; implementation delivery and originating DNS-G8-001 handoff |
 | Assumptions | Linux POSIX socket test is representative of the exercised POSIX branch. |
 | Open questions | None for G7. |
