@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T06:44:38+02:00
+  updated_at: 2026-09-27T07:08:10+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1943,7 +1943,7 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/completion-report.md
 history:
-  - at: 2026-09-27T07:15:00+02:00
+  - at: 2026-09-27T07:08:10+02:00
     actor: protocol-orchestrator/g9-full-campaign-reroute-002
     event: "Verified the sole full-campaign fuzz-engineer leaf delivery at local HEAD and exact origin ref git:797617e7e2194afa6fe80398b89550a3bf0b0694. Packet and name targets completed cleanly; the record target returned 71 with libFuzzer out-of-memory (used 1636Mb; mandatory limit 1024Mb) after 21.236172719858587 seconds. The leaf used the portable Python monotonic/RUSAGE_CHILDREN wrapper, not absent /usr/bin/time, and stopped without retry or review routing. Reflected workflow/fuzzing/G9 and the sole assignment BLOCKED. No technical approval, G9 security review, binding, documentation, or later-stage route is asserted."
     references:
