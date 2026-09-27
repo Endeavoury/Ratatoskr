@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T07:08:10+02:00
+  updated_at: 2026-09-27T10:51:42+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1673,11 +1673,34 @@ assignments:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/handoffs/g9-fuzz-evidence-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-evidence-001/completion-report.md
+  - id: g9-resource-policy-escalation-001
+    stage_id: fuzzing
+    role: protocol-orchestrator
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/README.md
+    agent_id: protocol-orchestrator/g9-resource-policy-escalation-001
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-remediation-routing-001/handoffs/g9-record-resource-authority-to-api-designer.md (Closure section only)
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - verified API-designer assessment local at observed git:510d1a3617e0b66ed98b0980f277de689b5ae508
+      - record target evidence tested git:90eca1f73f448c86ef455a37cddaa6c9cbbbd12e: exit 71, 1636 MiB versus mandatory 1024 MiB
+      - prior maintainer resource-policy handoff with numeric defaults unresolved
+      - current G6 excludes parser work
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/completion-report.md
 blocked_by:
   - id: DNS-BINDING-SCOPE-001
     reason: Binding scope needs maintainer decision before binding gates can become applicable.
     owner_role: maintainer
     handoff: null
+  - id: DNS-G9-RESOURCE-POLICY-MAINTAINER-001
+    reason: Maintainer/product numeric DNS resource default/hard-limit policy is unresolved; G9 result does not identify an authorized private corrective path and current G6 excludes parser work.
+    owner_role: maintainer/product
+    handoff: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
 
 decisions: []
 handoffs:
@@ -1689,6 +1712,7 @@ handoffs:
   - .agentic/workflows/dns-implementation-20260913/agents/binding-api-designer/g4-binding-safety-review-001/handoffs/g4-binding-safety-to-api-designer.md
   - .agentic/workflows/dns-implementation-20260913/agents/compatibility-reviewer/g4-compatibility-review-001/handoffs/g4-compatibility-to-api-designer-c-comp-001.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g4-compatibility-remediation-001/handoffs/maintainer-resource-policy.md
+  - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
   - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-security-review-001/handoffs/dns-g8-001-configured-limits-enforcement.md
   - .agentic/workflows/dns-implementation-20260913/agents/c-protocol-implementer/g8-limits-remediation-001/handoffs/dns-g8-001-remediation-to-protocol-orchestrator.md
   - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-g8-limits-rereview-001/handoffs/dns-g7-limits-001-resource-classification.md
@@ -1942,7 +1966,46 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/completion-report.md
+  - id: g9-record-resource-assessment-001
+    stage_id: fuzzing
+    role: protocol-api-designer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-api-routing-001/delegations/protocol-api-designer-g9-record-resource-assessment-001.md
+    agent_id: deleg_969f0944/task-0; fresh assessment leaf; requested openai-codex/gpt-5.6-sol/medium, observed openai-codex/gpt-5.6-terra with effort unknown; local-only BLOCKED delivery
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/decisions/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-remediation-routing-001/handoffs/g9-record-resource-authority-to-api-designer.md (Resolution section only)
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - source authority handoff at git:8698fe9e5732f7b7b539d0130b13f4d3d730759f
+      - record target evidence at tested git:90eca1f73f448c86ef455a37cddaa6c9cbbbd12e: exit 71, 1636 MiB versus mandatory 1024 MiB
+      - current G6 preflight excludes parser work
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md
 history:
+  - at: 2026-09-27T10:51:42+02:00
+    actor: protocol-orchestrator/g9-resource-policy-escalation-001
+    event: "After verifying the referenced API-designer BLOCKED assessment and its return handoff, completed exactly one formal maintainer/product resource-policy escalation and closed only the completed source-to-API-designer handoff. No specialist is ready: numeric default/hard-limit policy and any revision-bound candidate remain unavailable; no private path or root cause is inferred. Workflow/fuzzing/G9 remain BLOCKED, G7/G8 remain APPROVED, and -rss_limit_mb=1024 remains fixed. No implementation, review, fuzz rerun, security work, binding, documentation, configuration, ABI, or later-stage route is authorized."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/completion-report.md
+  - at: 2026-09-27T10:41:36+02:00
+    actor: protocol-orchestrator/g9-record-resource-api-routing-001
+    event: "Verified exactly one fresh protocol-api-designer assessment leaf delivery before recording state: all five required leaf artifacts exist, source/baseline traceability is present, status is BLOCKED, and the assessment authorizes no private path, public ABI change, implementation, review, campaign rerun, security work, bindings, documentation, or later stage. The sole tracked leaf modification is the assigned source-handoff Resolution section and git diff --check passed; leaf artifacts are local-only and origin remains 510d1a3617e0b66ed98b0980f277de689b5ae508. The assessment preserves mandatory 1024 MiB and formally requests only a future fresh G6 authority assessment after unresolved resource-policy/design inputs. Workflow/fuzzing/G9 remain BLOCKED."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-api-routing-001/delegations/protocol-api-designer-g9-record-resource-assessment-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-api-routing-001/verification/leaf-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md
   - at: 2026-09-27T07:08:10+02:00
     actor: protocol-orchestrator/g9-full-campaign-reroute-002
     event: "Verified the sole full-campaign fuzz-engineer leaf delivery at local HEAD and exact origin ref git:797617e7e2194afa6fe80398b89550a3bf0b0694. Packet and name targets completed cleanly; the record target returned 71 with libFuzzer out-of-memory (used 1636Mb; mandatory limit 1024Mb) after 21.236172719858587 seconds. The leaf used the portable Python monotonic/RUSAGE_CHILDREN wrapper, not absent /usr/bin/time, and stopped without retry or review routing. Reflected workflow/fuzzing/G9 and the sole assignment BLOCKED. No technical approval, G9 security review, binding, documentation, or later-stage route is asserted."

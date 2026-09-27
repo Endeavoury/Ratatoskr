@@ -49,8 +49,19 @@ Assess the approved DNS resource-policy/design against the exact G9 evidence. Pr
 
 ## Resolution (destination role)
 
-Pending `protocol-api-designer` assessment.
+`protocol-api-designer/g9-record-resource-assessment-001` completed a revision-bound assessment at dispatch baseline `git:510d1a3617e0b66ed98b0980f277de689b5ae508` against the tested failure `git:90eca1f73f448c86ef455a37cddaa6c9cbbbd12e`.
+
+**Disposition: `BLOCKED`.** Approved `DNS-REQ-024` and the existing limits contract require bounded parsing, but numeric implementation defaults remain an unresolved maintainer/product resource-policy decision. The observed G9 RSS failure proves a mandatory 1024 MiB-budget failure only; it does not establish an allocation/lifetime cause or a concrete private correction. Therefore no private path is authorized: `src/protocols/dns/dns_parser.c` remains a potential surface outside current G6, not a candidate inferred from this evidence. No public ABI/API change is proposed or approved.
+
+Changed destination artifacts:
+
+- `.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md`
+- `.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/decisions/dns-g9-record-resource-authority.md`
+- `.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md`
+- `.agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md`
+
+The formal handoff requests only that `protocol-orchestrator`, after the missing resource-policy/design prerequisite is resolved, perform a **future fresh G6 authority assessment** for an exact candidate, exact private paths, applicable renewed approvals, and the unchanged `-rss_limit_mb=1024` budget. It does not route implementation or review. Status remains `BLOCKED`; G9 remains `BLOCKED`.
 
 ## Closure (orchestrator after verification)
 
-Pending. G9 remains `BLOCKED`; no implementation or reviewer is authorized by this handoff.
+Verified on 2026-09-27 by `protocol-orchestrator/g9-resource-policy-escalation-001`: the destination assessment's required files exist and consistently retain `BLOCKED`, no authorized private path, no public ABI/API proposal, and the mandatory `-rss_limit_mb=1024` limit. The assessment is accepted only as a blocker response, not as a technical gate approval or G6 renewal. This source-to-API-designer handoff is `COMPLETE`; its unresolved maintainer/product prerequisite is carried forward in `DNS-G9-RESOURCE-POLICY-MAINTAINER-001` at `.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md`. Workflow, fuzzing, and G9 remain `BLOCKED`; G7/G8 remain `APPROVED`.
