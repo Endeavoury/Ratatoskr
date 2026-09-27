@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T06:09:54+02:00
+  updated_at: 2026-09-27T06:22:24+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1878,7 +1878,35 @@ handoffs:
     expected_outputs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/reviews/g9-name-harness-focused-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/completion-report.md
+  - id: g9-full-campaign-execution-001
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: IN_PROGRESS
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/delegations/fuzz-engineer-g9-full-campaign-execution-001.md
+    agent_id: pending fresh fuzz-engineer leaf dispatch; must be independent of all prior G9 campaign and focused-remediation assignments
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - approved G7/G8 records, LLVM19 preflight, and focused remediation/review as named in delegation
+      - current corpus, target-source, and fuzz-CMake SHA-256 values as named in delegation
+      - committed routing packet must be an ancestor of execution HEAD
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/completion-report.md
 history:
+  - at: 2026-09-27T06:22:24+02:00
+    actor: protocol-orchestrator/g9-full-campaign-routing-001
+    event: "Verified current G7/G8 approvals, focused name-harness remediation/review, current source digests, LLVM19 preflight, local/origin baseline, and preserved untracked paths. Recorded exactly one fresh fuzz-engineer assignment for a full bounded serial packet/name/record campaign. Workflow, fuzzing, and G9 remain BLOCKED pending campaign evidence and a separately routed independent G9 security review; no review or later stage is routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/preflight-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/delegations/fuzz-engineer-g9-full-campaign-execution-001.md
   - at: 2026-09-27T06:09:54+02:00
     actor: protocol-orchestrator/g9-name-harness-focused-review-routing-001
     event: "Dispatched exactly one fresh independent fuzz-engineer focused review, verified its permitted two-file delivery at remote git:04715d1771c90b1f8d82686947b5cc1bb96dcf39, and recorded its focused APPROVED disposition for candidate git:2c9e9b945352642d27cf703132e8e5e525b8b5cb. The reviewer independently verified the five-path candidate diff, cap maximum 1007, terminal index 1023, and an LLVM19 sanitizer-clean 1,133-byte replay. This does not approve G9: fuzzing/G9 remain BLOCKED pending fresh complete campaign evidence and designated G9 security review. No further stage or specialist was routed."
