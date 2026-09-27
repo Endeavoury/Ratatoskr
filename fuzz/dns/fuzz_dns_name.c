@@ -5,7 +5,7 @@
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     uint8_t packet[1024] = {0x12,0x34,0x81,0x80,0,1,0,0,0,0,0,0};
-    size_t copied = size < sizeof(packet) - 16u ? size : sizeof(packet) - 16u;
+    size_t copied = size < sizeof(packet) - 17u ? size : sizeof(packet) - 17u;
     ratos_context *ctx; ratos_dns_result *result = NULL;
     memcpy(packet + 12u, data, copied);
     packet[12u + copied] = 0u; packet[13u + copied] = 0u; packet[14u + copied] = 1u;
