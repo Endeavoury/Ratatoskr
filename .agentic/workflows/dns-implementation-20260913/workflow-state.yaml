@@ -6,11 +6,11 @@ workflow:
   target:
     kind: protocol
     id: dns
-  status: IN_PROGRESS
+  status: BLOCKED
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T02:08:21+02:00
+  updated_at: 2026-09-27T02:12:28+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -145,7 +145,7 @@ stages:
     gate: G8
   - id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     depends_on: [security]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
@@ -312,8 +312,8 @@ gates:
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fresh fuzz evidence for implementation work. Prior g9-fuzz-execution-002 remains BLOCKED because its corpus decoder rejected literal `zero-length:` before build. A sole fresh role-scoped execution assignment uses first-colon parsing into /tmp and must independently verify all recorded source digests, build the existing LLVM19 harnesses, and complete three bounded serial runs before G9 review can be routed.
-    status: IN_PROGRESS
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/preflight-verification.md
+    status: BLOCKED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/verification/fuzz-engineer-g9-fuzz-execution-004-validation.md
     input_revisions:
       - dispatch-baseline:a4ae4e3fd94871bba4d5644b4edff891ae213047
       - g7-candidate:1a371fe8083e72304740d983dcb7f9f6033b6b7f
@@ -1798,9 +1798,9 @@ handoffs:
   - id: g9-fuzz-execution-004
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/delegations/fuzz-engineer-g9-fuzz-execution-004.md
-    agent_id: pending sole fresh leaf dispatch after committed routing readback
+    agent_id: deleg_4ee738cc/task-0; fresh leaf blocked by environment command-consent denial before preflight/conversion/build/run
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-004/fuzz-plan.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-004/fuzz-results.md
@@ -1817,6 +1817,13 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-004/handoffs/g9-fuzz-execution-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-004/completion-report.md
 history:
+  - at: 2026-09-27T02:12:28+02:00
+    actor: protocol-orchestrator/g9-corpus-decoder-routing-001
+    event: "Independently validated the sole fresh fuzz-engineer leaf return. The environment denied its required wrapper-based preflight, and it stopped without conversion, build, target execution, output artifacts, commit, or push. Reflected fuzzing/G9/workflow BLOCKED and created a durable consent blocker handoff. No G9 security review or later stage is routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/verification/fuzz-engineer-g9-fuzz-execution-004-validation.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/handoffs/dns-g9-fuzz-execution-consent-blocker-004.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/completion-report.md
   - at: 2026-09-27T02:08:21+02:00
     actor: protocol-orchestrator/g9-corpus-decoder-routing-001
     event: "Verified the committed g9-fuzz-execution-002 blocker: its `: ` decoder rejected literal zero-length: before configuration; no targets ran. Recorded exactly one fresh fuzz-engineer assignment with first-colon ephemeral decoding, fixed input digests, packet-ancestor integrity rule, and three bounded sequential existing-target runs. G9 is IN_PROGRESS and unapproved; no security review or later stage is routed."
