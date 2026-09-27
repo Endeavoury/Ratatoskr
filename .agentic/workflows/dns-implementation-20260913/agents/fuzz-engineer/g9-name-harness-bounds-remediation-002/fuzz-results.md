@@ -44,6 +44,10 @@ timeout 30s /tmp/ratatoskr-g9-name-harness-bounds-remediation-002/fuzz/ratos_fuz
 
 Replay exited 0. libFuzzer found one 1,133-byte corpus input and completed two runs in zero seconds (`DONE`, RSS 33 MB). Output contained no ASan, UBSan, crash, timeout, or RSS-limit diagnostic.
 
+## Delivery evidence
+
+Initial leaf delivery commit: `a5703fccd511c42267b223c4e0b43fe40318a20d`. Exact remote readback after its push: `refs/heads/hermes/dns-implementation-20260913 = a5703fccd511c42267b223c4e0b43fe40318a20d`. `git diff-tree --name-only` for that commit listed exactly the four assigned leaf artifacts: this file, `fuzz-plan.md`, the named handoff, and `completion-report.md`; it listed no source path. `git diff --check` for that delivery exited 0.
+
 ## Scope and limitations
 
 No repository source changed; packet and record targets were not built or run. No fuzz campaign, focused review, security review, or later stage was run. This is focused no-op remediation validation only and is not G9 approval.

@@ -16,6 +16,10 @@ The live harness already contains the safe `sizeof(packet) - 17u` cap, and fix c
 
 Using the existing LLVM19 toolchain, an isolated `/tmp/ratatoskr-g9-name-harness-bounds-remediation-002` configuration and `ratos_fuzz_dns_name`-only build both exited 0. A one-file, 1,133-byte derived replay exited 0 with no ASan, UBSan, crash, timeout, or RSS diagnostic. Exact commands, tool versions, input digest, and exits are recorded in `fuzz-results.md`.
 
+## Delivery evidence
+
+Initial leaf delivery commit: `a5703fccd511c42267b223c4e0b43fe40318a20d`; exact remote readback immediately after push: `refs/heads/hermes/dns-implementation-20260913 = a5703fccd511c42267b223c4e0b43fe40318a20d`. Its changed paths were exactly the four required leaf artifacts, with no source path, and `git diff --check` passed.
+
 ## Requested action and acceptance criteria
 
 Record this limited source-cap validation as available evidence only. Do not treat it as a G9 gate approval and do not route a review, campaign, security review, packet/record target, or later stage from this leaf. A future G9 decision requires separately authorized complete evidence and designated independent review under the workflow contract.
