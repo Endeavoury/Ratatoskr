@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T06:22:24+02:00
+  updated_at: 2026-09-27T06:28:28+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1881,9 +1881,9 @@ handoffs:
   - id: g9-full-campaign-execution-001
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/delegations/fuzz-engineer-g9-full-campaign-execution-001.md
-    agent_id: pending fresh fuzz-engineer leaf dispatch; must be independent of all prior G9 campaign and focused-remediation assignments
+    agent_id: deleg_b9ef14b9/task-0; fresh leaf delivery git:38e713043f991f135bfc168e569dd5e007d555bc; blocked before packet target process launch by absent /usr/bin/time
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-plan.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-results.md
@@ -1900,6 +1900,14 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/completion-report.md
 history:
+  - at: 2026-09-27T06:28:28+02:00
+    actor: protocol-orchestrator/g9-full-campaign-routing-001
+    event: "Verified the sole fresh fuzz-engineer delivery at remote git:38e713043f991f135bfc168e569dd5e007d555bc: all four required outputs exist, routing ancestry and four-file-only boundary hold, and diff check is clean. Input integrity, ephemeral corpus conversion, and LLVM19 three-target build succeeded, but the first packet command exited 127 before fuzzer launch because /usr/bin/time is absent. Per the leaf's immediate-stop rule, name and record did not run. Reflected the assignment BLOCKED; workflow/fuzzing/G9 remain BLOCKED. No G9 security review or later stage was routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-routing-001/verification/g9-full-campaign-execution-001-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/completion-report.md
   - at: 2026-09-27T06:22:24+02:00
     actor: protocol-orchestrator/g9-full-campaign-routing-001
     event: "Verified current G7/G8 approvals, focused name-harness remediation/review, current source digests, LLVM19 preflight, local/origin baseline, and preserved untracked paths. Recorded exactly one fresh fuzz-engineer assignment for a full bounded serial packet/name/record campaign. Workflow, fuzzing, and G9 remain BLOCKED pending campaign evidence and a separately routed independent G9 security review; no review or later stage is routed."
