@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T05:55:08+02:00
+  updated_at: 2026-09-27T06:09:54+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1841,9 +1841,9 @@ handoffs:
   - id: g9-name-harness-remediation-001
     stage_id: fuzzing
     role: fuzz-engineer
-    status: READY_FOR_REVIEW
+    status: COMPLETE
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-harness-remediation-routing-001/delegations/fuzz-engineer-g9-name-harness-remediation-001.md
-    agent_id: deleg_9f677c42/task-0; fresh leaf independent of g9-fuzz-execution-005; focused remediation delivery git:2c9e9b945352642d27cf703132e8e5e525b8b5cb
+    agent_id: deleg_9f677c42/task-0; fresh leaf independent of g9-fuzz-execution-005; focused remediation delivery git:2c9e9b945352642d27cf703132e8e5e525b8b5cb; independently focused-reviewed APPROVED at git:04715d1771c90b1f8d82686947b5cc1bb96dcf39
     allowed_paths:
       - fuzz/dns/fuzz_dns_name.c
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-remediation-001/README.md
@@ -1861,7 +1861,32 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-remediation-001/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-remediation-001/handoffs/g9-name-harness-remediation-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-remediation-001/completion-report.md
+  - id: g9-name-harness-focused-review-001
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-name-harness-focused-review-routing-001/delegations/fuzz-engineer-g9-name-harness-focused-review-001.md
+    agent_id: deleg_8d43f646/task-0; fresh independent reviewer distinct from remediation author deleg_9f677c42/task-0; focused disposition APPROVED; delivery git:04715d1771c90b1f8d82686947b5cc1bb96dcf39
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/reviews/g9-name-harness-focused-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/handoffs/g9-name-harness-focused-review-to-protocol-orchestrator.md (only if required)
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - candidate source at git:2c9e9b945352642d27cf703132e8e5e525b8b5cb; direct parent git:f90c9bd80217cddb0e036d4dc0d8914f0cd32927
+      - remediation report, handoff, completion, delivery verification and G9 execution 005 failure verification named in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/reviews/g9-name-harness-focused-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/completion-report.md
 history:
+  - at: 2026-09-27T06:09:54+02:00
+    actor: protocol-orchestrator/g9-name-harness-focused-review-routing-001
+    event: "Dispatched exactly one fresh independent fuzz-engineer focused review, verified its permitted two-file delivery at remote git:04715d1771c90b1f8d82686947b5cc1bb96dcf39, and recorded its focused APPROVED disposition for candidate git:2c9e9b945352642d27cf703132e8e5e525b8b5cb. The reviewer independently verified the five-path candidate diff, cap maximum 1007, terminal index 1023, and an LLVM19 sanitizer-clean 1,133-byte replay. This does not approve G9: fuzzing/G9 remain BLOCKED pending fresh complete campaign evidence and designated G9 security review. No further stage or specialist was routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-name-harness-focused-review-routing-001/delegations/fuzz-engineer-g9-name-harness-focused-review-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-name-harness-focused-review-routing-001/verification/g9-name-harness-focused-review-001-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/reviews/g9-name-harness-focused-review.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/completion-report.md
   - at: 2026-09-27T05:55:08+02:00
     actor: protocol-orchestrator/g9-harness-remediation-routing-001
     event: "Verified the G9 name-harness overflow blocker, dispatched exactly one fresh independent fuzz-engineer corrective leaf, and verified its focused delivery at remote git:2c9e9b945352642d27cf703132e8e5e525b8b5cb. The leaf changed only fuzz/dns/fuzz_dns_name.c plus four formal reports; its explicit LLVM19 name-target build and fixed 1,133-byte sanitizer replay were clean. The candidate awaits independently assigned focused fuzz verification/review. G9/fuzzing remain BLOCKED and unapproved because no fresh complete three-target campaign exists; no G9 security review was routed."
