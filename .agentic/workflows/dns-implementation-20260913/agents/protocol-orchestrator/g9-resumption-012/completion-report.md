@@ -37,4 +37,5 @@ RECOMMENDED NEXT ROLE:
 - `maintainer` / product owner, returned through `protocol-orchestrator`.
 
 REMOTE READBACK AFTER PUSH:
-- Pending required wrapper commit/push and exact origin readback.
+- Required wrapper push completed: `HEAD:refs/heads/hermes/dns-implementation-20260913`.
+- Fetched `origin/hermes/dns-implementation-20260913` read back as `e5c2be8ecf263bb9805735335f37637c96ae0418` after the blocker-artifact delivery commit.
