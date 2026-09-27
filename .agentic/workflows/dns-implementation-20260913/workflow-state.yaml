@@ -6,7 +6,7 @@ workflow:
   target:
     kind: protocol
     id: dns
-  status: IN_PROGRESS
+  status: BLOCKED
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
@@ -145,7 +145,7 @@ stages:
     gate: G8
   - id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     depends_on: [security]
     input_artifacts:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-test-engineer/g7-configured-limits-rereview-003/reviews/g7-configured-limits-rereview.md
@@ -312,8 +312,8 @@ gates:
   - id: G9
     applicable: true
     rationale: DNS parser is hostile-input surface and requires fresh fuzz evidence for implementation work. Prior g9-fuzz-execution-002 remains BLOCKED because its corpus decoder rejected literal `zero-length:` before build. A sole fresh role-scoped execution assignment uses first-colon parsing into /tmp and must independently verify all recorded source digests, build the existing LLVM19 harnesses, and complete three bounded serial runs before G9 review can be routed.
-    status: IN_PROGRESS
-    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-corpus-decoder-routing-001/verification/fuzz-engineer-g9-fuzz-execution-004-validation.md
+    status: BLOCKED
+    record: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-reroute-002/verification/g9-full-campaign-execution-002-delivery-verification.md
     input_revisions:
       - dispatch-baseline:a4ae4e3fd94871bba4d5644b4edff891ae213047
       - g7-candidate:1a371fe8083e72304740d983dcb7f9f6033b6b7f
@@ -1924,9 +1924,9 @@ handoffs:
   - id: g9-full-campaign-execution-002
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: BLOCKED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-reroute-002/delegations/fuzz-engineer-g9-full-campaign-execution-002.md
-    agent_id: pending one fresh fuzz-engineer leaf dispatch; requested openai-codex/gpt-5.6-terra medium; effective model gpt-5.6-terra; effort unknown
+    agent_id: deleg_01a07705/task-0; requested openai-codex/gpt-5.6-terra medium; actual gpt-5.6-terra, effort unknown; delivery git:797617e7e2194afa6fe80398b89550a3bf0b0694; blocked by record-target libFuzzer RSS failure
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-plan.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
@@ -1943,6 +1943,14 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/completion-report.md
 history:
+  - at: 2026-09-27T07:15:00+02:00
+    actor: protocol-orchestrator/g9-full-campaign-reroute-002
+    event: "Verified the sole full-campaign fuzz-engineer leaf delivery at local HEAD and exact origin ref git:797617e7e2194afa6fe80398b89550a3bf0b0694. Packet and name targets completed cleanly; the record target returned 71 with libFuzzer out-of-memory (used 1636Mb; mandatory limit 1024Mb) after 21.236172719858587 seconds. The leaf used the portable Python monotonic/RUSAGE_CHILDREN wrapper, not absent /usr/bin/time, and stopped without retry or review routing. Reflected workflow/fuzzing/G9 and the sole assignment BLOCKED. No technical approval, G9 security review, binding, documentation, or later-stage route is asserted."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-full-campaign-reroute-002/verification/g9-full-campaign-execution-002-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/completion-report.md
   - at: 2026-09-27T06:50:00+02:00
     actor: protocol-orchestrator/g9-full-campaign-reroute-002
     event: "Verified no live specialist execution, current origin/local baseline, prior full-campaign block before target launch from absent /usr/bin/time, focused name-harness evidence, and portable /usr/bin/timeout plus /usr/bin/python3 availability. Recorded exactly one fresh full-campaign fuzz-engineer assignment with a Python monotonic/RUSAGE_CHILDREN measurement wrapper; /usr/bin/time is prohibited. Workflow/fuzzing/G9 are IN_PROGRESS only; no technical G9 approval, security review, binding, documentation, or later-stage route is asserted."
