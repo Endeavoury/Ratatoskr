@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T10:51:42+02:00
+  updated_at: 2026-09-27T13:35:39+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1966,6 +1966,25 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/completion-report.md
+  - id: g9-dispatch-readiness-verification-001
+    stage_id: fuzzing
+    role: protocol-orchestrator
+    status: BLOCKED
+    delegation: null
+    agent_id: protocol-orchestrator/g9-dispatch-readiness-verification-001; no child dispatched
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/workflow-state.yaml
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - current local/origin branch baseline git:d5656aa76c8a730282097fafb3cc73d3b688f8fc
+      - LLVM19 preflight at .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
+      - G9 resource-policy blocker at .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
+      - G9 record-target campaign result at .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/completion-report.md
   - id: g9-record-resource-assessment-001
     stage_id: fuzzing
     role: protocol-api-designer
@@ -1989,6 +2008,14 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md
 history:
+  - at: 2026-09-27T13:35:39+02:00
+    actor: protocol-orchestrator/g9-dispatch-readiness-verification-001
+    event: "Verified local/origin baseline, absence of live DNS fuzz-target execution, and current versioned LLVM19 availability. Reconciled the resumption-006 toolchain correction against the later durable record-target RSS failure and unresolved DNS-G9-RESOURCE-POLICY-MAINTAINER-001: only the PATH-only toolchain blocker is cleared. Workflow, fuzzing, and G9 remain BLOCKED. No fuzz-engineer leaf, G9 security review, technical approval, campaign, binding, documentation, or later-stage route was created."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-dispatch-readiness-verification-001/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resource-policy-escalation-001/handoffs/dns-g9-resource-policy-to-maintainer-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/fuzz-results.md
   - at: 2026-09-27T10:51:42+02:00
     actor: protocol-orchestrator/g9-resource-policy-escalation-001
     event: "After verifying the referenced API-designer BLOCKED assessment and its return handoff, completed exactly one formal maintainer/product resource-policy escalation and closed only the completed source-to-API-designer handoff. No specialist is ready: numeric default/hard-limit policy and any revision-bound candidate remain unavailable; no private path or root cause is inferred. Workflow/fuzzing/G9 remain BLOCKED, G7/G8 remain APPROVED, and -rss_limit_mb=1024 remains fixed. No implementation, review, fuzz rerun, security work, binding, documentation, configuration, ABI, or later-stage route is authorized."
