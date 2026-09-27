@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T06:28:28+02:00
+  updated_at: 2026-09-27T06:44:38+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -1878,6 +1878,28 @@ handoffs:
     expected_outputs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/reviews/g9-name-harness-focused-review.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-focused-review-001/completion-report.md
+  - id: g9-name-harness-bounds-remediation-002
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: COMPLETE
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-009/delegations/fuzz-engineer-g9-name-harness-bounds-remediation-002.md
+    agent_id: deleg_cc712d15/task-0; one bounded leaf; requested and actual openai-codex/gpt-5.6-terra, medium requested, effort telemetry unavailable; final delivery git:4bf4f7620e30ae58ea9a7d05f6ece433cb90effd; focused no-op disposition READY_FOR_REVIEW
+    allowed_paths:
+      - fuzz/dns/fuzz_dns_name.c (only if the minimal terminal-write bounds correction was absent)
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/handoffs/g9-name-harness-bounds-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - execution-005 blocker and handoff plus resumption-008 delivery verification
+      - focused remediation-001 and focused-review-001 reports
+      - live fuzz/dns/fuzz_dns_name.c at dispatch git:d489d749a37548e1e711d11c10b53b2041281bbf
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/handoffs/g9-name-harness-bounds-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/completion-report.md
   - id: g9-full-campaign-execution-001
     stage_id: fuzzing
     role: fuzz-engineer
@@ -1900,6 +1922,15 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-001/completion-report.md
 history:
+  - at: 2026-09-27T06:44:38+02:00
+    actor: protocol-orchestrator/g9-resumption-009
+    event: "Created one complete fresh fuzz-engineer bounds-remediation packet and dispatched exactly that one leaf. Independently verified its four required artifacts, exact allowed-path boundary, unchanged name-harness source blob, clean delivery diffs, local ancestry, fetched origin ref, and direct origin readback at git:4bf4f7620e30ae58ea9a7d05f6ece433cb90effd. The leaf reports READY_FOR_REVIEW only for a no-op focused sanitizer validation: live source already contains sizeof(packet) - 17u, and its 1,133-byte name-target replay was clean. Workflow/fuzzing/G9 remain BLOCKED; no campaign, G9 security review, or later stage was routed."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-009/delegations/fuzz-engineer-g9-name-harness-bounds-remediation-002.md
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-009/verification/g9-name-harness-bounds-remediation-002-delivery-verification.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/handoffs/g9-name-harness-bounds-remediation-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-name-harness-bounds-remediation-002/completion-report.md
   - at: 2026-09-27T06:28:28+02:00
     actor: protocol-orchestrator/g9-full-campaign-routing-001
     event: "Verified the sole fresh fuzz-engineer delivery at remote git:38e713043f991f135bfc168e569dd5e007d555bc: all four required outputs exist, routing ancestry and four-file-only boundary hold, and diff check is clean. Input integrity, ephemeral corpus conversion, and LLVM19 three-target build succeeded, but the first packet command exited 127 before fuzzer launch because /usr/bin/time is absent. Per the leaf's immediate-stop rule, name and record did not run. Reflected the assignment BLOCKED; workflow/fuzzing/G9 remain BLOCKED. No G9 security review or later stage was routed."
