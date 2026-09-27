@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T01:55:06+02:00
+  updated_at: 2026-09-27T02:00:55+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -152,10 +152,10 @@ stages:
       - .agentic/workflows/dns-implementation-20260913/agents/security-reviewer/g8-configured-limits-security-rereview-001/reviews/g8-configured-limits-security-rereview.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
     output_artifacts:
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-plan.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/handoffs/g9-fuzz-execution-to-security-reviewer.md
-      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/completion-report.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/completion-report.md
     gate: G9
   - id: binding_design
     role: binding-api-designer
@@ -1754,9 +1754,9 @@ handoffs:
   - id: g9-fuzz-execution-002
     stage_id: fuzzing
     role: fuzz-engineer
-    status: IN_PROGRESS
+    status: SUPERSEDED
     delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-execution-routing-002/delegations/fuzz-engineer-g9-fuzz-execution-002.md
-    agent_id: pending fresh leaf dispatch
+    agent_id: no leaf dispatched; superseded because packet baseline git:f37171a33e62f2ad2c1440ce41295a22596c5ee3 cannot equal current HEAD
     allowed_paths:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-plan.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
@@ -1773,6 +1773,27 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/handoffs/g9-fuzz-execution-to-security-reviewer.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-002/completion-report.md
+  - id: g9-fuzz-execution-003
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: PENDING_DISPATCH
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-baseline-correction-001/delegations/fuzz-engineer-g9-fuzz-execution-003.md
+    agent_id: pending one fresh leaf; dispatch only after push/readback and exact packet-baseline equals HEAD check
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - G7 APPROVED and G8 APPROVED exact records named in the fresh delegation at its committed correction-tip baseline
+      - LLVM 19 preflight at .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-006/g9-current-toolchain-preflight.md
+      - fixed local corpus fuzz/dns/corpus/ and the three pre-existing DNS fuzz targets
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/handoffs/g9-fuzz-execution-to-security-reviewer.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-fuzz-execution-003/completion-report.md
 history:
   - at: 2026-09-27T01:55:06+02:00
     actor: protocol-orchestrator/g9-execution-routing-002
