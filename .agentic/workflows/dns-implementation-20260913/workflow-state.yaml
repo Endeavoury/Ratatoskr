@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-27T16:11:48+02:00
+  updated_at: 2026-09-27T20:06:06+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -2007,6 +2007,27 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/handoffs/dns-g9-record-resource-assessment-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/completion-report.md
+  - id: g9-full-campaign-execution-003
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-011/delegations/fuzz-engineer-g9-full-campaign-execution-003.md
+    agent_id: deleg_179f2d77/task-0; fresh leaf; requested/observed openai-codex/gpt-5.6-terra, effort unknown; delivery git:e03dd0da18ccfb9d308b7ad5bd758116b9a7b955; stopped before campaign by packet baseline/ref divergence
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/completion-report.md
+    readonly_paths: [all other repository paths]
+    input_artifacts:
+      - dispatch baseline git:0a8fc53cd645609dfa5eda51e53f98c2ea2c2ea4; packet delivery git:7b92dcb393881d7b98a15289bb98ce52317eba73
+      - G7/G8 approved state, LLVM19 preflight, current corpus/target/CMake digests, and G9 resumption-010 evidence named in delegation
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/fuzz-results.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-003/completion-report.md
 history:
   - at: 2026-09-27T13:35:39+02:00
     actor: protocol-orchestrator/g9-dispatch-readiness-verification-001
