@@ -5,15 +5,15 @@
 | Artifact ID | `dns-implementation-20260913-g9-corrective-full-campaign-routing-004-completion` |
 | Workflow / stage | `dns-implementation-20260913` / `fuzzing` (G9) |
 | Owner | `protocol-orchestrator/g9-corrective-full-campaign-routing-004` |
-| Status | `IN_PROGRESS` |
-| Source baseline | `git:464702783c7174212644a4d6416a72958c057cae` |
+| Status | `BLOCKED` |
+| Source baseline | `git:464702783c7174212644a4d6416a72958c057cae`; routing delivery `git:b82ea8499600c3ef7ab1e51fa297b477b1f17c1c`; leaf delivery `git:edfde9410eb78ac9dd816136e57651d5e863c330` |
 
 ROLE: `protocol-orchestrator/g9-corrective-full-campaign-routing-004`
 
-STATUS: `IN_PROGRESS`
+STATUS: `BLOCKED`
 
 SUMMARY:
-Verified that no prior G9 worker is live, G7/G8 remain approved, the versioned LLVM19 toolchain and fixed inputs are present, and unrelated untracked artifacts are preserved. Created one unique routing workspace and one complete fresh packet for exactly one nested fuzz-engineer leaf. No security review is dispatched.
+Verified the fresh leaf delivery and exact five-file boundary. The requested LLVM19 build and first-colon corpus conversion succeeded. Packet and name runs were clean, but `ratos_fuzz_dns_record` returned 71 with explicit libFuzzer out-of-memory at the unchanged 1024 MiB RSS limit; the leaf stopped without retry, repair, G9 approval, or security-review routing.
 
 ARTIFACTS CREATED:
 - `README.md`
@@ -29,16 +29,16 @@ DECISIONS MADE:
 - Do not route `security-reviewer` until a later verification establishes three clean leaf runs.
 
 OPEN QUESTIONS:
-- Campaign outcome is pending the sole leaf.
+- The responsible corrective owner/scope is not inferred from the record-target resource result.
 
 BLOCKERS:
-- None at dispatch. Any leaf prerequisite or campaign failure must be recorded by that leaf without a retry or fix.
+- `ratos_fuzz_dns_record` returned 71 after 10.101190892979503 seconds with `ERROR: libFuzzer: out-of-memory` and `SUMMARY: libFuzzer: out-of-memory` under mandatory `-rss_limit_mb=1024`.
 
 HANDOFF REQUIRED:
-- Fuzz-engineer returns its formal handoff only to this protocol-orchestrator workspace.
+- Preserve the leaf handoff at `agents/fuzz-engineer/g9-full-campaign-execution-004/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md`; any corrective route requires separate authorization.
 
 RECOMMENDED NEXT ROLE:
-- `fuzz-engineer/g9-full-campaign-execution-004`; then, only on verified clean evidence, an independent G9 `security-reviewer`.
+- `protocol-orchestrator` only; do not route G9 `security-reviewer` from blocked evidence.
 
 VALIDATION EVIDENCE:
 - Local and origin ref matched at the recorded source baseline; no live matching process was observed; the role wrapper is executable; current corpus/harness/CMake SHA-256 values match the packet; nesting configuration is enabled with depth 2.
