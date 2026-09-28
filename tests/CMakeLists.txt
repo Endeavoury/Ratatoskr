@@ -3,6 +3,11 @@ target_include_directories(ratos_dns_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(ratos_dns_tests PRIVATE ratatoskr_static)
 add_test(NAME ratos_dns_tests COMMAND ratos_dns_tests)
 
+add_executable(ratos_dns_g7_native_verification_tests dns/dns_g7_native_verification_tests.c)
+target_include_directories(ratos_dns_g7_native_verification_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(ratos_dns_g7_native_verification_tests PRIVATE ratatoskr_static)
+add_test(NAME ratos_dns_g7_native_verification_tests COMMAND ratos_dns_g7_native_verification_tests)
+
 add_executable(ratos_abi_tests core/abi_tests.c)
 target_link_libraries(ratos_abi_tests PRIVATE ratatoskr_static)
 add_test(NAME ratos_abi_tests COMMAND ratos_abi_tests)

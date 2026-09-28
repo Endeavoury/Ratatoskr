@@ -16,6 +16,7 @@ typedef int ratos_socklen;
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <sys/uio.h>
 #include <unistd.h>
 typedef int ratos_socket;
 typedef socklen_t ratos_socklen;
@@ -61,11 +62,11 @@ static int timed_out(void) {
 
 ratos_error ratos_dns_udp_exchange(ratos_context *ctx, const char *server,
     uint16_t port, uint32_t timeout_ms, const uint8_t *query, size_t query_length,
-    uint8_t **response, size_t *response_length) {
+    const ratos_dns_limits *limits, uint8_t **response, size_t *response_length) {
     struct addrinfo hints, *addresses = NULL, *address;
     char service[6];
     ratos_error final_error = RATOS_ERROR_NETWORK;
-    if (response == NULL || response_length == NULL) return RATOS_ERROR_INVALID_ARGUMENT;
+    if (response == NULL || response_length == NULL || limits == NULL || limits->max_udp_message_bytes > RATOS_DNS_MAX_PACKET) return RATOS_ERROR_INVALID_ARGUMENT;
     *response = NULL; *response_length = 0u;
     if (!socket_start()) { ratos_set_error(ctx, "Unable to initialize socket runtime"); return RATOS_ERROR_NETWORK; }
     memset(&hints, 0, sizeof(hints)); hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_DGRAM; hints.ai_protocol = IPPROTO_UDP;
@@ -88,12 +89,31 @@ ratos_error ratos_dns_udp_exchange(ratos_context *ctx, const char *server,
             final_error = timed_out() ? RATOS_ERROR_TIMEOUT : RATOS_ERROR_NETWORK;
             ratos_close_socket(socket_handle); continue;
         }
-        buffer = (uint8_t *)malloc(RATOS_DNS_MAX_PACKET);
+        buffer = (uint8_t *)malloc(limits->max_udp_message_bytes);
         if (buffer == NULL) { ratos_close_socket(socket_handle); final_error = RATOS_ERROR_OUT_OF_MEMORY; break; }
 #ifdef _WIN32
-        received = recv(socket_handle, (char *)buffer, (int)RATOS_DNS_MAX_PACKET, 0);
+        received = recv(socket_handle, (char *)buffer, (int)limits->max_udp_message_bytes, 0);
+        if (received == SOCKET_ERROR && WSAGetLastError() == WSAEMSGSIZE) {
+            free(buffer); ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();
+            ratos_set_error(ctx, "DNS UDP response exceeds configured message limit");
+            return RATOS_ERROR_OUT_OF_MEMORY;
+        }
 #else
-        received = (int)recv(socket_handle, buffer, RATOS_DNS_MAX_PACKET, 0);
+        {
+            struct iovec vector;
+            struct msghdr message;
+            memset(&message, 0, sizeof(message));
+            vector.iov_base = buffer;
+            vector.iov_len = limits->max_udp_message_bytes;
+            message.msg_iov = &vector;
+            message.msg_iovlen = 1u;
+            received = (int)recvmsg(socket_handle, &message, 0);
+            if (received >= 0 && (message.msg_flags & MSG_TRUNC) != 0) {
+                free(buffer); ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();
+                ratos_set_error(ctx, "DNS UDP response exceeds configured message limit");
+                return RATOS_ERROR_OUT_OF_MEMORY;
+            }
+        }
 #endif
         if (received > 0) {
             ratos_close_socket(socket_handle); freeaddrinfo(addresses); socket_finish();

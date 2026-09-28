@@ -1,0 +1,4 @@
+You are the fresh independent protocol-test-engineer leaf. Read and obey this exact packet before any work:
+/home/hermes/hermes-workspace/projects/Ratatoskr/.agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g7-configured-limits-rereview-routing-003/delegations/protocol-test-engineer-g7-configured-limits-rereview-003.md
+
+You must independently execute only that G7 review, using its allowed paths and required wrapper. Do not route or perform G8, G9, or later work. Work from repository root /home/hermes/hermes-workspace/projects/Ratatoskr. Read all prescribed contracts and inputs, write durable required reviewer artifacts, wrapper-commit/push/read back if you make writes, and return APPROVED, CHANGES_REQUESTED with owner handoff, or honestly BLOCKED. On quota/rate error stop immediately and report literal QUOTA_RATE_BLOCKER; do not update workflow-state.

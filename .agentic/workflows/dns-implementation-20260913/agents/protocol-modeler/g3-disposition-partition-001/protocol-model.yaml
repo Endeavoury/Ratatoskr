@@ -1,0 +1,415 @@
+schema_version: 1
+template: false
+artifact_id: dns-implementation-20260913-protocol-model-g3-disposition-partition-001
+workflow_id: dns-implementation-20260913
+target: protocol/dns
+owner_role: protocol-modeler
+status: READY_FOR_REVIEW
+revision: "Disposition-partition corrective candidate; Git delivery commit and content digest are recorded in completion-report.md."
+source_artifacts:
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-modeler/g2-model-001/reviews/g2-analysis-review.md
+    disposition: G2_APPROVED
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/protocol-analysis.md
+    git: 5615caed0b7ad0a321d6794e71b79c4195e90384
+    sha256: 5bc0ce7a7442060a946308de0bd6f36eb0a224c3715ae24225927bc87b48d444
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-analyst/analysis-001/decisions/dns-extension-and-qtype-profile.md
+    git: 5615caed0b7ad0a321d6794e71b79c4195e90384
+    sha256: 38746ca8f26735bae37643ae2ffc17ec652ee89c9b027fcbf5dfca4d81b082c9
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/reviews/g3-model-review.md
+    git: 0fa10145698994fcdb2e3a6004cd8e6a356b96f7
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-api-001/handoffs/g3-to-modeler-tcp-semantics.md
+    git: 0fa10145698994fcdb2e3a6004cd8e6a356b96f7
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/reviews/g3-corrective-model-review.md
+    git: 4e8a6653146575b8e4ce57b7cd5927e5d80d8b9e
+  - path: .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g3-corrective-review-001/handoffs/g3-corrective-to-modeler-disposition-partition.md
+    git: 4e8a6653146575b8e4ce57b7cd5927e5d80d8b9e
+assumptions:
+  - The component is a standard unicast DNS stub/client with an explicitly selected or OS-configured upstream resolver.
+  - The operating-system network stack owns socket mechanics; this model defines component-visible events and effects only.
+  - The authorized transport policy is UDP first and TCP fallback only after a correlated UDP response has TC set.
+open_questions:
+  - Numerical resource budgets and their configurability are API/product policy, constrained only by the stated protocol maxima and invariants.
+  - Retry, server selection, timeout/cancellation ownership, TCP-first, reuse, and pipelining are not selected capabilities.
+  - The selected ordinary QTYPE capability set is API/product policy; ANY, meta, and unassigned/reserved requests are unsupported in this profile.
+limitations:
+  - G3 remains CHANGES_REQUESTED until a fresh independent protocol-api-designer review approves this corrective candidate. This candidate is not an API, ABI, parser algorithm, implementation, vector set, or approval.
+  - EDNS, OPT option semantics, extended RCODE representation, DNSSEC validation, encrypted DNS, recursive/authoritative behavior, caching, transfers, UPDATE, NOTIFY, DSO, mDNS/DNS-SD, and bindings are excluded.
+semantic_domains:
+  - id: DOM-DNS-U16
+    meaning: Unsigned DNS wire-sized scalar.
+    constraints: integer range 0..65535; semantic numeric value independent of representation.
+    requirement_refs: [DNS-REQ-003, DNS-REQ-004, DNS-REQ-006, DNS-REQ-010, DNS-REQ-019]
+  - id: DOM-DNS-U32
+    meaning: Unsigned DNS TTL scalar.
+    constraints: integer range 0..4294967295.
+    requirement_refs: [DNS-REQ-010]
+  - id: DOM-DNS-NAME
+    meaning: DNS domain name as ordered label octets plus root termination.
+    constraints: each label is 1..63 octets; complete expanded wire name is at most 255 octets; root is zero labels; ASCII A-Z/a-z compare case-insensitively only.
+    requirement_refs: [DNS-REQ-002, DNS-REQ-008, DNS-REQ-009, DNS-REQ-012]
+  - id: DOM-DNS-OPAQUE-BYTES
+    meaning: Exact uninterpreted octet sequence.
+    constraints: length is explicit and bounded by enclosing declared region and configured limits; no rewriting follows from retention.
+    requirement_refs: [DNS-REQ-010, DNS-REQ-011]
+  - id: DOM-TRANSPORT
+    meaning: Selected DNS transport.
+    constraints: one of UDP or TCP; TCP-first, reuse, and pipelining are not current selection promises.
+    requirement_refs: [DNS-REQ-013, DNS-REQ-017, DNS-REQ-019, DNS-REQ-021]
+  - id: DOM-PEER-CONTEXT
+    meaning: Network endpoint identity used for transaction correlation.
+    constraints: selected peer address, local address/port, transport, and deadline are retained for a pending request.
+    requirement_refs: [DNS-REQ-004, DNS-REQ-013, DNS-REQ-017]
+  - id: DOM-CONSUMPTION
+    meaning: Input-consumption outcome.
+    constraints: For one EVT-TCP-BYTES parse step, caller input is an ordered byte sequence. The step accepts and transfers into ENT-FRAME-ACCUMULATOR exactly the shortest leading sequence needed to complete either the two-octet prefix or its declared nonzero body, but never more than one frame. On need-more-input, all supplied caller bytes that belong to the incomplete prefix/body are accumulator-owned and remaining caller input is empty. On one-frame completion, the prefix and exactly its declared body are accumulator-owned until disposition; the unaccepted suffix remains caller input. A terminal framing failure accepts only bytes needed to establish that failure; no unspecified suffix is consumed. UDP examination consumes its complete datagram. Dereferenced compression bytes do not change parent-field consumption.
+    requirement_refs: [DNS-REQ-007, DNS-REQ-009, DNS-REQ-019]
+  - id: DOM-TCP-CORRELATED-DISPOSITION
+    meaning: Ordered observable disposition for one completed TCP frame correlated to the outstanding request.
+    constraints: "The only dispositions are terminal_resource_limit, terminal_malformed, terminal_unsupported_extension, and publish. Classification is ordered: first resource-limit, then malformed, then unsupported-extension, then publish. A later disposition is evaluated only if every earlier disposition does not apply; therefore exactly one disposition applies to every completed correlated frame. A completed nonmatching frame is outside this domain and remains pending/ignored."
+    requirement_refs: [DNS-REQ-019, DNS-REQ-023, DNS-REQ-024, DNS-REQ-025]
+entities:
+  - id: ENT-QUERY-INTENT
+    meaning: Locally requested standard DNS lookup before wire construction.
+    attributes: [qname, qtype, qclass_IN, recursion_desired_option, selected_peer, deadline]
+    invariants: [one query only, selected ordinary QTYPE only, no invalid name/options cause I/O]
+    requirement_refs: [DNS-REQ-001, DNS-REQ-002, DNS-REQ-003, DNS-REQ-005]
+  - id: ENT-REQUEST-CONTEXT
+    meaning: Pending transaction identity and lifecycle owner.
+    attributes: [id, canonical_qname, qtype, qclass, peer_context, transport, deadline, request_state]
+    invariants: [ID is unpredictable across full 16-bit domain; removed on every terminal path]
+    requirement_refs: [DNS-REQ-004, DNS-REQ-013, DNS-REQ-020, DNS-REQ-022]
+  - id: ENT-DNS-HEADER
+    meaning: Semantically decoded 12-octet DNS message header.
+    attributes: [id, qr, opcode, aa, tc, rd, ra, z, ad, cd, rcode, qdcount, ancount, nscount, arcount]
+    invariants: [all fields are available only after complete header; z is zero for accepted profile message]
+    requirement_refs: [DNS-REQ-005, DNS-REQ-006, DNS-REQ-015, DNS-REQ-016]
+  - id: ENT-QUESTION
+    meaning: DNS question tuple.
+    attributes: [qname, qtype, qclass]
+    invariants: [response acceptance requires exactly one echoed question semantically matching request context]
+    requirement_refs: [DNS-REQ-001, DNS-REQ-007, DNS-REQ-012, DNS-REQ-013, DNS-REQ-014]
+  - id: ENT-RESOURCE-RECORD
+    meaning: Structurally complete DNS RR envelope.
+    attributes: [owner_name, type, class, ttl, rdata]
+    invariants: [rdata occupies exactly declared RDLENGTH; unknown ordinary type retains exact opaque rdata]
+    requirement_refs: [DNS-REQ-007, DNS-REQ-010, DNS-REQ-011]
+  - id: ENT-DNS-RESPONSE
+    meaning: Fully structural, correlated DNS response candidate.
+    attributes: [header, echoed_question, answer_records, authority_records, additional_records, response_metadata]
+    invariants: [all sections parse in count order; parsing consumes the complete DNS message; no successful response contains OPT in this profile]
+    requirement_refs: [DNS-REQ-007, DNS-REQ-013, DNS-REQ-015, DNS-REQ-025]
+  - id: ENT-FRAME-ACCUMULATOR
+    meaning: TCP framing state before DNS message parsing.
+    attributes: [owned_prefix_bytes_0_to_2, declared_body_length_after_complete_prefix, owned_body_bytes_0_to_declared_length]
+    invariants: [the accumulator owns accepted caller bytes until one frame is disposed or a terminal path discards them; prefix is outside DNS message; incomplete state emits no DNS decode; zero declared length is terminal malformed; a parse step accepts at most one prefix-plus-body frame and leaves any suffix caller-owned]
+    requirement_refs: [DNS-REQ-019]
+  - id: ENT-OWNED-RESULT
+    meaning: Sole owner of published DNS response metadata, records, names, and raw RDATA.
+    attributes: [response, dns_status_classification, ownership_lifetime]
+    invariants: [published once at most; all contained views expire together when result is destroyed; no terminal failure transfers partial ownership]
+    requirement_refs: [DNS-REQ-010, DNS-REQ-015, DNS-REQ-018, DNS-REQ-022, DNS-REQ-023]
+messages:
+  - id: MSG-STANDARD-QUERY
+    semantic_fields: [id, qr_false, opcode_query, rd_from_local_option, reserved_zero, qdcount_one, zero_response_counts, question]
+    constraints: [no compression pointer in emitted qname, qclass is IN, response-only flags absent]
+    requirement_refs: [DNS-REQ-001, DNS-REQ-002, DNS-REQ-003, DNS-REQ-005]
+  - id: MSG-DNS-MESSAGE
+    semantic_fields: [header, question_section, answer_section, authority_section, additional_section]
+    constraints: [header precedes ordered sections; all declared content fully present; exact message-end consumption]
+    requirement_refs: [DNS-REQ-006, DNS-REQ-007, DNS-REQ-008, DNS-REQ-009, DNS-REQ-010, DNS-REQ-011]
+  - id: MSG-TCP-FRAME
+    semantic_fields: [body_length, dns_message_octets]
+    constraints: [body_length is nonzero U16; prefix is separate from DNS message; one completed frame is emitted per parse step]
+    requirement_refs: [DNS-REQ-019, DNS-REQ-020]
+peer_roles:
+  - id: ROLE-STUB-CLIENT
+    meaning: Constructs one standard query, maintains request context, accepts only correlated complete responses, and publishes an atomic owned result.
+    requirement_refs: [DNS-REQ-001, DNS-REQ-004, DNS-REQ-013, DNS-REQ-022]
+  - id: ROLE-UPSTREAM-RESOLVER
+    meaning: Selected DNS peer; response is treated as untrusted transport input, not authenticated data.
+    requirement_refs: [DNS-REQ-013, DNS-REQ-017, DNS-REQ-027]
+states:
+  - id: ST-NEW
+    meaning: Query intent received; no wire request/context exists.
+    requirement_refs: [DNS-REQ-022]
+  - id: ST-BUILT
+    meaning: Local validation succeeded, standard query and request context exist, but no transport pending state is active.
+    requirement_refs: [DNS-REQ-001, DNS-REQ-002, DNS-REQ-003, DNS-REQ-004, DNS-REQ-005, DNS-REQ-022]
+  - id: ST-UDP-PENDING
+    meaning: UDP request is outstanding until correlated complete response, timeout/network failure, cancellation, or TC fallback.
+    requirement_refs: [DNS-REQ-013, DNS-REQ-017, DNS-REQ-018, DNS-REQ-022]
+  - id: ST-TCP-PENDING
+    meaning: TCP fallback transaction is outstanding; its frame accumulator may require additional input.
+    requirement_refs: [DNS-REQ-018, DNS-REQ-019, DNS-REQ-020, DNS-REQ-022]
+  - id: ST-COMPLETE
+    meaning: One fully parsed, correlated, supported response has published one owned result.
+    requirement_refs: [DNS-REQ-015, DNS-REQ-022]
+  - id: ST-FAILED
+    meaning: Terminal local, protocol, resource, extension, or transport failure; no result exists.
+    requirement_refs: [DNS-REQ-002, DNS-REQ-003, DNS-REQ-016, DNS-REQ-017, DNS-REQ-019, DNS-REQ-023, DNS-REQ-024, DNS-REQ-025]
+  - id: ST-CANCELLED
+    meaning: Terminal cancellation; no result exists and request resources are released.
+    requirement_refs: [DNS-REQ-004, DNS-REQ-022]
+events:
+  - id: EVT-LOCAL-REQUEST
+    meaning: Local request intent is submitted.
+    requirement_refs: [DNS-REQ-001, DNS-REQ-002, DNS-REQ-003, DNS-REQ-005]
+  - id: EVT-UDP-DATAGRAM
+    meaning: One complete UDP datagram arrives with source/destination metadata.
+    requirement_refs: [DNS-REQ-013, DNS-REQ-017]
+  - id: EVT-TCP-BYTES
+    meaning: An ordered caller-owned byte sequence is offered for one selected fallback transaction; the step reports accepted leading bytes and remaining caller input according to DOM-CONSUMPTION.
+    requirement_refs: [DNS-REQ-019, DNS-REQ-020]
+  - id: EVT-DEADLINE-OR-NETWORK-FAILURE
+    meaning: Timeout, network, connect, EOF, or transport failure occurs.
+    requirement_refs: [DNS-REQ-017, DNS-REQ-019, DNS-REQ-022]
+  - id: EVT-CANCEL
+    meaning: Local cancellation is requested.
+    requirement_refs: [DNS-REQ-022]
+transitions:
+  - id: TR-VALIDATE-AND-BUILD
+    role_state: ST-NEW
+    event: EVT-LOCAL-REQUEST
+    guard: Query intent has valid DNS name, selected ordinary QTYPE, class IN, supported options, and available dependency.
+    effects: [create unpredictable ID, create request context, construct standard query, retain no result]
+    next_state: ST-BUILT
+    requirement_refs: [DNS-REQ-001, DNS-REQ-002, DNS-REQ-003, DNS-REQ-004, DNS-REQ-005]
+  - id: TR-LOCAL-REJECT
+    role_state: ST-NEW
+    event: EVT-LOCAL-REQUEST
+    guard: Any local validation or supported-capability condition fails.
+    effects: [emit local_validation_error, send_no_packet, retain_no_context_or_result]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-002, DNS-REQ-003, DNS-REQ-024]
+  - id: TR-SEND-UDP
+    role_state: ST-BUILT
+    event: local_transport_start
+    guard: UDP-first profile is selected.
+    effects: [send_one_complete_dns_message_as_one_udp_datagram]
+    next_state: ST-UDP-PENDING
+    requirement_refs: [DNS-REQ-017, DNS-REQ-021, DNS-REQ-022]
+  - id: TR-IGNORE-NONMATCHING-UDP
+    role_state: ST-UDP-PENDING
+    event: EVT-UDP-DATAGRAM
+    guard: Datagram fails ID/question/peer/local-address-port/transport correlation.
+    effects: [ignore_for_this_request, keep_context_and_deadline, publish_nothing]
+    next_state: ST-UDP-PENDING
+    requirement_refs: [DNS-REQ-012, DNS-REQ-013, DNS-REQ-017, DNS-REQ-023]
+  - id: TR-UDP-MALFORMED
+    role_state: ST-UDP-PENDING
+    event: EVT-UDP-DATAGRAM
+    guard: Datagram is correlated but fails accepted header, structural, count, name, RDLENGTH, exact-consumption, or reserved-bit rule.
+    effects: [discard_partial_records, release_context_and_buffers, emit_malformed_response]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-006, DNS-REQ-007, DNS-REQ-008, DNS-REQ-009, DNS-REQ-010, DNS-REQ-011, DNS-REQ-014, DNS-REQ-016, DNS-REQ-023]
+  - id: TR-UDP-TC-FALLBACK
+    role_state: ST-UDP-PENDING
+    event: EVT-UDP-DATAGRAM
+    guard: Datagram is correlated and structurally valid through TC observation, with TC true.
+    effects: [discard_udp_partial_content, preserve_query_identity, initialize_tcp_fallback_context]
+    next_state: ST-TCP-PENDING
+    requirement_refs: [DNS-REQ-018, DNS-REQ-021, DNS-REQ-022]
+  - id: TR-UDP-PUBLISH
+    role_state: ST-UDP-PENDING
+    event: EVT-UDP-DATAGRAM
+    guard: Datagram is correlated, structurally complete, TC false, has no OPT, and respects limits.
+    effects: [classify_dns_rcode_metadata, atomically_publish_owned_result, release_request_context_and_transport_buffers]
+    next_state: ST-COMPLETE
+    requirement_refs: [DNS-REQ-007, DNS-REQ-010, DNS-REQ-015, DNS-REQ-022, DNS-REQ-025]
+  - id: TR-TCP-NEED-MORE
+    role_state: ST-TCP-PENDING
+    event: EVT-TCP-BYTES
+    guard: Fewer than two prefix bytes or fewer than declared body bytes are available.
+    effects: [accept_all_supplied_incomplete_prefix_or_body_bytes_into_accumulator, leave_no_remaining_caller_input, retain_accumulator_and_context, emit_need_more_input, decode_no_dns_message]
+    next_state: ST-TCP-PENDING
+    requirement_refs: [DNS-REQ-019]
+  - id: TR-TCP-INVALID-FRAME
+    role_state: ST-TCP-PENDING
+    event: EVT-TCP-BYTES
+    guard: Complete prefix declares zero length, exceeds configured limit, or EOF interrupts a frame.
+    effects: [discard_accumulator, release_context, emit_malformed_response_or_resource_limit_or_transport_error]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-019, DNS-REQ-023, DNS-REQ-024]
+  - id: TR-TCP-IGNORE-NONMATCHING
+    role_state: ST-TCP-PENDING
+    event: completed_tcp_frame
+    guard: Complete framed message is not correlated to this outstanding request.
+    effects: [accept_prefix_and_exact_declared_body_into_accumulator, leave_suffix_as_remaining_caller_input, discard_completed_frame, publish_nothing, retain_pending_context]
+    next_state: ST-TCP-PENDING
+    requirement_refs: [DNS-REQ-013, DNS-REQ-019, DNS-REQ-020]
+  - id: TR-TCP-CORRELATED-MALFORMED
+    role_state: ST-TCP-PENDING
+    event: completed_tcp_frame
+    guard: Frame is correlated; no configured resource limit is exceeded while classifying it; and its DNS message fails an accepted header, structural, count, name, RDLENGTH, exact-consumption, reserved-bit, or accepted profile rule other than the excluded OPT/EDNS material classified by TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION.
+    effects: [accept_prefix_and_exact_declared_body_into_accumulator, leave_suffix_as_remaining_caller_input, discard_partial_records_and_accumulator, release_context_and_transport_buffers, publish_no_result, emit_malformed_response]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-006, DNS-REQ-007, DNS-REQ-008, DNS-REQ-009, DNS-REQ-010, DNS-REQ-011, DNS-REQ-014, DNS-REQ-016, DNS-REQ-019, DNS-REQ-023]
+  - id: TR-TCP-CORRELATED-RESOURCE-LIMIT
+    role_state: ST-TCP-PENDING
+    event: completed_tcp_frame
+    guard: Frame is correlated and any configured parsing resource limit would be exceeded. This is the first disposition test for a completed correlated frame; later malformed, unsupported-extension, and publish tests are not evaluated.
+    effects: [accept_prefix_and_exact_declared_body_into_accumulator, leave_suffix_as_remaining_caller_input, discard_partial_records_and_accumulator, release_context_and_transport_buffers, publish_no_result, emit_resource_limit]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-019, DNS-REQ-023, DNS-REQ-024]
+  - id: TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION
+    role_state: ST-TCP-PENDING
+    event: completed_tcp_frame
+    guard: Frame is correlated; no configured resource limit is exceeded; it satisfies every accepted header and structural rule other than the excluded OPT/EDNS profile rule; and it contains OPT/EDNS material excluded by this profile. This is evaluated only after the resource-limit and malformed dispositions do not apply.
+    effects: [accept_prefix_and_exact_declared_body_into_accumulator, leave_suffix_as_remaining_caller_input, discard_partial_records_and_accumulator, release_context_and_transport_buffers, publish_no_result, emit_unsupported_extension]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-019, DNS-REQ-023, DNS-REQ-025]
+  - id: TR-TCP-PUBLISH
+    role_state: ST-TCP-PENDING
+    event: completed_tcp_frame
+    guard: Frame is correlated; no configured resource limit is exceeded; it satisfies every accepted header, structural, count, name, RDLENGTH, exact-consumption, reserved-bit, and profile rule; it contains no OPT/EDNS material; and no earlier terminal disposition applies. This is the final disposition test.
+    effects: [accept_prefix_and_exact_declared_body_into_accumulator, leave_suffix_as_remaining_caller_input, classify_dns_rcode_metadata, atomically_publish_owned_result, release_context_and_buffers]
+    next_state: ST-COMPLETE
+    requirement_refs: [DNS-REQ-015, DNS-REQ-019, DNS-REQ-020, DNS-REQ-022, DNS-REQ-025]
+  - id: TR-TERMINAL-ERROR
+    role_state: [ST-UDP-PENDING, ST-TCP-PENDING]
+    event: EVT-DEADLINE-OR-NETWORK-FAILURE
+    guard: Any deadline or local transport failure.
+    effects: [release_context_and_buffers, publish_no_result, emit_transport_error]
+    next_state: ST-FAILED
+    requirement_refs: [DNS-REQ-017, DNS-REQ-018, DNS-REQ-019, DNS-REQ-022]
+  - id: TR-CANCEL
+    role_state: [ST-BUILT, ST-UDP-PENDING, ST-TCP-PENDING]
+    event: EVT-CANCEL
+    guard: Request is not terminal.
+    effects: [release_context_and_buffers, publish_no_result]
+    next_state: ST-CANCELLED
+    requirement_refs: [DNS-REQ-004, DNS-REQ-022]
+sessions:
+  - id: SES-UDP-TRANSACTION
+    meaning: One request context plus one complete datagram exchange; datagrams never concatenate.
+    requirement_refs: [DNS-REQ-017]
+  - id: SES-TCP-FALLBACK-TRANSACTION
+    meaning: One request context plus incremental frame accumulator after UDP TC; no connection-reuse/pipelining commitment.
+    requirement_refs: [DNS-REQ-018, DNS-REQ-019, DNS-REQ-020, DNS-REQ-021]
+streams:
+  - id: STR-TCP-DNS-FRAME
+    meaning: Ordered byte stream segmented into independent length-prefixed DNS messages.
+    constraints: one completed frame at most per parse step; future shared connection multiplexing is deferred.
+    requirement_refs: [DNS-REQ-019, DNS-REQ-020, DNS-REQ-021]
+timers:
+  - id: TIM-REQUEST-DEADLINE
+    meaning: Deadline held in request context from build until terminal cleanup.
+    constraints: expiration is a local terminal transport outcome, not a DNS response; retry policy is absent.
+    requirement_refs: [DNS-REQ-004, DNS-REQ-017, DNS-REQ-022]
+errors:
+  - id: ERR-LOCAL-VALIDATION
+    meaning: Invalid name, unsupported QTYPE/options, or unavailable dependency before I/O.
+    terminal: true
+    requirement_refs: [DNS-REQ-002, DNS-REQ-003]
+  - id: ERR-MALFORMED-RESPONSE
+    meaning: Correlated input, including a completed TCP frame, violates framing, structural, name, count, length, accepted-header, or exact-consumption constraints.
+    terminal: true
+    requirement_refs: [DNS-REQ-006, DNS-REQ-007, DNS-REQ-008, DNS-REQ-009, DNS-REQ-010, DNS-REQ-011, DNS-REQ-014, DNS-REQ-016, DNS-REQ-019, DNS-REQ-023]
+  - id: ERR-RESOURCE-LIMIT
+    meaning: Configured preallocation/preiteration budget is exceeded.
+    terminal: true
+    requirement_refs: [DNS-REQ-024]
+  - id: ERR-UNSUPPORTED-EXTENSION
+    meaning: Structurally valid OPT/EDNS material is encountered in the excluded profile.
+    terminal: true
+    requirement_refs: [DNS-REQ-025]
+  - id: ERR-TRANSPORT
+    meaning: Timeout, network, connect, or EOF event without a valid completed result.
+    terminal: true
+    requirement_refs: [DNS-REQ-017, DNS-REQ-018, DNS-REQ-019]
+  - id: OUT-DNS-STATUS
+    meaning: Nonzero base RCODE or negative answer classification on a fully structural correlated response.
+    terminal: false
+    constraints: response outcome is distinct from parser/transport failure and does not imply cache/retry behavior.
+    requirement_refs: [DNS-REQ-015]
+resource_invariants:
+  - id: INV-BOUNDED-PARSING
+    statement: Every cursor, pointer target, label, count, RDLENGTH region, expansion, and iteration is within message and configured resource bounds before read, allocation, indexing, dereference, or copy.
+    requirement_refs: [DNS-REQ-007, DNS-REQ-008, DNS-REQ-009, DNS-REQ-010, DNS-REQ-011, DNS-REQ-023, DNS-REQ-024]
+  - id: INV-ATOMIC-PUBLICATION
+    statement: A request publishes zero or one ENT-OWNED-RESULT only from ST-COMPLETE; every other terminal path, including correlated TCP malformed, resource-limit, and unsupported-extension outcomes, discards partial state and transfers no result ownership.
+    requirement_refs: [DNS-REQ-018, DNS-REQ-022, DNS-REQ-023, DNS-REQ-025]
+  - id: INV-TERMINAL-CLEANUP
+    statement: Completion, failure, and cancellation release request context and transport buffers; correlated TCP malformed, resource-limit, and unsupported-extension outcomes also discard the completed frame accumulator; no correlation context survives terminal state.
+    requirement_refs: [DNS-REQ-004, DNS-REQ-017, DNS-REQ-019, DNS-REQ-022, DNS-REQ-023, DNS-REQ-024, DNS-REQ-025]
+  - id: INV-TCP-CORRELATED-DISPOSITION-PARTITION
+    statement: "For each completed TCP frame correlated to the outstanding request, apply the ordered DOM-TCP-CORRELATED-DISPOSITION tests exactly once: resource-limit first; if not resource-limit, malformed next; if not malformed, unsupported-extension next; otherwise publish. The ordered tests are exhaustive and no later test can override an earlier disposition. Each terminal disposition publishes no result, discards partial records and the completed frame accumulator, and releases request context and transport buffers."
+    requirement_refs: [DNS-REQ-019, DNS-REQ-023, DNS-REQ-024, DNS-REQ-025]
+  - id: INV-TRANSACTION-ISOLATION
+    statement: A nonmatching or invalid message cannot complete or poison another outstanding request; future pipelined responses require the same correlation semantics.
+    requirement_refs: [DNS-REQ-013, DNS-REQ-020]
+extension_points:
+  - id: EXT-EDNS
+    meaning: Future EDNS/OPT, options, payload negotiation, and extended RCODE support.
+    current_disposition: excluded; OPT is recognized structurally then rejected as unsupported_extension.
+    requirement_refs: [DNS-REQ-025]
+  - id: EXT-TYPED-RDATA
+    meaning: Future approved typed RDATA interpretations.
+    current_disposition: only sourced approved type formats may decode; all other ordinary RR RDATA remains opaque.
+    requirement_refs: [DNS-REQ-010, DNS-REQ-011]
+  - id: EXT-TRANSPORT-POLICY
+    meaning: TCP-first, reuse, pipelining, retry, server selection, encrypted transport, and multiplexing.
+    current_disposition: deferred; later scope must define composition framing/state/security and renew affected gates.
+    requirement_refs: [DNS-REQ-020, DNS-REQ-021, DNS-REQ-024, DNS-REQ-027]
+dependencies:
+  - id: DEP-SELECTED-UPSTREAM-RESOLVER
+    purpose: DNS peer selected by local configuration or operating system.
+    requirement_refs: [DNS-REQ-004, DNS-REQ-013, DNS-REQ-017]
+  - id: DEP-OS-NETWORK-STACK
+    purpose: Socket transport, endpoint metadata, send/receive, connection, timeout, and EOF events.
+    requirement_refs: [DNS-REQ-017, DNS-REQ-019, DNS-REQ-022]
+traceability:
+  - requirement_id: DNS-REQ-001
+    model_element_ids: [ENT-QUERY-INTENT, ENT-QUESTION, MSG-STANDARD-QUERY, TR-VALIDATE-AND-BUILD]
+  - requirement_id: DNS-REQ-002
+    model_element_ids: [DOM-DNS-NAME, ENT-QUERY-INTENT, TR-VALIDATE-AND-BUILD, TR-LOCAL-REJECT]
+  - requirement_id: DNS-REQ-003
+    model_element_ids: [DOM-DNS-U16, ENT-QUERY-INTENT, MSG-STANDARD-QUERY, TR-LOCAL-REJECT]
+  - requirement_id: DNS-REQ-004
+    model_element_ids: [DOM-DNS-U16, DOM-PEER-CONTEXT, ENT-REQUEST-CONTEXT, TIM-REQUEST-DEADLINE, INV-TERMINAL-CLEANUP]
+  - requirement_id: DNS-REQ-005
+    model_element_ids: [ENT-DNS-HEADER, MSG-STANDARD-QUERY, TR-VALIDATE-AND-BUILD]
+  - requirement_id: DNS-REQ-006
+    model_element_ids: [ENT-DNS-HEADER, MSG-DNS-MESSAGE, ERR-MALFORMED-RESPONSE]
+  - requirement_id: DNS-REQ-007
+    model_element_ids: [MSG-DNS-MESSAGE, ENT-DNS-RESPONSE, INV-BOUNDED-PARSING]
+  - requirement_id: DNS-REQ-008
+    model_element_ids: [DOM-DNS-NAME, MSG-DNS-MESSAGE, INV-BOUNDED-PARSING]
+  - requirement_id: DNS-REQ-009
+    model_element_ids: [DOM-DNS-NAME, DOM-CONSUMPTION, INV-BOUNDED-PARSING]
+  - requirement_id: DNS-REQ-010
+    model_element_ids: [DOM-DNS-U32, DOM-DNS-OPAQUE-BYTES, ENT-RESOURCE-RECORD, ENT-OWNED-RESULT]
+  - requirement_id: DNS-REQ-011
+    model_element_ids: [ENT-RESOURCE-RECORD, ERR-MALFORMED-RESPONSE, EXT-TYPED-RDATA]
+  - requirement_id: DNS-REQ-012
+    model_element_ids: [DOM-DNS-NAME, ENT-QUESTION, TR-IGNORE-NONMATCHING-UDP]
+  - requirement_id: DNS-REQ-013
+    model_element_ids: [ENT-REQUEST-CONTEXT, DOM-PEER-CONTEXT, TR-IGNORE-NONMATCHING-UDP, TR-TCP-IGNORE-NONMATCHING, INV-TRANSACTION-ISOLATION]
+  - requirement_id: DNS-REQ-014
+    model_element_ids: [ENT-QUESTION, TR-UDP-MALFORMED, ERR-MALFORMED-RESPONSE]
+  - requirement_id: DNS-REQ-015
+    model_element_ids: [ENT-DNS-HEADER, ENT-OWNED-RESULT, OUT-DNS-STATUS, TR-UDP-PUBLISH, TR-TCP-PUBLISH]
+  - requirement_id: DNS-REQ-016
+    model_element_ids: [ENT-DNS-HEADER, TR-UDP-MALFORMED, ERR-MALFORMED-RESPONSE]
+  - requirement_id: DNS-REQ-017
+    model_element_ids: [SES-UDP-TRANSACTION, EVT-UDP-DATAGRAM, TR-SEND-UDP, TR-TERMINAL-ERROR]
+  - requirement_id: DNS-REQ-018
+    model_element_ids: [SES-TCP-FALLBACK-TRANSACTION, TR-UDP-TC-FALLBACK, INV-ATOMIC-PUBLICATION]
+  - requirement_id: DNS-REQ-019
+    model_element_ids: [DOM-CONSUMPTION, DOM-TCP-CORRELATED-DISPOSITION, ENT-FRAME-ACCUMULATOR, MSG-TCP-FRAME, EVT-TCP-BYTES, STR-TCP-DNS-FRAME, TR-TCP-NEED-MORE, TR-TCP-INVALID-FRAME, TR-TCP-IGNORE-NONMATCHING, TR-TCP-CORRELATED-MALFORMED, TR-TCP-CORRELATED-RESOURCE-LIMIT, TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION, TR-TCP-PUBLISH, INV-TERMINAL-CLEANUP, INV-TCP-CORRELATED-DISPOSITION-PARTITION]
+  - requirement_id: DNS-REQ-020
+    model_element_ids: [MSG-TCP-FRAME, TR-TCP-IGNORE-NONMATCHING, INV-TRANSACTION-ISOLATION]
+  - requirement_id: DNS-REQ-021
+    model_element_ids: [DOM-TRANSPORT, TR-SEND-UDP, TR-UDP-TC-FALLBACK, EXT-TRANSPORT-POLICY]
+  - requirement_id: DNS-REQ-022
+    model_element_ids: [ST-NEW, ST-BUILT, ST-UDP-PENDING, ST-TCP-PENDING, ST-COMPLETE, ST-FAILED, ST-CANCELLED, INV-ATOMIC-PUBLICATION, INV-TERMINAL-CLEANUP]
+  - requirement_id: DNS-REQ-023
+    model_element_ids: [DOM-TCP-CORRELATED-DISPOSITION, ERR-MALFORMED-RESPONSE, TR-UDP-MALFORMED, TR-TCP-CORRELATED-MALFORMED, TR-TCP-CORRELATED-RESOURCE-LIMIT, TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION, INV-ATOMIC-PUBLICATION, INV-BOUNDED-PARSING, INV-TERMINAL-CLEANUP, INV-TCP-CORRELATED-DISPOSITION-PARTITION]
+  - requirement_id: DNS-REQ-024
+    model_element_ids: [DOM-TCP-CORRELATED-DISPOSITION, ERR-RESOURCE-LIMIT, TR-TCP-CORRELATED-RESOURCE-LIMIT, TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION, INV-BOUNDED-PARSING, INV-TERMINAL-CLEANUP, INV-TCP-CORRELATED-DISPOSITION-PARTITION, EXT-TRANSPORT-POLICY]
+  - requirement_id: DNS-REQ-025
+    model_element_ids: [DOM-TCP-CORRELATED-DISPOSITION, ERR-UNSUPPORTED-EXTENSION, ENT-DNS-RESPONSE, TR-TCP-CORRELATED-UNSUPPORTED-EXTENSION, INV-ATOMIC-PUBLICATION, INV-TERMINAL-CLEANUP, INV-TCP-CORRELATED-DISPOSITION-PARTITION, EXT-EDNS]
+  - requirement_id: DNS-REQ-026
+    model_element_ids: [MSG-STANDARD-QUERY, ENT-QUERY-INTENT, EXT-EDNS]
+  - requirement_id: DNS-REQ-027
+    model_element_ids: [ROLE-UPSTREAM-RESOLVER, ENT-REQUEST-CONTEXT, INV-TRANSACTION-ISOLATION, EXT-TRANSPORT-POLICY]
