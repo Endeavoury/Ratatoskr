@@ -10,7 +10,7 @@ workflow:
   request: .agentic/workflows/dns-implementation-20260913/request.md
   manifest: .agentic/workflows/dns-implementation-20260913/manifest.yaml
   baseline_revision: 42b0611efa90e4b62f06d07cca64044ae9f090a7
-  updated_at: 2026-09-28T17:41:51+02:00
+  updated_at: 2026-09-28T20:28:16+02:00
   scope_mode: implementation
 current_stage: fuzzing
 active_role: protocol-orchestrator
@@ -2075,7 +2075,38 @@ handoffs:
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-006/fuzz-results.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-006/handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md
       - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-006/completion-report.md
+  - id: g9-record-resource-triage-001
+    stage_id: fuzzing
+    role: fuzz-engineer
+    status: BLOCKED
+    delegation: .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-triage-routing-001/delegations/fuzz-engineer-g9-record-resource-triage-001.md
+    agent_id: deleg_df3112ec/task-0; single fresh leaf; requested/observed openai-codex/gpt-5.6-terra, requested medium, effort telemetry unavailable; completed static triage with BLOCKED handoff
+    allowed_paths:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/README.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/handoffs/g9-record-resource-triage-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/completion-report.md
+      - fuzz/dns/fuzz_dns_record.c (only if an inspection-supported fuzz-only correction existed; unchanged)
+    readonly_paths:
+      - all other repository paths
+    input_artifacts:
+      - G9 record resource evidence at git:90eca1f73f448c86ef455a37cddaa6c9cbbbd12e: exit 71 after 21.236172719858587 seconds, ru_maxrss 1675884 KiB, libFuzzer 1636 MiB against mandatory 1024 MiB; no crash/sanitizer/timeout
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-resumption-008/verification/g9-current-toolchain-preflight-008.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-full-campaign-execution-002/{fuzz-plan.md,fuzz-results.md,handoffs/g9-full-campaign-execution-to-protocol-orchestrator.md}
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-api-designer/g9-record-resource-assessment-001/api-design.md
+    expected_outputs:
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/handoffs/g9-record-resource-triage-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/completion-report.md
 history:
+  - at: 2026-09-28T20:28:16+02:00
+    actor: protocol-orchestrator/g9-record-resource-triage-routing-001
+    event: "After independently verifying the G9 preflight, historical full-campaign plan/results/handoff, G9 failure route, selected fuzz-engineer skill, current state, and the existing resource-authority assessment, dispatched exactly one fresh fuzz-engineer triage leaf. The leaf performed static strategy/harness inspection only and returned BLOCKED: the structured record harness and maximum packet seed are intentional bounded coverage; no fuzz-only root cause/remediation is proven. No source, corpus, CMake, flags, campaign, retry, production code, G9 security review, or later stage was routed. Workflow/fuzzing/G9 remain BLOCKED with the mandatory 1024 MiB budget and prior failure evidence preserved."
+    references:
+      - .agentic/workflows/dns-implementation-20260913/agents/protocol-orchestrator/g9-record-resource-triage-routing-001/delegations/fuzz-engineer-g9-record-resource-triage-001.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/fuzz-plan.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/handoffs/g9-record-resource-triage-to-protocol-orchestrator.md
+      - .agentic/workflows/dns-implementation-20260913/agents/fuzz-engineer/g9-record-resource-triage-001/completion-report.md
   - at: 2026-09-28T17:41:51+02:00
     actor: protocol-orchestrator/g9-resumption-008
     event: "Fresh preflight explicitly verified /usr/bin/clang-19 and /usr/bin/clang++-19, matching LLVM19 fuzzer/ASan/UBSan runtimes, CMake configure, and all three existing DNS fuzz builds. This justified exactly one fresh local-only serial fuzz-engineer leaf deleg_2b37a375/task-0. Packet and name completed cleanly; record exited 71 with libFuzzer out-of-memory at 1112 MiB against the mandatory 1024 MiB limit. Reflected the leaf COMPLETE and workflow/fuzzing/G9 BLOCKED. No retry, G9 security review, or later stage was routed."
